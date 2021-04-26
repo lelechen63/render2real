@@ -118,6 +118,10 @@ class Pix2PixHDModel(BaseModel):
         # Fake Generation
         fake_image = self.netG.forward(renderred_image.cuda())
 
+        # real images for training
+        real_image = Variable(image.data.cuda())
+
+
         # Fake Detection and Loss
         pred_fake_pool = self.discriminate( renderred_image, fake_image, use_pool=True)
         loss_D_fake = self.criterionGAN(pred_fake_pool, False)        
