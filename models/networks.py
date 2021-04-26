@@ -193,6 +193,50 @@ class GlobalGenerator(nn.Module):
             mult = 2**i
             model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
                       norm_layer(ngf * mult * 2), activation]
+        self.encoder = nn.Sequential(*model)
+        model = []
+        ### resnet blocks
+        mult = 2**n_downsampling
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+        
+        self.resblocks = nn.Sequential(*model)
+        ### upsample
+        model = []         
+        for i in range(n_downsampling):
+            mult = 2**(n_downsampling - i)
+            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult / 2)), activation]
+        self.decoder = nn.Sequential(*model)
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+            
+    def forward(self, input):
+        print (input.shape, 'input')
+        encoded = self.encoder(input)
+        print (encoded.shape, "encoded")
+        encoded = self.resblocks(encoded)
+        print (encoded.shape, "encoded")
+        decoded = self.decoder(encoded)
+        print (decoded.shape, "decoded")
+        output = self.output_layer(decoded)
+        print (output.shape, "output")
+        return output        
+class DefultGlobalGenerator(nn.Module):
+    def __init__(self, input_nc, output_nc, ngf=64, n_downsampling=3, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(DefultGlobalGenerator, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
+        ### downsample
+        for i in range(n_downsampling):
+            mult = 2**i
+            model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
+                      norm_layer(ngf * mult * 2), activation]
 
         ### resnet blocks
         mult = 2**n_downsampling
@@ -210,6 +254,7 @@ class GlobalGenerator(nn.Module):
     def forward(self, input):
         return self.model(input)             
         
+
 # Define a resnet block
 class ResnetBlock(nn.Module):
     def __init__(self, dim, padding_type, norm_layer, activation=nn.ReLU(True), use_dropout=False):
