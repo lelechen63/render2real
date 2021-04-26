@@ -105,8 +105,8 @@ class Pix2PixHDModel(BaseModel):
 
   
 
-    def discriminate(self, test_image, use_pool=False):
-        input_concat = test_image.detach()
+    def discriminate(self, renderred_image, test_image, use_pool=False):
+        input_concat = torch.cat((renderred_image, test_image.detach()), dim=1)
         if use_pool:            
             fake_query = self.fake_pool.query(input_concat)
             return self.netD.forward(fake_query)
@@ -119,15 +119,15 @@ class Pix2PixHDModel(BaseModel):
         fake_image = self.netG.forward(renderred_image.cuda())
 
         # Fake Detection and Loss
-        pred_fake_pool = self.discriminate( fake_image, use_pool=True)
+        pred_fake_pool = self.discriminate( renderred_image, fake_image, use_pool=True)
         loss_D_fake = self.criterionGAN(pred_fake_pool, False)        
 
         # Real Detection and Loss        
-        pred_real = self.discriminate( real_image)
+        pred_real = self.discriminate( renderred_image, real_image)
         loss_D_real = self.criterionGAN(pred_real, True)
 
         # GAN loss (Fake Passability Loss)        
-        pred_fake = self.netD.forward(fake_image, dim=1)        
+        pred_fake = self.netD.forward(torch.cat((renderred_image, fake_image), dim=1)        
         loss_G_GAN = self.criterionGAN(pred_fake, True)               
         
         # GAN feature matching loss
