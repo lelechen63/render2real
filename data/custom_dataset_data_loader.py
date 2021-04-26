@@ -4,7 +4,7 @@ from data.base_data_loader import BaseDataLoader
 
 def CreateDataset(opt):
     dataset = None
-    from data.facescapeDataset import FacescapeDataset
+    from data.facescape_dataset import FacescapeDataset
     dataset = FacescapeDataset()
 
     print("dataset [%s] was created" % (dataset.name()))
