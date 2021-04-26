@@ -106,7 +106,7 @@ class Pix2PixHDModel(BaseModel):
   
 
     def discriminate(self, renderred_image, test_image, use_pool=False):
-        input_concat = torch.cat(renderred_image, test_image.detach(), dim=1))
+        input_concat = torch.cat((renderred_image, test_image.detach()), dim=1)
         if use_pool:            
             fake_query = self.fake_pool.query(input_concat)
             return self.netD.forward(fake_query)
