@@ -15,14 +15,12 @@ class FacescapeDataset(BaseDataset):
         ### input B (real images)
         self.dir_B = os.path.join(opt.dataroot, "fsmview_images")
 
-        self.mode = opt.isTrain
 
-        if self.mode=='train':
+        if opt.isTrain:
             _file = open(os.path.join(opt.dataroot, "lists/train.pkl"), "rb")
-        elif self.mode =='test':
+        else:
             _file = open(os.path.join(opt.dataroot, "lists/test.pkl"), "rb")
-        elif self.mode =='demo' :
-            _file = open(os.path.join(opt.dataroot, "lists/demo.pkl"), "rb")
+       
         self.data_list = pickle.load(_file)
         _file.close()
 
