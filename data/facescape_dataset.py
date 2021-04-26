@@ -43,7 +43,7 @@ class FacescapeDataset(BaseDataset):
         ### input B (real images)
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
         #for debug
-        B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.png'  
+        B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.jpg'  
         print (B_path)       
         B = Image.open(B_path).convert('RGB')
         transform_B = get_transform(self.opt, params)      
