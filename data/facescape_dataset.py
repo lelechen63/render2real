@@ -28,7 +28,10 @@ class FacescapeDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input A (renderred image)
         A_path = os.path.join( self.dir_A , self.data_list[index] )   
-        print (A_path)          
+          
+        #for debug
+        A_path =  '/raid/celong/FaceScape/fsmview_renderings/1/1_neutral/1.png'    
+        print (A_path)  
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
         
@@ -39,6 +42,8 @@ class FacescapeDataset(BaseDataset):
         B_tensor = 0
         ### input B (real images)
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
+        #for debug
+        B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.png'  
         print (B_path)       
         B = Image.open(B_path).convert('RGB')
         transform_B = get_transform(self.opt, params)      
