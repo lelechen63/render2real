@@ -21,7 +21,7 @@ class FacescapeDataset(BaseDataset):
         else:
             _file = open(os.path.join(opt.dataroot, "lists/test.pkl"), "rb")
        
-        self.data_list = pickle.load(_file)
+        self.data_list = pickle.load(_file)[:10]
         _file.close()
 
         
@@ -31,7 +31,7 @@ class FacescapeDataset(BaseDataset):
           
         #for debug
         A_path =  '/raid/celong/FaceScape/fsmview_renderings/1/1_neutral/1.png'    
-        print (A_path)  
+        # print (A_path)  
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
         
@@ -44,7 +44,7 @@ class FacescapeDataset(BaseDataset):
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
         #for debug
         B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.jpg'  
-        print (B_path)       
+        # print (B_path)       
         B = Image.open(B_path).convert('RGB')
         transform_B = get_transform(self.opt, params)      
         B_tensor = transform_B(B)
