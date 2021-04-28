@@ -45,20 +45,33 @@ def get_imgs():
 
     return data_list
 
-dir_B = os.path.join(root , "fsmview_images")
+img_dir = os.path.join(root , "fsmview_images")
+lmark_dir = os.path.join(root , "fsmview_landmarks")
+
 data_list = get_imgs()
 idet = IrisDetector()
 idet.set_detector(fa)
 for data in data_list:
     print (data)
-    img_path = os.path.join(dir_B, data)
+    img_path = os.path.join(img_dir, data)
+    # debug
+    img_path = "/raid/celong/FaceScape/fsmview_images/1/9_mouth_right/1.jpg"
     print (img_path)
+    lmark = None
+
+    lmark_path = os.path.join(lmark_dir, data[:-3] + 'npy')
+    # debug
+    lmark_path = "/raid/celong/FaceScape/fsmview_landmarks/1/9_mouth_right/1.npy"
+    if os.path.exists(lmark_path):
+        lmark = np.load(lmark_path).transpose(1,0)[:,::-1]
+    else:
+        print ('*********', lmark_path)
 
 
     im = cv2.imread(img_path)[..., ::-1]
     # im = resize_image(im) # Resize image to prevent GPU OOM.
     h, w, _ = im.shape
-    eye_lms = idet.detect_iris(im)
+    eye_lms = idet.detect_iris(im,lmark)
 
     # Display detection result
     plt.figure(figsize=(15,10))
