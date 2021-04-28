@@ -35,14 +35,9 @@ def get_imgs(dir):
 
 def get_imgs():
 
-    _file = open(os.path.join(root, "lists/train.pkl"), "rb")
+    _file = open(os.path.join(root, "lists/front_list.pkl"), "rb")
     data_list = pickle.load(_file)
     _file.close()
-
-    # _file = open(os.path.join(root, "lists/test.pkl"), "rb")
-    # data_list.extend(pickle.load(_file))
-    # _file.close()
-
     return data_list
 
 img_dir = os.path.join(root , "fsmview_images")
@@ -54,19 +49,19 @@ idet.set_detector(fa)
 for data in data_list:
     print (data)
     img_path = os.path.join(img_dir, data)
+    lmark = None
+    lmark_path = os.path.join(lmark_dir, data[:-3] + 'npy')
+    parsing_path = os.path.join(lmark_dir, data[:-4] + '_eye.png')
+
     # debug
     img_path = "/raid/celong/FaceScape/fsmview_images/1/9_mouth_right/1.jpg"
-    print (img_path)
-    lmark = None
-
-    lmark_path = os.path.join(lmark_dir, data[:-3] + 'npy')
-    # debug
     lmark_path = "/raid/celong/FaceScape/fsmview_landmarks/1/9_mouth_right/1.npy"
+    parsing_path = "/raid/celong/FaceScape/fsmview_landmarks/1/9_mouth_right/1_eye.png"
+
     if os.path.exists(lmark_path):
         lmark = np.load(lmark_path).transpose(1,0)[:,::-1]
     else:
         print ('*********', lmark_path)
-
 
     im = cv2.imread(img_path)[..., ::-1]
     # im = resize_image(im) # Resize image to prevent GPU OOM.
@@ -74,7 +69,6 @@ for data in data_list:
     eye_lms = idet.detect_iris(im,lmark)
 
     # Display detection result
-    plt.figure(figsize=(15,10))
     draw = idet.draw_pupil(im, eye_lms[0][0,...]) # draw left eye
     draw = idet.draw_pupil(draw, eye_lms[0][1,...]) # draw right eye
 
@@ -84,23 +78,24 @@ for data in data_list:
     cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
     cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
 
-    lms =   eye_lms[0][1,...].astype(np.int32)[:,::-1]
+    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
     cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
     cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
-    cv2.imwrite('gg.png', blank_image)
+    cv2.imwrite(parsing_path, blank_image)
 
-    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    # detect faces in the grayscale image
-    bbox = detector(gray, 1)[0]
+    # plt.figure(figsize=(15,10))
+    # gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    # # detect faces in the grayscale image
+    # bbox = detector(gray, 1)[0]
 
-    x0 = int(bbox.left())
-    x1 = int(bbox.right())
-    y0 = int(bbox.top())
-    y1 = int(bbox.bottom())
+    # x0 = int(bbox.left())
+    # x1 = int(bbox.right())
+    # y0 = int(bbox.top())
+    # y1 = int(bbox.bottom())
 
-    plt.subplot(1,2,1)
-    plt.imshow(draw)
-    plt.subplot(1,2,2)
-    plt.imshow(draw[x0:x1, y0:y1])
-    plt.savefig('foo.png')
+    # plt.subplot(1,2,1)
+    # plt.imshow(draw)
+    # plt.subplot(1,2,2)
+    # plt.imshow(draw[x0:x1, y0:y1])
+    # plt.savefig('foo.png')
     break
