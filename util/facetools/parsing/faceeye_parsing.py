@@ -88,7 +88,7 @@ def parsing(img_path, landmark=None):
 
     im = cv2.imread(img_path)[..., ::-1]
     # try:
-    eye_lms = idet.detect_iris(im,landmark)
+    eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 
     cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
