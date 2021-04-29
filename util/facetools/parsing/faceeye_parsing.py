@@ -87,19 +87,18 @@ def parsing(img, landmark):
         print (parsing_maps.shape)
 
     im = np.array(img)[..., ::-1]
-    try:
-        eye_lms = idet.detect_iris(im,lmark)
-        lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
+    # try:
+    eye_lms = idet.detect_iris(im,lmark)
+    lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 
-        cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-        # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
+    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
 
-        lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-        cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-        # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
+    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
         
-    except:
-        print (img_path, '**************')
+    # except:
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
     return parsing_maps
 
