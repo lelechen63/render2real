@@ -86,6 +86,7 @@ def parsing(img_path, landmark=None):
         out = facenet(image)[0]
         parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
         print (parsing_maps.shape)
+    parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
 
     im = cv2.imread(img_path)[..., ::-1]
     # try:
@@ -112,6 +113,5 @@ def parsing(img_path, landmark=None):
     
         
     # except:
-    parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
     return parsing_maps
 
