@@ -88,7 +88,7 @@ def parsing(img, landmark):
 
     im = np.array(img)[..., ::-1]
     # try:
-    eye_lms = idet.detect_iris(im,lmark)
+    eye_lms = idet.detect_iris(im,landmark)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 
     cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
