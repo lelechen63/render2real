@@ -88,18 +88,18 @@ def parsing(img, landmark, cp='checkpoint/face_parsing.pth'):
     im = np.array(img)[..., ::-1]
     try:
         eye_lms = idet.detect_iris(im,lmark)
+        lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
+
+        cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+        # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
+
+        lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
+        cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+        # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+        
+        parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
+        
     except:
         print (img_path, '**************')
-        continue
-    lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
-
-    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
-
-    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
-    
-    parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
     return parsing_maps
 
