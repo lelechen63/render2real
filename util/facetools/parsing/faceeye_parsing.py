@@ -14,6 +14,8 @@ import face_alignment
 from parsing.eye_parsing.iris_detector import IrisDetector
 import dlib
 import pickle
+from shapely.geometry import Polygon
+
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
@@ -93,24 +95,25 @@ def parsing(img_path, landmark=None):
     eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
     print (lms[8:16])
-    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(parsing_maps, lms[8:16], 255)
-
-    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(parsing_maps, lms[8:16], 255)
-
-    blank_image = np.zeros((512,512,3), np.uint8)
-    lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
-
-    cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
-    cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
-
-    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
-    cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
-    cv2.imwrite('imgs/fuck.png', blank_image)
     
+    p1 = Polygon(lms[:8])
+    p2 = Polygon(lms[8:16])
+    print(p1.intersects(p2))
+
+
+    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    cv2.fillConvexPoly(parsing_maps, p1.intersects(p2), 21)
+
+    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
+    p1 = Polygon(lms[:8])
+    p2 = Polygon(lms[8:16])
+    print(p1.intersects(p2))
+    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    cv2.fillConvexPoly(parsing_maps, p1.intersects(p2), 21)
+
+
+
+   
         
     # except:
     return parsing_maps
