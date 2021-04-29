@@ -19,11 +19,12 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
 idet = IrisDetector()
 idet.set_detector(fa)
+# cp='checkpoint/face_parsing.pth'
 
 n_classes = 19
 facenet = BiSeNet(n_classes=n_classes)
 facenet.cuda()
-facenet.load_state_dict(torch.load(cp))
+facenet.load_state_dict(torch.load('checkpoint/face_parsing.pth'))
 facenet.eval()
 
 to_tensor = transforms.Compose([
@@ -73,7 +74,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(img, landmark, cp='checkpoint/face_parsing.pth'):
+def parsing(img, landmark):
 
     with torch.no_grad():
         shape = imgs.size
