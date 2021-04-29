@@ -1,5 +1,5 @@
 from PIL import Image
-from parsing.face_parsing import parsing, vis_parsing_maps
+from parsing.faceeye_parsing import parsing, vis_parsing_maps
 
 image = Image.open('imgs/9.jpg')
 
