@@ -50,8 +50,7 @@ ids.sort()
 for id_p in ids:
     current_p = os.path.join( base_p , id_p)
     front_idx = front_indx[id_p]
-    if not os.path.exists(  os.path.join( save_p1 ) ):
-        os.mkdir( save_p1 ) 
+   
     for motion_p in os.listdir(current_p):
         current_p1 = os.path.join( current_p , motion_p)
         img_p = os.path.join( current_p1, front_idx + '.jpg')
