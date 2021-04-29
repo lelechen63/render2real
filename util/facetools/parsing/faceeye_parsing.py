@@ -77,7 +77,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
 def parsing(img, landmark):
 
     with torch.no_grad():
-        shape = imgs.size
+        shape = img.size
         image = img.resize((512, 512), Image.BILINEAR)
         img = to_tensor(image)
         img = torch.unsqueeze(img, 0)
