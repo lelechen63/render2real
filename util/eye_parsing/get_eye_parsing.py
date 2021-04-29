@@ -33,17 +33,6 @@ def get_imgs(dir):
 
     return images
 
-def get_imgs():
-
-    _file = open(os.path.join(root, "lists/front_list.pkl"), "rb")
-    data_list = pickle.load(_file)
-    _file.close()
-    return data_list
-
-img_dir = os.path.join(root , "fsmview_images")
-lmark_dir = os.path.join(root , "fsmview_landmarks")
-
-data_list = get_imgs()
 idet = IrisDetector()
 idet.set_detector(fa)
 
