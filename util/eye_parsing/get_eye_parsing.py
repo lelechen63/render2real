@@ -54,9 +54,9 @@ for id_p in ids:
     for motion_p in os.listdir(current_p):
         current_p1 = os.path.join( current_p , motion_p)
         img_p = os.path.join( current_p1, front_idx + '.jpg')
-        lmark_p = img_p.replace('fsmview_images', 'fsmview_landmarks')[:-3] +'npy'
+        lmark_path = img_p.replace('fsmview_images', 'fsmview_landmarks')[:-3] +'npy'
         lmark = None
-        parsing_path = lmark_p[:-4] + '_eye.png'
+        parsing_path = lmark_path[:-4] + '_eye.png'
 
         # debug
         # img_path = "/raid/celong/FaceScape/fsmview_images/1/9_mouth_right/1.jpg"
