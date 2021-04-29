@@ -1,8 +1,9 @@
 from PIL import Image
 from parsing.faceeye_parsing import parsing, vis_parsing_maps
 
-image = Image.open('imgs/9.jpg')
+img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
+image = Image.open(img_path)
 
 res = parsing(image)
 print (res.shape)
-vis_parsing_maps(image, res, save_parsing_path='imgs/9_parsing.jpg', save_vis_path = 'imgs/9_vis.jpg' )
+vis_parsing_maps(image, res, save_parsing_path=img_path[:-4] + '_parsing.jpg', save_vis_path = img_path[:-4] +'_vis.jpg' )
