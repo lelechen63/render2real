@@ -112,7 +112,7 @@ class Pix2PixHDModel(BaseModel):
         else:
             return self.netD.forward(input_concat)
 
-    def forward(self, renderred_image, image , infer=False, eye_parsing = None):
+    def forward(self, renderred_image, image ,eye_parsing = None, infer=False):
 
         # Fake Generation
         if eye_parsing is not None:
