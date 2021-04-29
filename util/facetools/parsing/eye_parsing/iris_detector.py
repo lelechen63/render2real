@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from pathlib import Path
 import dlib
-from ELG.elg_keras import KerasELG
+from .ELG.elg_keras import KerasELG
 
 
 FILE_PATH = str(Path(__file__).parent.resolve())
