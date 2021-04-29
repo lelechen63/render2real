@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 from .model import BiSeNet
 
 
-def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_im=False, save_path='imgs/'):
+def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='imgs/gg.png', save_vis_path = None):
 
     part_colors = [[255, 0, 0], [255, 85, 0], [255, 170, 0],
                    [255, 0, 85], [255, 0, 170],
@@ -44,12 +44,10 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_im=False, save
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    # Save result or not
-    if save_im:
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
-        cv2.imwrite(osp.join(save_path, 'parsing_maps.png'), vis_parsing_anno)
-        cv2.imwrite(osp.join(save_path, 'parsing.jpg'), vis_im, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+    # Save result 
+    cv2.imwrite(save_parsing_path, vis_parsing_anno)
+    if save_vis_path is not None:
+        cv2.imwrite(save_vis_path, vis_im)
 
     # return vis_im
 
@@ -68,29 +66,17 @@ def parsing(imgs, cp='checkpoint/face_parsing.pth'):
     ])
 
     with torch.no_grad():
-        if not isinstance(imgs, list):
-            shape = imgs.size
-            image = imgs.resize((512, 512), Image.BILINEAR)
-            img = to_tensor(image)
-            img = torch.unsqueeze(img, 0)
-            img = img.cuda()
-            out = net(img)[0]
-            parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
-            parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
-            return parsing_maps
+        shape = imgs.size
+        image = imgs.resize((512, 512), Image.BILINEAR)
+        img = to_tensor(image)
+        img = torch.unsqueeze(img, 0)
+        img = img.cuda()
+        out = net(img)[0]
+        parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
+        print (parsing_maps.shape)
 
-        else:
-            parsing_list = []
-            for img in imgs:
-                shape = img.size
-                image = img.resize((512, 512), Image.BILINEAR)
-                img = to_tensor(image)
-                img = torch.unsqueeze(img, 0)
-                img = img.cuda()
-                out = net(img)[0]
-                parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
-                parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
-                parsing_list.append(parsing_maps)
-            return parsing_list
 
+
+        parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
+        return parsing_maps
 
