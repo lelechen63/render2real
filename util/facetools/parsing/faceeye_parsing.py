@@ -74,7 +74,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(img_path, landmark):
+def parsing(img_path, landmark=None):
     img = Image.open(img_path)
     with torch.no_grad():
         shape = img.size
@@ -88,7 +88,6 @@ def parsing(img_path, landmark):
 
     im = cv2.imread(img_path)[..., ::-1]
     # try:
-    print (im.shape, landmark.shape)
     eye_lms = idet.detect_iris(im,landmark)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 

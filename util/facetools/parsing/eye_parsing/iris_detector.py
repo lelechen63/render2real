@@ -59,7 +59,7 @@ class IrisDetector():
         right_eye_idx = slice(42, 48)
         output_eye_landmarks = []
         
-        lm = lm[:,::-1]
+        # lm = lm[:,::-1]
 
         left_eye_im, left_x0y0 = self.get_eye_roi(im, lm[left_eye_idx])
         print (left_eye_im.shape)
