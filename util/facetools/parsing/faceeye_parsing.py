@@ -98,6 +98,18 @@ def parsing(img_path, landmark=None):
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
     cv2.fillConvexPoly(parsing_maps, lms[8:16], 255)
+
+    blank_image = np.zeros((h,w,3), np.uint8)
+    lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
+
+    cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
+    cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+
+    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
+    cv2.fillConvexPoly(blank_image, lms[:8], (0,0,255))
+    cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+    cv2.imwrite('imgs/fuck.png', blank_image)
+    
         
     # except:
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
