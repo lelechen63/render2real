@@ -78,7 +78,7 @@ def parsing(img, landmark):
 
     with torch.no_grad():
         shape = img.size
-        image = img.resize((512, 512), Image.BILINEAR)
+        image = image.resize((512, 512), Image.BILINEAR)
         img = to_tensor(image)
         img = torch.unsqueeze(img, 0)
         img = img.cuda()
@@ -86,7 +86,7 @@ def parsing(img, landmark):
         parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
         print (parsing_maps.shape)
 
-    im = np.array(img)[..., ::-1]
+    im = np.array(image)[..., ::-1]
     try:
         eye_lms = idet.detect_iris(im,lmark)
         lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
