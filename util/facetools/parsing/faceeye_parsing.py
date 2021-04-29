@@ -91,12 +91,12 @@ def parsing(img_path, landmark=None):
     eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 
-    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
+    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
         
     # except:
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
