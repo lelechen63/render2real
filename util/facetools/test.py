@@ -4,6 +4,6 @@ from parsing.faceeye_parsing import parsing, vis_parsing_maps
 img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
 image = Image.open(img_path)
 
-res = parsing(image)
+res = parsing(image, np.load(img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-3] + 'npy'))
 print (res.shape)
-vis_parsing_maps(image, res, save_parsing_path=img_path[:-4] + '_parsing.jpg', save_vis_path = img_path[:-4] +'_vis.jpg' )
+vis_parsing_maps(image, res, save_parsing_path='9_parsing.jpg', save_vis_path = 'imgs/9_vis.jpg' )
