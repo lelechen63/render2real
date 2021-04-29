@@ -52,7 +52,7 @@ if not os.path.exists( base_p.replace('fsmview_images', 'ffhq_aligned_img') ):
     os.mkdir(base_p.replace('fsmview_images', 'ffhq_aligned_img'))
 save_p = base_p.replace('fsmview_images', 'ffhq_aligned_img')
 
-_file = open( './predef/frontface_list.pkl', "rb")
+_file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/frontface_list.pkl', "rb")
 front_indx = pickle.load(_file)
 
 ids =  os.listdir(base_p)
