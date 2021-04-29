@@ -67,8 +67,11 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = total_steps % opt.display_freq == display_delta
 
         ############## Forward Pass ######################
-        losses, generated = model( Variable(data['renderred_image']) ,Variable(data['image']) , infer=save_fake)
-
+        if opt.eye_parsing:
+            losses, generated = model( Variable(data['renderred_image']), Variable(data['image']) , infer=save_fake, Variable(data['eye_parsing']))
+        else:
+            losses, generated = model( Variable(data['renderred_image']), Variable(data['image']) , infer=save_fake)
+      
         # sum per device losses
         losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
         loss_dict = dict(zip(model.module.loss_names, losses))
@@ -106,6 +109,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### display output images
         if save_fake:
             visuals = OrderedDict([ ('renderred_image', util.tensor2im(data['renderred_image'][0])),
+                                    ('eye_parsing', util.tensor2im(data['eye_parsing'][0])),
                                    ('synthesized_image', util.tensor2im(generated.data[0])),
                                    ('real_image', util.tensor2im(data['image'][0]))]
                                 )

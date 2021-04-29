@@ -15,6 +15,10 @@ class FacescapeDataset(BaseDataset):
         ### input B (real images)
         self.dir_B = os.path.join(opt.dataroot, "fsmview_images")
 
+        ### input C (eye parsing images)
+        self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
+        # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
+
 
         if opt.isTrain:
             _file = open(os.path.join(opt.dataroot, "lists/train.pkl"), "rb")
@@ -35,9 +39,8 @@ class FacescapeDataset(BaseDataset):
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
         
-        transform_A = get_transform(self.opt, params)      
-        A_tensor = transform_A(A)
-
+        transform = get_transform(self.opt, params)      
+        A_tensor = transform(A)
 
         B_tensor = 0
         ### input B (real images)
@@ -46,11 +49,18 @@ class FacescapeDataset(BaseDataset):
         B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.jpg'  
         # print (B_path)       
         B = Image.open(B_path).convert('RGB')
-        transform_B = get_transform(self.opt, params)      
-        B_tensor = transform_B(B)
+        # transform_B = get_transform(self.opt, params)      
+        B_tensor = transform(B)
+
+        C_path =  os.path.join( self.dir_A , self.data_list[index][:-3] + 'png' )
+        #debug 
+        C_path =  '/raid/celong/FaceScape/fsmview_landmarks/1/1_neutral/1.png'    
+
+        C =  Image.open(C_path).convert('RGB')
+        C_tensor = transform(C)
 
      
-        input_dict = { 'renderred_image':A_tensor, 'image': B_tensor, 'path': A_path}
+        input_dict = { 'renderred_image':A_tensor, 'image': B_tensor, 'eye_parsing': C_tensor, 'path': A_path}
 
         return input_dict
 

@@ -21,9 +21,12 @@ class Pix2PixHDModel(BaseModel):
         if opt.resize_or_crop != 'none' or not opt.isTrain: # when training at full res this causes OOM
             torch.backends.cudnn.benchmark = True
         self.isTrain = opt.isTrain
-        self.use_features = opt.instance_feat or opt.label_feat
-        self.gen_features = self.use_features and not self.opt.load_features
-        input_nc = 3
+        self.use_eyeparsing = opt.eye_parsing
+        if self.use_eyeparsing:
+            input_nc = 6
+        else:
+            input_nc =3
+
         ##### define networks        
         # Generator network
         netG_input_nc = input_nc        
@@ -41,9 +44,7 @@ class Pix2PixHDModel(BaseModel):
                                           opt.num_D, not opt.no_ganFeat_loss, gpu_ids=self.gpu_ids)
 
         ### Encoder network
-        if self.gen_features:          
-            self.netE = networks.define_G(opt.output_nc, opt.feat_num, opt.nef, 'encoder', 
-                                          opt.n_downsample_E, norm=opt.norm, gpu_ids=self.gpu_ids)  
+
         if self.opt.verbose:
                 print('---------- Networks initialized -------------')
 
@@ -53,8 +54,7 @@ class Pix2PixHDModel(BaseModel):
             self.load_network(self.netG, 'G', opt.which_epoch, pretrained_path)            
             if self.isTrain:
                 self.load_network(self.netD, 'D', opt.which_epoch, pretrained_path)  
-            if self.gen_features:
-                self.load_network(self.netE, 'E', opt.which_epoch, pretrained_path)              
+                
 
         # set loss functions and optimizers
         if self.isTrain:
@@ -95,8 +95,7 @@ class Pix2PixHDModel(BaseModel):
                 print('The layers that are finetuned are ', sorted(finetune_list))                         
             else:
                 params = list(self.netG.parameters())
-            if self.gen_features:              
-                params += list(self.netE.parameters())         
+                
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
             # optimizer D                        
@@ -113,25 +112,31 @@ class Pix2PixHDModel(BaseModel):
         else:
             return self.netD.forward(input_concat)
 
-    def forward(self, renderred_image, image , infer=False):
+    def forward(self, renderred_image, image , infer=False, eye_parsing = None):
 
         # Fake Generation
-        fake_image = self.netG.forward(renderred_image.cuda())
+        if eye_parsing is not None:
+            cat_input = torch.cat([renderred_image.cuda(), eye_parsing.cuda(),dim = 1])
+            
+        else:
+            cat_input = renderred_image.cuda()
+
+        fake_image = self.netG.forward(cat_input)
 
         # real images for training
         real_image = Variable(image.data.cuda())
 
 
         # Fake Detection and Loss
-        pred_fake_pool = self.discriminate( renderred_image, fake_image, use_pool=True)
+        pred_fake_pool = self.discriminate( cat_input, fake_image, use_pool=True)
         loss_D_fake = self.criterionGAN(pred_fake_pool, False)        
 
         # Real Detection and Loss        
-        pred_real = self.discriminate( renderred_image, real_image)
+        pred_real = self.discriminate( cat_input, real_image)
         loss_D_real = self.criterionGAN(pred_real, True)
 
         # GAN loss (Fake Passability Loss)        
-        pred_fake = self.netD.forward(torch.cat((renderred_image, fake_image), dim=1))        
+        pred_fake = self.netD.forward(torch.cat((cat_input, fake_image), dim=1))        
         loss_G_GAN = self.criterionGAN(pred_fake, True)               
         
         # GAN feature matching loss
@@ -152,34 +157,40 @@ class Pix2PixHDModel(BaseModel):
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_GAN, loss_G_GAN_Feat, loss_G_VGG, loss_D_real, loss_D_fake ), None if not infer else fake_image ]
 
-    def inference(self, renderred_image):
+    def inference(self, renderred_image, eye_parsing = None):
 
         # # real images for training
         # if real_image is not None:
         #     real_image = Variable(image.data.cuda())
 
         renderred_image = Variable(renderred_image.data.cuda())
+        
+        # Fake Generation
+        if eye_parsing is not None:
+            eye_parsing = Variable(eye_parsing.data.cuda())
+            cat_input = torch.cat([renderred_image, eye_parsing,dim = 1])
+            
+        else:
+            cat_input = renderred_image
 
-                
+
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
-                fake_image = self.netG.forward(renderred_image)
+                fake_image = self.netG.forward(cat_input)
         else:
-            fake_image = self.netG.forward(renderred_image)
+            fake_image = self.netG.forward(cat_input)
         return fake_image
 
 
     def save(self, which_epoch):
         self.save_network(self.netG, 'G', which_epoch, self.gpu_ids)
         self.save_network(self.netD, 'D', which_epoch, self.gpu_ids)
-        if self.gen_features:
-            self.save_network(self.netE, 'E', which_epoch, self.gpu_ids)
+        
 
     def update_fixed_params(self):
         # after fixing the global generator for a number of iterations, also start finetuning it
         params = list(self.netG.parameters())
-        if self.gen_features:
-            params += list(self.netE.parameters())           
+             
         self.optimizer_G = torch.optim.Adam(params, lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
         if self.opt.verbose:
             print('------------ Now also finetuning global generator -----------')
@@ -196,7 +207,7 @@ class Pix2PixHDModel(BaseModel):
         self.old_lr = lr
 
 class InferenceModel(Pix2PixHDModel):
-    def forward(self, renderred_image):
-        return self.inference(renderred_image)
+    def forward(self, renderred_image, eye_parsing  = None):
+        return self.inference(renderred_image, eye_parsing)
 
         
