@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 from .model import BiSeNet
 from matplotlib import pyplot as plt
 import face_alignment
-from eye_parsing.iris_detector import IrisDetector
+from parsing.eye_parsing.iris_detector import IrisDetector
 import dlib
 import pickle
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
