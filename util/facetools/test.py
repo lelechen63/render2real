@@ -1,6 +1,6 @@
 from PIL import Image
 from parsing.faceeye_parsing import parsing, vis_parsing_maps
-
+import numpy as np
 img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
 image = Image.open(img_path)
 
