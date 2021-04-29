@@ -88,6 +88,7 @@ def parsing(img_path, landmark):
 
     im = cv2.imread(img_path)[..., ::-1]
     # try:
+    print (im.shape, landmark.shape)
     eye_lms = idet.detect_iris(im,landmark)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
 
