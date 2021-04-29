@@ -60,8 +60,7 @@ class IrisDetector():
         output_eye_landmarks = []
         
         
-        lm = lm[:,::-1]
-        print(lm.shape, '++++++')
+        # lm = lm[:,::-1]
         left_eye_im, left_x0y0 = self.get_eye_roi(im, lm[left_eye_idx])
         # cv2.imwrite('gg1.png', left_eye_im)
         right_eye_im, right_x0y0 = self.get_eye_roi(im, lm[right_eye_idx])
