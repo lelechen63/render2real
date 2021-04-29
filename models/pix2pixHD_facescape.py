@@ -168,7 +168,7 @@ class Pix2PixHDModel(BaseModel):
         # Fake Generation
         if eye_parsing is not None:
             eye_parsing = Variable(eye_parsing.data.cuda())
-            cat_input = torch.cat((renderred_image, eye_parsing),dim = 1])
+            cat_input = torch.cat((renderred_image, eye_parsing),dim = 1)
             
         else:
             cat_input = renderred_image
