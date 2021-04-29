@@ -72,8 +72,11 @@ for id_p in ids:
         im = cv2.imread(img_path)[..., ::-1]
         # im = resize_image(im) # Resize image to prevent GPU OOM.
         h, w, _ = im.shape
-        eye_lms = idet.detect_iris(im,lmark)
-
+        try:
+            eye_lms = idet.detect_iris(im,lmark)
+        except:
+            print (img_path, '**************')
+            continue
         # Display detection result
         draw = idet.draw_pupil(im, eye_lms[0][0,...]) # draw left eye
         draw = idet.draw_pupil(draw, eye_lms[0][1,...]) # draw right eye
