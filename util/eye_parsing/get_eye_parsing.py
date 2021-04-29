@@ -53,8 +53,8 @@ for id_p in ids:
    
     for motion_p in os.listdir(current_p):
         current_p1 = os.path.join( current_p , motion_p)
-        img_p = os.path.join( current_p1, front_idx + '.jpg')
-        lmark_path = img_p.replace('fsmview_images', 'fsmview_landmarks')[:-3] +'npy'
+        img_path = os.path.join( current_p1, front_idx + '.jpg')
+        lmark_path = img_path.replace('fsmview_images', 'fsmview_landmarks')[:-3] +'npy'
         lmark = None
         parsing_path = lmark_path[:-4] + '_eye.png'
 
