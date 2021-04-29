@@ -63,11 +63,11 @@ class IrisDetector():
 
         left_eye_im, left_x0y0 = self.get_eye_roi(im, lm[left_eye_idx])
         print (left_eye_im.shape)
-        # cv2.imwrite('gg1.png', left_eye_im)
+        cv2.imwrite('gg1.png', left_eye_im)
         right_eye_im, right_x0y0 = self.get_eye_roi(im, lm[right_eye_idx])                
         print (right_eye_im.shape)
 
-        # cv2.imwrite('gg2.png', right_eye_im)
+        cv2.imwrite('gg2.png', right_eye_im)
         inp_left = self.preprocess_eye_im(left_eye_im)
         inp_right = self.preprocess_eye_im(right_eye_im)
         
