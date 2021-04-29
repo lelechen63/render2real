@@ -60,18 +60,11 @@ ids.sort()
 
 for id_p in ids:
     current_p = os.path.join( base_p , id_p)
-    save_p1 = os.path.join( save_p , id_p)
     front_idx = front_indx[id_p]
     if not os.path.exists(  os.path.join( save_p1 ) ):
         os.mkdir( save_p1 ) 
     for motion_p in os.listdir(current_p):
         current_p1 = os.path.join( current_p , motion_p)
-        save_p2 = os.path.join( save_p1 , motion_p)
-        if not os.path.exists(  os.path.join( save_p2 ) ):
-            os.mkdir( save_p2 ) 
-        # img_names = os.listdir(current_p1)
-        # img_names.sort()
-        # for i in range(len(img_names)):
         img_p = os.path.join( current_p1, front_idx + '.jpg')
         lmark_p = img_p.replace('fsmview_images', 'fsmview_landmarks')[:-3] +'npy'
         lmark = None
