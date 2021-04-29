@@ -52,9 +52,9 @@ class FacescapeDataset(BaseDataset):
         # transform_B = get_transform(self.opt, params)      
         B_tensor = transform(B)
 
-        C_path =  os.path.join( self.dir_A , self.data_list[index][:-3] + 'png' )
+        C_path =  os.path.join( self.dir_A , self.data_list[index][:-4] + '_eye.png' )
         #debug 
-        C_path =  '/raid/celong/FaceScape/fsmview_landmarks/1/1_neutral/1.png'    
+        C_path =  '/raid/celong/FaceScape/fsmview_landmarks/1/1_neutral/1_eye.png'    
 
         C =  Image.open(C_path).convert('RGB')
         C_tensor = transform(C)
