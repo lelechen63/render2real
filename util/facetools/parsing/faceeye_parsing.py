@@ -52,6 +52,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     vis_parsing_anno_color = np.zeros((vis_parsing_anno.shape[0], vis_parsing_anno.shape[1], 3)) + 255
 
     num_of_class = np.max(vis_parsing_anno)
+    num_of_class = 19
     print (num_of_class,'!!!!!!!!!')
     for pi in range(1, num_of_class + 1):
         index = np.where(vis_parsing_anno == pi)
@@ -92,11 +93,11 @@ def parsing(img_path, landmark=None):
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
     print (lms[8:16])
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(parsing_maps, lms[8:16], 21)
+    cv2.fillConvexPoly(parsing_maps, lms[8:16], 255)
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(parsing_maps, lms[8:16], 21)
+    cv2.fillConvexPoly(parsing_maps, lms[8:16], 255)
         
     # except:
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
