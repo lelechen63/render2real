@@ -9,6 +9,27 @@ import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
 from .model import BiSeNet
+from matplotlib import pyplot as plt
+import face_alignment
+from eye_parsing.iris_detector import IrisDetector
+import dlib
+import pickle
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
+idet = IrisDetector()
+idet.set_detector(fa)
+
+n_classes = 19
+facenet = BiSeNet(n_classes=n_classes)
+facenet.cuda()
+facenet.load_state_dict(torch.load(cp))
+facenet.eval()
+
+to_tensor = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+])
 
 
 def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='imgs/gg.png', save_vis_path = None):
@@ -52,28 +73,33 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(imgs, cp='checkpoint/face_parsing.pth'):
-
-    n_classes = 19
-    net = BiSeNet(n_classes=n_classes)
-    net.cuda()
-    net.load_state_dict(torch.load(cp))
-    net.eval()
-
-    to_tensor = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-    ])
+def parsing(img, landmark, cp='checkpoint/face_parsing.pth'):
 
     with torch.no_grad():
         shape = imgs.size
-        image = imgs.resize((512, 512), Image.BILINEAR)
+        image = img.resize((512, 512), Image.BILINEAR)
         img = to_tensor(image)
         img = torch.unsqueeze(img, 0)
         img = img.cuda()
-        out = net(img)[0]
+        out = facenet(img)[0]
         parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
         print (parsing_maps.shape)
-        parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
-        return parsing_maps
+
+    im = np.array(img)[..., ::-1]
+    try:
+        eye_lms = idet.detect_iris(im,lmark)
+    except:
+        print (img_path, '**************')
+        continue
+    lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
+
+    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    # cv2.fillConvexPoly(parsing_maps, lms[8:16], (255,0,0))
+
+    lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
+    cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
+    # cv2.fillConvexPoly(blank_image, lms[8:16], (255,0,0))
+    
+    parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
+    return parsing_maps
 

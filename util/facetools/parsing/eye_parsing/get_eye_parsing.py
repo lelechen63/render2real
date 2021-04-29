@@ -8,9 +8,6 @@ import os
 import pickle
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('/raid/celong/lele/github/idinvert_pytorch/utils/shape_predictor_68_face_landmarks.dat')
-
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
 
 
