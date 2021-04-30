@@ -10,10 +10,10 @@ class FacescapeDataset(BaseDataset):
         self.root = opt.dataroot    
 
         ### input A (renderred image)
-        self.dir_A = os.path.join(opt.dataroot, "fsmview_renderings")
+        self.dir_A = os.path.join(opt.dataroot, "ffhq_aligned_img")
 
         ### input B (real images)
-        self.dir_B = os.path.join(opt.dataroot, "fsmview_images")
+        self.dir_B = os.path.join(opt.dataroot, "ffhq_aligned_img")
 
         ### input C (eye parsing images)
         self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
