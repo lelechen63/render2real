@@ -23,28 +23,27 @@ facenet.eval()
 
 
 base_p = '/raid/celong/FaceScape/ffhq_aligned_img'
-_file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/frontface_list.pkl', "rb")
-front_indx = pickle.load(_file)
+_file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/validface_list.pkl', "rb")
+valid_all = pickle.load(_file)
 ids =  os.listdir(base_p)
 ids.sort()
 
 for id_p in ids:
     current_p = os.path.join( base_p , id_p)
-    front_idx = front_indx[id_p]
     
     for motion_p in os.listdir(current_p):
         print(id_p, motion_p)
         current_p1 = os.path.join( current_p , motion_p)
-        img_path = os.path.join( current_p1, front_idx + '.jpg')
-        parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
-
+        valid_idxs = valid_all[id_p +'__' + motion_p]
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
-        
-        try:
-            image = Image.open(img_path)
-            #  img_path[:-4] +'_front.png'
-            res = parsing(image, facenet, idet, img_path[:-4] +'_front.png')
-            vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +front_idx +'.png' ) 
-        except:
-            print (img_path)
-            continue
+        for valid_f in valid_idxs:
+            img_path = os.path.join( current_p1, valid_f + '.jpg')
+            parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
+            
+            try:
+                image = Image.open(img_path)
+                res = parsing(image, facenet, idet, img_path[:-4] +'_front.png')
+                vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +front_idx +'.png' ) 
+            except:
+                print (img_path)
+                continue

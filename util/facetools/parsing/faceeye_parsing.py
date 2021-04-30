@@ -81,13 +81,7 @@ def parsing(img, facenet, idet, save_face_path= None ):
 
         front_img = img * binary_mask[:,:, np.newaxis]
         cv2.imwrite(save_face_path, front_img[:,:,::-1])
-
-
-
-
     im = np.array(img)[..., ::-1]
-
-
     # im = cv2.imread(img_path)[..., ::-1]
     
     blank_image1 = np.zeros((shape), np.uint8)
