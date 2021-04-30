@@ -6,6 +6,7 @@ from parsing.eye_parsing.iris_detector import IrisDetector
 import dlib
 from parsing.model import BiSeNet
 import os
+import pickle
 import torch
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
