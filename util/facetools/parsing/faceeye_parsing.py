@@ -101,15 +101,15 @@ def parsing(img_path, landmark=None):
 
 
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(blank_image1, lms[:8], 10)
-    cv2.fillConvexPoly(blank_image2, lms[8:16], 11)
+    cv2.fillConvexPoly(blank_image1, lms[:8], 8)
+    cv2.fillConvexPoly(blank_image2, lms[8:16], 7)
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(blank_image1, lms[:8], 11)
-    cv2.fillConvexPoly(blank_image2, lms[8:16], 11)
+    cv2.fillConvexPoly(blank_image1, lms[:8], 8)
+    cv2.fillConvexPoly(blank_image2, lms[8:16], 7)
     blank_image = blank_image1 + blank_image2
-    blank_image[blank_image <21 ] = 0
+    blank_image[blank_image <15 ] = 0
     parsing_maps += blank_image
 
         
