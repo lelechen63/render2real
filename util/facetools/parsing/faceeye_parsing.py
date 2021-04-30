@@ -98,10 +98,6 @@ def parsing(img_path, landmark=None):
     eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
     print (lms[8:16])
-    
-    p1 = Polygon(lms[:8])
-    p2 = Polygon(lms[8:16])
-    print(p1.intersection(p2))
 
 
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
