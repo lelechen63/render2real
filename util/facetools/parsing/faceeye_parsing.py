@@ -53,8 +53,8 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     vis_parsing_anno_color = np.zeros((vis_parsing_anno.shape[0], vis_parsing_anno.shape[1], 3)) + 255
 
     num_of_class = np.max(vis_parsing_anno)
-    num_of_class = 19
-    print (num_of_class,'!!!!!!!!!')
+    # num_of_class = 19
+    # print (num_of_class,'!!!!!!!!!')
     for pi in range(1, num_of_class + 1):
         index = np.where(vis_parsing_anno == pi)
         vis_parsing_anno_color[index[0], index[1], :] = part_colors[pi]
