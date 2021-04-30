@@ -43,6 +43,7 @@ for id_p in ids:
                 image = Image.open(img_path)
                 res = parsing(image, facenet, idet, img_path[:-4] +'_front.png')
                 vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +front_idx +'.png' ) 
+                print ('+++', img_path)
             except:
                 print ('**********')
                 print (img_path)
