@@ -30,6 +30,9 @@ def get_image_pickle():
             if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
             
                 train_list.append( os.path.join( current_p , motion_p, front_idx + '.jpg') )
+            else:
+                print ('gg')
+    print (len(train_list))
     with open('/raid/celong/FaceScape/lists/img_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
