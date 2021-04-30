@@ -86,6 +86,7 @@ def parsing(img, facenet, idet, save_face_path= None ):
 
 
 
+
     im = np.array(img)[..., ::-1]
 
 
