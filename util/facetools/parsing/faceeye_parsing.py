@@ -8,25 +8,11 @@ import os.path as osp
 import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
-from .model import BiSeNet
 from matplotlib import pyplot as plt
-import face_alignment
-from parsing.eye_parsing.iris_detector import IrisDetector
-import dlib
+
 import pickle
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
-idet = IrisDetector()
-idet.set_detector(fa)
-# cp='checkpoint/face_parsing.pth'
-
-n_classes = 19
-facenet = BiSeNet(n_classes=n_classes)
-facenet.cuda()
-facenet.load_state_dict(torch.load('checkpoint/face_parsing.pth'))
-facenet.eval()
 
 to_tensor = transforms.Compose([
     transforms.ToTensor(),
@@ -76,7 +62,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(img_path, landmark=None):
+def parsing(img_path， facenet, idet ):
     img = Image.open(img_path)
     with torch.no_grad():
         shape = img.size
@@ -92,40 +78,29 @@ def parsing(img_path, landmark=None):
     
     im = cv2.imread(img_path)[..., ::-1]
     
-    # try:
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
     eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
-    print (lms[8:16])
 
-
-    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
     cv2.fillConvexPoly(blank_image1, lms[:8], 8)
     cv2.fillConvexPoly(blank_image2, lms[8:16], 7)
     
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <15 ] = 0
     parsing_maps += blank_image
-    blank_image[blank_image ==16 ] = 255
-    cv2.imwrite('imgs/fuck1.png', blank_image)
 
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
     cv2.fillConvexPoly(blank_image1, lms[:8], 8)
     cv2.fillConvexPoly(blank_image2, lms[8:16], 8)
 
     blank_image = blank_image1 + blank_image2
-    blank_image[blank_image <16 ] = 0
+    blank_image[blank_image < 16 ] = 0
     parsing_maps += blank_image    
-    blank_image[blank_image ==16 ] = 255
-    cv2.imwrite('imgs/fuck1.png', blank_image)
-    # parsing_maps[parsing_maps>21] =21
-
+   
         
-    # except:
     return parsing_maps
 
