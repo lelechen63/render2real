@@ -107,6 +107,8 @@ def parsing(img_path, landmark=None):
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <15 ] = 0
     parsing_maps += blank_image
+    blank_image[blank_image ==16 ] = 255
+    cv2.imwrite('imgs/fuck1.png', blank_image)
 
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
@@ -119,7 +121,8 @@ def parsing(img_path, landmark=None):
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <16 ] = 0
     parsing_maps += blank_image    
-    
+    blank_image[blank_image ==16 ] = 255
+    cv2.imwrite('imgs/fuck1.png', blank_image)
     # parsing_maps[parsing_maps>21] =21
 
         
