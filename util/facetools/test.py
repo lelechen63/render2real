@@ -5,7 +5,7 @@ import face_alignment
 from parsing.eye_parsing.iris_detector import IrisDetector
 import dlib
 from parsing.model import BiSeNet
-
+import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
