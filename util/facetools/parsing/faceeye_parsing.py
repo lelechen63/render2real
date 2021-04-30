@@ -62,7 +62,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(img_path， facenet, idet ):
+def parsing(img_path, facenet, idet ):
     img = Image.open(img_path)
     with torch.no_grad():
         shape = img.size
