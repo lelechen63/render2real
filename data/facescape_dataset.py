@@ -25,7 +25,7 @@ class FacescapeDataset(BaseDataset):
         else:
             _file = open(os.path.join(opt.dataroot, "lists/test.pkl"), "rb")
        
-        self.data_list = pickle.load(_file)[:10]
+        self.data_list = pickle.load(_file)
         _file.close()
 
         
