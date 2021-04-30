@@ -1,15 +1,7 @@
 import pickle
 import os
 def get_image_pickle():
-    ### input A (renderred image)
-    self.dir_A = os.path.join(opt.dataroot, "ffhq_aligned_img")
-
-    ### input B (real images)
-    self.dir_B = os.path.join(opt.dataroot, "ffhq_aligned_img")
-
-    ### input C (eye parsing images)
-    self.dir_C = os.path.join(opt.dataroot, "ffhq_aligned_img")
-
+    
     base_p = '/raid/celong/FaceScape/fsmview_renderings'
     save_p = '/raid/celong/FaceScape/ffhq_aligned_img'
 
