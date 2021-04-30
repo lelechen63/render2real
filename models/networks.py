@@ -3,7 +3,7 @@ import torch.nn as nn
 import functools
 from torch.autograd import Variable
 import numpy as np
-from blocks import LinearBlock, Conv2dBlock, ResBlocks, ActFirstResBlock
+from .blocks import LinearBlock, Conv2dBlock, ResBlocks, ActFirstResBlock
 
 ###############################################################################
 # Functions
