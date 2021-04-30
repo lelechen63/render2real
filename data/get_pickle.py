@@ -5,7 +5,7 @@ def get_image_pickle():
     base_p = '/raid/celong/FaceScape/fsmview_renderings'
     save_p = '/raid/celong/FaceScape/ffhq_aligned_img'
 
-    _file = open( './predef/frontface_list.pkl', "rb")
+    _file = open( '/raid/celong/lele/github/render2real/predef/frontface_list.pkl', "rb")
     front_indx = pickle.load(_file)
 
     train_list = []
