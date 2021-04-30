@@ -90,8 +90,12 @@ def parsing(img_path, landmark=None):
         print (parsing_maps.shape)
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
 
+    
     im = cv2.imread(img_path)[..., ::-1]
+    
     # try:
+    blank_image1 = np.zeros((shape), np.uint8)
+    blank_image2 = np.zeros((shape), np.uint8)
     eye_lms = idet.detect_iris(im)
     lms =   eye_lms[0][0,...].astype(np.int32)[:,::-1]
     print (lms[8:16])
@@ -102,18 +106,17 @@ def parsing(img_path, landmark=None):
 
 
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(parsing_maps, list(p1.intersection(p2)), 21)
+    cv2.fillConvexPoly(blank_image1, lms[:8]), 10)
+    cv2.fillConvexPoly(blank_image2, lms[8:16]), 11)
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
-    p1 = Polygon(lms[:8])
-    p2 = Polygon(lms[8:16])
-    print(p1.intersection(p2))
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
-    cv2.fillConvexPoly(arsing_maps, list(p1.intersection(p2)), 21)
+    cv2.fillConvexPoly(blank_image1, lms[:8], 10)
+    cv2.fillConvexPoly(blank_image2, lms[8:16]), 11)
+    blank_image = blank_image1 + blank_image2
+    blank_image[blank_image <21 ] = 0
+    parsing_maps += blank_image
 
-
-
-   
         
     # except:
     return parsing_maps
