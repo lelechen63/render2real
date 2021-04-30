@@ -39,6 +39,9 @@ for id_p in ids:
 
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         image = Image.open(img_path)
-        res = parsing(image, facenet, idet)
-        print (res.shape)
-        vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path = 'imgs/9_vis.jpg' )
+        try:
+            res = parsing(image, facenet, idet)
+            vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path = 'imgs/9_vis.jpg' ) 
+        except:
+            print (img_path)
+            continue
