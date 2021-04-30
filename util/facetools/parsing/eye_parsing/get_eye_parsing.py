@@ -8,6 +8,7 @@ import os
 import pickle
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
+
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
 
 

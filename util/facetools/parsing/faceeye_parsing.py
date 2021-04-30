@@ -66,8 +66,8 @@ def parsing(img_path, facenet, idet ):
     img = Image.open(img_path)
     with torch.no_grad():
         shape = img.size
-        img = img.resize((512, 512), Image.BILINEAR)
-        image = to_tensor(img)
+        image = img.resize((512, 512), Image.BILINEAR)
+        image = to_tensor(image)
         image = torch.unsqueeze(image, 0)
         image = image.cuda()
         out = facenet(image)[0]
@@ -75,8 +75,10 @@ def parsing(img_path, facenet, idet ):
         print (parsing_maps.shape)
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
 
-    
-    im = cv2.imread(img_path)[..., ::-1]
+    im = np.array(img)[..., ::-1]
+
+
+    # im = cv2.imread(img_path)[..., ::-1]
     
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
