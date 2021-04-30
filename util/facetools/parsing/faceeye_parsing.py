@@ -72,7 +72,6 @@ def parsing(img, facenet, idet, save_face_path= None ):
         image = image.cuda()
         out = facenet(image)[0]
         parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
-        print (parsing_maps.shape)
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
 
     if save_face_path is not None:
@@ -82,7 +81,7 @@ def parsing(img, facenet, idet, save_face_path= None ):
         binary_mask[parsing_maps>0] = 1
 
         front_img = img * binary_mask[:,:, np.newaxis]
-        cv2.imwrite(save_face_path, front_img)
+        cv2.imwrite(save_face_path, front_img[:,:,::-1])
 
 
 
