@@ -7,7 +7,7 @@ def create_model(opt):
             model = Pix2PixHDModel()
         else:
             model = InferenceModel()
-    eliff opt.model == 'pix2pixHD_fewshot':
+    elif opt.model == 'pix2pixHD_fewshot':
         from .pix2pixHD_facescape import Pix2PixHDFewshotModel, InferenceFewshotModel
         if opt.isTrain:
             model = Pix2PixHDFewshotModel()
