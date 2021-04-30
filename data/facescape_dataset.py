@@ -16,7 +16,7 @@ class FacescapeDataset(BaseDataset):
         self.dir_B = os.path.join(opt.dataroot, "ffhq_aligned_img")
 
         ### input C (eye parsing images)
-        self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
+        self.dir_C = os.path.join(opt.dataroot, "ffhq_aligned_img")
         # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
 
 
@@ -34,7 +34,7 @@ class FacescapeDataset(BaseDataset):
         A_path = os.path.join( self.dir_A , self.data_list[index] )   
           
         #for debug
-        A_path =  '/raid/celong/FaceScape/fsmview_renderings/1/1_neutral/1.png'    
+        A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path)  
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
@@ -46,15 +46,15 @@ class FacescapeDataset(BaseDataset):
         ### input B (real images)
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
         #for debug
-        B_path =  '/raid/celong/FaceScape/fsmview_images/1/1_neutral/1.jpg'  
+        B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         # print (B_path)       
         B = Image.open(B_path).convert('RGB')
         # transform_B = get_transform(self.opt, params)      
         B_tensor = transform(B)
 
-        C_path =  os.path.join( self.dir_A , self.data_list[index][:-4] + '_eye.png' )
+        C_path =  os.path.join( self.dir_A , self.data_list[index][:-4] + '_parsing.png' )
         #debug 
-        C_path =  '/raid/celong/FaceScape/fsmview_landmarks/1/1_neutral/1_eye.png'    
+        C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
 
         C =  Image.open(C_path).convert('RGB')
         C_tensor = transform(C)

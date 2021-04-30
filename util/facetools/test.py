@@ -36,7 +36,7 @@ for id_p in ids:
         print(id_p, motion_p)
         current_p1 = os.path.join( current_p , motion_p)
         img_path = os.path.join( current_p1, front_idx + '.jpg')
-        parsing_path = img_path.replace('fsmview_images', 'fsmview_landmarks')[:-4] +'_parsing.png'
+        parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
 
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         
