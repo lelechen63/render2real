@@ -14,7 +14,6 @@ import face_alignment
 from parsing.eye_parsing.iris_detector import IrisDetector
 import dlib
 import pickle
-from shapely.geometry import Polygon
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -107,12 +106,12 @@ def parsing(img_path, landmark=None):
 
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
     cv2.fillConvexPoly(blank_image1, lms[:8]), 10)
-    cv2.fillConvexPoly(blank_image2, lms[8:16]), 11)
+    cv2.fillConvexPoly(blank_image2, lms[8:16], 11)
 
     lms = eye_lms[0][1,...].astype(np.int32)[:,::-1]
     # cv2.fillConvexPoly(parsing_maps, lms[:8], 21)
     cv2.fillConvexPoly(blank_image1, lms[:8], 10)
-    cv2.fillConvexPoly(blank_image2, lms[8:16]), 11)
+    cv2.fillConvexPoly(blank_image2, lms[8:16], 11)
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <21 ] = 0
     parsing_maps += blank_image
