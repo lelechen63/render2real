@@ -68,7 +68,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
         ############## Forward Pass ######################
         if opt.eye_parsing:
-            losses, generated = model( Variable(data['renderred_image']), Variable(data['image']) , Variable(data['eye_parsing']), infer=save_fake)
+            losses, generated = model( renderred_image = Variable(data['renderred_image']), 
+                                        image = Variable(data['image']) , 
+                                        eye_parsing = Variable(data['eye_parsing']), 
+                                        infer=save_fake)
         else:
             losses, generated = model( Variable(data['renderred_image']), Variable(data['image']) , infer=save_fake)
       
