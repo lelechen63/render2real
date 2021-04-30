@@ -91,6 +91,7 @@ def parsing(img, facenet, idet ):
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <15 ] = 0
     parsing_maps += blank_image
+    parsing_maps[parsing_maps>19] = 19
 
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
@@ -101,7 +102,8 @@ def parsing(img, facenet, idet ):
 
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image < 16 ] = 0
-    parsing_maps += blank_image    
+    parsing_maps += blank_image 
+    parsing_maps[parsing_maps>20] = 20  
    
         
     return parsing_maps
