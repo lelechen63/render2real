@@ -17,7 +17,7 @@ idet.set_detector(fa)
 n_classes = 19
 facenet = BiSeNet(n_classes=n_classes)
 facenet.cuda()
-facenet.load_state_dict(torch.load('parsing/checkpoint/face_parsing.pth'))
+facenet.load_state_dict(torch.load('checkpoint/face_parsing.pth'))
 facenet.eval()
 
 img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
