@@ -31,13 +31,13 @@ class FacescapeDataset(BaseDataset):
         
     def __getitem__(self, index):        
         ### input A (renderred image)
-        print (self.data_list[index])
+        print (self.data_list[index],'!!!!!!!!!!!!!')
         A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
           
         #for debug
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path) 
-        print (A_path)
+        print (A_path,'@@@@@')
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
         
