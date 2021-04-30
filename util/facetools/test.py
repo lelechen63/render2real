@@ -38,12 +38,13 @@ for id_p in ids:
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         for valid_f in valid_idxs:
             img_path = os.path.join( current_p1, valid_f + '.jpg')
+            print ('+++', img_path)
             parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
             # try:
             image = Image.open(img_path)
             res = parsing(image, facenet, idet, img_path[:-4] +'_front.png')
             vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +valid_f +'.png' ) 
-            print ('+++', img_path)
+            
             # except:
             #     print ('**********')
             #     print (img_path)
