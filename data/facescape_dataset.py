@@ -21,7 +21,7 @@ class FacescapeDataset(BaseDataset):
 
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
         else:
             _file = open(os.path.join(opt.dataroot, "lists/test.pkl"), "rb")
        
@@ -31,10 +31,10 @@ class FacescapeDataset(BaseDataset):
         
     def __getitem__(self, index):        
         ### input A (renderred image)
-        A_path = os.path.join( self.dir_A , self.data_list[index] )   
+        A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
           
         #for debug
-        A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
+        # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path)  
         A = Image.open(A_path).convert('RGB')   
         params = get_params(self.opt, A.size)
@@ -46,7 +46,7 @@ class FacescapeDataset(BaseDataset):
         ### input B (real images)
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
         #for debug
-        B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
+        # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         # print (B_path)       
         B = Image.open(B_path).convert('RGB')
         # transform_B = get_transform(self.opt, params)      
@@ -54,7 +54,7 @@ class FacescapeDataset(BaseDataset):
 
         C_path =  os.path.join( self.dir_A , self.data_list[index][:-4] + '_parsing.png' )
         #debug 
-        C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
+        # C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
 
         C =  Image.open(C_path).convert('RGB')
         C_tensor = transform(C)
