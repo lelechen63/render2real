@@ -81,7 +81,7 @@ def parsing(img, facenet, idet, save_face_path= None ):
         binary_mask[parsing_maps>14] = 0
         binary_mask[parsing_maps>0] = 1
 
-        front_img = img *binary_mask.view(shape[0],shape[1],1)
+        front_img = img *binary_mask.view((shape[0],shape[1],1))
         cv2.imwrite(save_face_path, front_img)
 
 
