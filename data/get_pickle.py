@@ -1,5 +1,5 @@
 import pickle
-
+import os
 def get_image_pickle():
     ### input A (renderred image)
     self.dir_A = os.path.join(opt.dataroot, "ffhq_aligned_img")
