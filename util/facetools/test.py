@@ -37,9 +37,8 @@ for id_p in ids:
         img_path = os.path.join( current_p1, front_idx + '.jpg')
         parsing_path = img_path.replace('fsmview_images', 'fsmview_landmarks')[:-4] +'_parsing.png'
 
-
-        img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
+        # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         image = Image.open(img_path)
-        res = parsing(img_path, facenet, idet)
+        res = parsing(image, facenet, idet)
         print (res.shape)
-        vis_parsing_maps(image, res, save_parsing_path='9_parsing.jpg', save_vis_path = 'imgs/9_vis.jpg' )
+        vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path = 'imgs/9_vis.jpg' )
