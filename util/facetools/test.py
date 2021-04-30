@@ -31,7 +31,7 @@ ids.sort()
 for id_p in ids:
     current_p = os.path.join( base_p , id_p)
     front_idx = front_indx[id_p]
-   
+    print (id_p)
     for motion_p in os.listdir(current_p):
         current_p1 = os.path.join( current_p , motion_p)
         img_path = os.path.join( current_p1, front_idx + '.jpg')
