@@ -111,6 +111,7 @@ def parsing(img_path, landmark=None):
     blank_image = blank_image1 + blank_image2
     blank_image[blank_image <15 ] = 0
     parsing_maps += blank_image
+    parsing_maps[parsing_maps>21] =21
 
         
     # except:
