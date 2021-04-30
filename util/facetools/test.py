@@ -31,8 +31,9 @@ ids.sort()
 for id_p in ids:
     current_p = os.path.join( base_p , id_p)
     front_idx = front_indx[id_p]
-    print (id_p)
+    
     for motion_p in os.listdir(current_p):
+        print(id_p, motion_p)
         current_p1 = os.path.join( current_p , motion_p)
         img_path = os.path.join( current_p1, front_idx + '.jpg')
         parsing_path = img_path.replace('fsmview_images', 'fsmview_landmarks')[:-4] +'_parsing.png'
@@ -41,7 +42,7 @@ for id_p in ids:
         image = Image.open(img_path)
         # try:
             #  img_path[:-4] +'_front.png'
-        res = parsing(image, facenet, idet, 'imgs/ggg.png')
+        res = parsing(image, facenet, idet, img_path[:-4] +'_front.png')
         vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +front_idx +'.png' ) 
         # except:
         #     print (img_path)
