@@ -41,7 +41,7 @@ for id_p in ids:
         image = Image.open(img_path)
         try:
             res = parsing(image, facenet, idet)
-            vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path = 'imgs/9_vis.jpg' ) 
+            vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path =parsing_path[:-4] +'_vis.png' ) 
         except:
             print (img_path)
             continue

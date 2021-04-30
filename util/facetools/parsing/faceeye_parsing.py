@@ -62,7 +62,7 @@ def vis_parsing_maps(im, parsing_anno, stride=1, show=False, save_parsing_path='
     # return vis_im
 
 
-def parsing(img, facenet, idet ):
+def parsing(img, facenet, idet, save_face= False ):
     # img = Image.open(img_path)
     with torch.no_grad():
         shape = img.size
@@ -74,6 +74,9 @@ def parsing(img, facenet, idet ):
         parsing_maps = out.squeeze(0).cpu().numpy().argmax(0).astype('float32')
         print (parsing_maps.shape)
     parsing_maps = cv2.resize(parsing_maps, shape, interpolation=cv2.INTER_NEAREST)
+
+    if save_face:
+        binary_mask = 
 
     im = np.array(img)[..., ::-1]
 
