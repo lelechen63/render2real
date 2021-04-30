@@ -39,4 +39,4 @@ def get_image_pickle():
             
                 train_list.append( os.path.join( current_p , motion_p, front_idx + '.jpg') )
     with open('/raid/celong/FaceScape/lists/img_train.pkl', 'wb') as handle:
-    pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
