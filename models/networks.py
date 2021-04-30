@@ -3,6 +3,7 @@ import torch.nn as nn
 import functools
 from torch.autograd import Variable
 import numpy as np
+from blocks import LinearBlock, Conv2dBlock, ResBlocks, ActFirstResBlock
 
 ###############################################################################
 # Functions
@@ -24,6 +25,29 @@ def get_norm_layer(norm_type='instance'):
         raise NotImplementedError('normalization layer [%s] is not found' % norm_type)
     return norm_layer
 
+
+def assign_adain_params(adain_params, model):
+    # assign the adain_params to the AdaIN layers in model
+    for m in model.modules():
+        if m.__class__.__name__ == "AdaptiveInstanceNorm2d":
+            mean = adain_params[:, :m.num_features]
+            std = adain_params[:, m.num_features:2*m.num_features]
+            m.bias = mean.contiguous().view(-1)
+            m.weight = std.contiguous().view(-1)
+            if adain_params.size(1) > 2*m.num_features:
+                adain_params = adain_params[:, 2*m.num_features:]
+
+
+def get_num_adain_params(model):
+    # return the number of AdaIN parameters needed by the model
+    num_adain_params = 0
+    for m in model.modules():
+        if m.__class__.__name__ == "AdaptiveInstanceNorm2d":
+            num_adain_params += 2*m.num_features
+    return num_adain_params
+
+
+
 def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
@@ -42,6 +66,24 @@ def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_glo
         netG.cuda(gpu_ids[0])
     netG.apply(weights_init)
     return netG
+
+def define_G_fewshot(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
+             n_blocks_local=3, norm='instance', gpu_ids=[]):    
+    norm_layer = get_norm_layer(norm_type=norm)     
+    if netG == 'global':    
+        netG = GlobalGenerator_fewhsot(input_nc, output_nc, ngf, n_downsample_global, n_blocks_global, norm_layer)       
+    elif netG == 'local':        
+        netG = LocalEnhancer(input_nc, output_nc, ngf, n_downsample_global, n_blocks_global, 
+                                  n_local_enhancers, n_blocks_local, norm_layer)
+    else:
+        raise('generator not implemented!')
+    print(netG)
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())   
+        netG.cuda(gpu_ids[0])
+    netG.apply(weights_init)
+    return netG
+
 
 def define_D(input_nc, ndf, n_layers_D, norm='instance', use_sigmoid=False, num_D=1, getIntermFeat=False, gpu_ids=[]):        
     norm_layer = get_norm_layer(norm_type=norm)   
@@ -224,6 +266,53 @@ class GlobalGenerator(nn.Module):
         output = self.output_layer(decoded)
         print (output.shape, "output")
         return output        
+
+class GlobalGenerator_fewhsot(nn.Module):
+    def __init__(self, input_nc, output_nc, ngf=64, n_downsampling=3, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(GlobalGenerator_fewhsot, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
+        ### downsample 16 times
+        for i in range(n_downsampling):
+            mult = 2**i
+            model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
+                      norm_layer(ngf * mult * 2), activation]
+        self.encoder = nn.Sequential(*model)
+        model = []
+        ### resnet blocks
+        mult = 2**n_downsampling
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+        
+        self.resblocks = nn.Sequential(*model)
+        ### upsample
+        model = []         
+        for i in range(n_downsampling):
+            mult = 2**(n_downsampling - i)
+            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult / 2)), activation]
+        self.decoder = nn.Sequential(*model)
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+            
+    def forward(self, input):
+        print (input.shape, 'input')
+        encoded = self.encoder(input)
+        print (encoded.shape, "encoded")
+        encoded = self.resblocks(encoded)
+        print (encoded.shape, "encoded")
+        decoded = self.decoder(encoded)
+        print (decoded.shape, "decoded")
+        output = self.output_layer(decoded)
+        print (output.shape, "output")
+        return output   
+
+
 class DefultGlobalGenerator(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, n_downsampling=3, n_blocks=9, norm_layer=nn.BatchNorm2d, 
                  padding_type='reflect'):

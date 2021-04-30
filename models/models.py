@@ -7,9 +7,12 @@ def create_model(opt):
             model = Pix2PixHDModel()
         else:
             model = InferenceModel()
-    else:
-    	from .ui_model import UIModel
-    	model = UIModel()
+    eliff opt.model == 'pix2pixHD_fewshot':
+        from .pix2pixHD_facescape import Pix2PixHDFewshotModel, InferenceFewshotModel
+        if opt.isTrain:
+            model = Pix2PixHDFewshotModel()
+        else:
+            model = InferenceFewshotModel()
     model.initialize(opt)
     if opt.verbose:
         print("model [%s] was created" % (model.name()))
