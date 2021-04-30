@@ -26,9 +26,10 @@ def get_image_pickle():
             output_p = os.path.join( save_p2 ,front_idx + '_render.png')
             parsing_p = img_p[:-4] + '_parsing.png'
 
-            print (img_p, output_p, parsing_p)
+            # print (img_p, output_p, parsing_p)
             if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
-            
+                if id_p =='12':
+                    print ( os.path.join( id_p , motion_p, front_idx + '.jpg'))
                 train_list.append( os.path.join( id_p , motion_p, front_idx + '.jpg') )
             else:
                 print ('gg')
