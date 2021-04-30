@@ -29,7 +29,6 @@ for id_p in ids:
     current_p = os.path.join( base_p , id_p)
     
     for motion_p in os.listdir(current_p):
-        print(id_p, motion_p)
         current_p1 = os.path.join( current_p , motion_p)
         valid_idxs = valid_all[id_p +'__' + motion_p]
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
@@ -39,7 +38,7 @@ for id_p in ids:
         image = Image.open(img_path)
         res = parsing(image, facenet, idet, img_path[:-4] +'_mask.png')
         parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
-        vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' +valid_f +'.png' ) 
+        vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' + '33.png' ) 
         print (gg)
         
         for valid_f in valid_idxs:
