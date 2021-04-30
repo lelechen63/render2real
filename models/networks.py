@@ -256,15 +256,15 @@ class GlobalGenerator(nn.Module):
         self.output_layer = nn.Sequential(*model)
             
     def forward(self, input):
-        print (input.shape, 'input')
+        # print (input.shape, 'input')
         encoded = self.encoder(input)
-        print (encoded.shape, "encoded")
+        # print (encoded.shape, "encoded")
         encoded = self.resblocks(encoded)
-        print (encoded.shape, "encoded")
+        # print (encoded.shape, "encoded")
         decoded = self.decoder(encoded)
-        print (decoded.shape, "decoded")
+        # print (decoded.shape, "decoded")
         output = self.output_layer(decoded)
-        print (output.shape, "output")
+        # print (output.shape, "output")
         return output        
 
 class GlobalGenerator_fewhsot(nn.Module):
