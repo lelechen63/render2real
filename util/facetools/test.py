@@ -34,15 +34,18 @@ for id_p in ids:
         # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
 
         # debug 
-        img_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/14_sadness/33.jpg' 
-        image = Image.open(img_path)
-        res = parsing(image, facenet, idet, img_path[:-4] +'_mask.png')
-        parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
-        vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' + '33.png' ) 
-        print (gg)
+        # img_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/14_sadness/33.jpg' 
+        # image = Image.open(img_path)
+        # res = parsing(image, facenet, idet, img_path[:-4] +'_mask.png')
+        # parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
+        # vis_parsing_maps(image, res, save_parsing_path=parsing_path, save_vis_path ='/raid/celong/FaceScape/tmp/tmp2/' + id_p +'_' + motion_p +'_' + '33.png' ) 
+        # print (gg)
         
         for valid_f in valid_idxs:
             img_path = os.path.join( current_p1, valid_f + '.jpg')
+            if os.path.exists(img_path[:-4] +'_mask.png'):
+                print (img_path, '-----')
+                continue
             print ('+++', img_path)
             parsing_path = img_path.replace('ffhq_aligned_img', 'fsmview_landmarks')[:-4] +'_parsing.png'
             try:
