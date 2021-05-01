@@ -9,6 +9,7 @@ import os
 import pickle
 import torch
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
+import time, threading
 
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
 idet = IrisDetector()
