@@ -59,6 +59,7 @@ def get_parsing_batch( ids ):
                 #     print ('**********')
                 #     print (img_path)
                 #     continue
-batch = 7
-for i in range(1):
-    threading.Thread(target = get_parsing_batch, args = (total_ids[batch * i: batch *(i+1)], )).start()
+get_parsing_batch(total_ids)
+# batch = 7
+# for i in range(1):
+#     threading.Thread(target = get_parsing_batch, args = (total_ids[batch * i: batch *(i+1)], )).start()
