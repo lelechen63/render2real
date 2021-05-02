@@ -55,7 +55,7 @@ def get_parsing_batch( ids ):
     for id_p in ids:
         current_p = os.path.join( base_p , id_p)
         for k in range(len(expressions)):
-            motion_p = expressions[k]
+            motion_p = expressions[k + 1]
             current_p1 = os.path.join( current_p , motion_p)
             # valid_idxs = valid_all[id_p +'__' + motion_p]
             # img_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
