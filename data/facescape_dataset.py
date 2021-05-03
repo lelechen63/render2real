@@ -32,7 +32,7 @@ class FacescapeDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input mask (binary mask to segment person out)
         mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
-        mask = Image.open(mask_path)
+        mask = Image.open(mask_path).convert('RGB')
         ### input A (renderred image)
         A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
           
