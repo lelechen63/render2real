@@ -8,6 +8,7 @@ def get_image_pickle():
 
     _file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/validface_list.pkl', "rb")
     valid_indx = pickle.load(_file)
+    print (valid_indx.keys())
 
     train_list = []
     test_list = []
@@ -32,12 +33,12 @@ def get_image_pickle():
                 parsing_p = img_p[:-4] + '_parsing.png'
                 # print (img_p, output_p, parsing_p)
                 if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
-                    if id_p =='12':
-                        print ( os.path.join( id_p , motion_p, cam_idx + '.jpg'))
-                        if k < 17:
-                            train_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
-                        else:
-                            test_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
+                    # if id_p =='12':
+                    print ( os.path.join( id_p , motion_p, cam_idx + '.jpg'))
+                    if k < 17:
+                        train_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
+                    else:
+                        test_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
 
                 else:
                     print (img_p,'========')
