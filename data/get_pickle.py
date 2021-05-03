@@ -25,7 +25,7 @@ def get_image_pickle():
             current_p1 = os.path.join( current_p , motion_p)
             save_p2 = os.path.join( save_p1 , motion_p)
             if id_p +'__' + motion_p not  in valid_indx.keys():
-                # print (id_p +'__' + motion_p)
+                print (id_p +'__' + motion_p)
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
