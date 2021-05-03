@@ -30,7 +30,7 @@ def get_image_pickle():
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
                 output_p = os.path.join( save_p2 ,cam_idx + '_render.png')
-                parsing_p = img_p[:-4] + '_parsing.png'
+                parsing_p = img_p[:-4].replace('ffhq_aligned_img', 'fsmview_landmarks' ) + '_parsing.png'
                 # print (img_p, output_p, parsing_p)
                 if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
                     # if id_p =='12':
