@@ -83,7 +83,7 @@ def parsing(img, facenet, idet, save_face_path= None ):
         cv2.imwrite(save_face_path, binary_mask)
     im = np.array(img)[..., ::-1]
     # im = cv2.imread(img_path)[..., ::-1]
-    
+    # try:
     blank_image1 = np.zeros((shape), np.uint8)
     blank_image2 = np.zeros((shape), np.uint8)
     eye_lms = idet.detect_iris(im)
@@ -108,7 +108,8 @@ def parsing(img, facenet, idet, save_face_path= None ):
     blank_image[blank_image < 16 ] = 0
     parsing_maps += blank_image 
     parsing_maps[parsing_maps>20] = 20  
-   
+    # except:
+    #     print('no eyes ***********') 
         
     return parsing_maps
 

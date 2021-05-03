@@ -1,7 +1,7 @@
 import os.path
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
-from PIL import Image
+from PIL import Image, ImageChops
 import pickle 
 
 class FacescapeDataset(BaseDataset):
@@ -16,27 +16,31 @@ class FacescapeDataset(BaseDataset):
         self.dir_B = os.path.join(opt.dataroot, "ffhq_aligned_img")
 
         ### input C (eye parsing images)
-        self.dir_C = os.path.join(opt.dataroot, "ffhq_aligned_img")
+        self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
         # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
 
 
         if opt.isTrain:
             _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
         else:
-            _file = open(os.path.join(opt.dataroot, "lists/test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_test.pkl"), "rb")
        
         self.data_list = pickle.load(_file)
         _file.close()
 
         
     def __getitem__(self, index):        
+        ### input mask (binary mask to segment person out)
+        mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
+        mask = Image.open(mask_path)
         ### input A (renderred image)
         A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
           
         #for debug
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path) 
-        A = Image.open(A_path).convert('RGB')   
+        A = Image.open(A_path).convert('RGB')
+        A = ImageChops.multiply(A, mask)
         params = get_params(self.opt, A.size)
         
         transform = get_transform(self.opt, params)      
@@ -49,10 +53,12 @@ class FacescapeDataset(BaseDataset):
         # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
         # print (B_path)       
         B = Image.open(B_path).convert('RGB')
+        B = ImageChops.multiply(B, mask)
         # transform_B = get_transform(self.opt, params)      
         B_tensor = transform(B)
 
-        C_path =  os.path.join( self.dir_A , self.data_list[index][:-4] + '_parsing.png' )
+
+        C_path =  os.path.join( self.dir_C , self.data_list[index][:-4] + '_parsing.png' )
         #debug 
         # C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
 
