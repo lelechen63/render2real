@@ -40,6 +40,9 @@ class FacescapeDataset(BaseDataset):
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path) 
         A = Image.open(A_path).convert('RGB')
+        print(A.size)
+        print(mask.size)
+        print('+++++')
         A = ImageChops.multiply(A, mask)
         params = get_params(self.opt, A.size)
         
