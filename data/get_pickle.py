@@ -25,7 +25,7 @@ def get_image_pickle():
             current_p1 = os.path.join( current_p , motion_p)
             save_p2 = os.path.join( save_p1 , motion_p)
             if id_p +'__' + motion_p not  in valid_indx.keys():
-                print (id_p +'__' + motion_p)
+                # print (id_p +'__' + motion_p)
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
@@ -34,14 +34,14 @@ def get_image_pickle():
                 # print (img_p, output_p, parsing_p)
                 if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
                     # if id_p =='12':
-                    print ( os.path.join( id_p , motion_p, cam_idx + '.jpg'))
+                    # print ( os.path.join( id_p , motion_p, cam_idx + '.jpg'))
                     if k < 17:
                         train_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
                     else:
                         test_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
 
                 else:
-                    print (img_p,'========')
+                    # print (img_p,'========')
                     continue
                 # print ('gg')
     print (len(train_list))
