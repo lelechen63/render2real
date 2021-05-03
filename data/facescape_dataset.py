@@ -32,18 +32,23 @@ class FacescapeDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input mask (binary mask to segment person out)
         mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
-        mask = Image.open(mask_path).convert('RGB')
+        # mask = Image.open(mask_path).convert('RGB')
+        mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (renderred image)
         A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
           
         #for debug
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
         # print (A_path) 
-        A = Image.open(A_path).convert('RGB')
+        A = cv2.imread(A_path)[:,:,::-1]
+        A = A * mask
+        A = Image.fromarray(np.uint8(A))
+
+        # A = Image.open(A_path).convert('RGB')
         # print(A.size)
         # print(mask.size)
         # print('+++++')
-        A = ImageChops.multiply(A, mask)
+        # A = ImageChops.multiply(A, mask)
         params = get_params(self.opt, A.size)
         
         transform = get_transform(self.opt, params)      
@@ -54,9 +59,12 @@ class FacescapeDataset(BaseDataset):
         B_path = os.path.join( self.dir_B , self.data_list[index] )   
         #for debug
         # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
-        # print (B_path)       
-        B = Image.open(B_path).convert('RGB')
-        B = ImageChops.multiply(B, mask)
+        # print (B_path) 
+        B = cv2.imread(B_path)[:,:,::-1]
+        B = B * mask
+        B = Image.fromarray(np.uint8(B))
+        # B = Image.open(B_path).convert('RGB')
+        # B = ImageChops.multiply(B, mask)
         # transform_B = get_transform(self.opt, params)      
         B_tensor = transform(B)
 
@@ -64,7 +72,7 @@ class FacescapeDataset(BaseDataset):
         C_path =  os.path.join( self.dir_C , self.data_list[index][:-4] + '_parsing.png' )
         #debug 
         # C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
-
+        # C = cv2.imread(C_path)[:,:,::-1]
         C =  Image.open(C_path).convert('RGB')
         C_tensor = transform(C)
 
