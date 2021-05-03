@@ -3,7 +3,7 @@ from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
 from PIL import Image, ImageChops
 import pickle 
-
+import cv2
 class FacescapeDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
