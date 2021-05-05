@@ -45,7 +45,7 @@ for i, data in enumerate(dataset):
                           opt.export_onnx, verbose=True)
         exit(0)
     minibatch = 1
-    parsing  = None:
+    parsing  = None
     if opt.eye_parsing:
         parsing = data['eye_parsing']
     if opt.engine:
