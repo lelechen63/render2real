@@ -38,28 +38,26 @@ else:
 for i, data in enumerate(dataset):
     if i >= opt.how_many:
         break
-    if opt.data_type == 16:
-        data['label'] = data['label'].half()
-        data['inst']  = data['inst'].half()
-    elif opt.data_type == 8:
-        data['label'] = data['label'].uint8()
-        data['inst']  = data['inst'].uint8()
     if opt.export_onnx:
         print ("Exporting to ONNX: ", opt.export_onnx)
         assert opt.export_onnx.endswith("onnx"), "Export model file should end with .onnx"
-        torch.onnx.export(model, [data['label'], data['inst']],
+        torch.onnx.export(model, [data['renderred_image'], data['eye_parsing']],
                           opt.export_onnx, verbose=True)
         exit(0)
     minibatch = 1 
     if opt.engine:
-        generated = run_trt_engine(opt.engine, minibatch, [data['label'], data['inst']])
+        generated = run_trt_engine(opt.engine, minibatch, [data['renderred_image'], data['eye_parsing']])
     elif opt.onnx:
-        generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['label'], data['inst']])
+        generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['renderred_image'], data['eye_parsing']])
     else:        
-        generated = model.inference(data['label'], data['inst'], data['image'])
+        generated = model.inference(data['renderred_image'], data['eye_parsing'])%#, data['image'])
         
-    visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
-                           ('synthesized_image', util.tensor2im(generated.data[0]))])
+    visuals = OrderedDict([ ('renderred_image', util.tensor2im(data['renderred_image'][0])),
+                                    ('eye_parsing', util.tensor2im(data['eye_parsing'][0])),
+                                   ('synthesized_image', util.tensor2im(generated.data[0])),
+                                   ('real_image', util.tensor2im(data['image'][0]))]
+                                )
+
     img_path = data['path']
     print('process image... %s' % img_path)
     visualizer.save_images(webpage, visuals, img_path)
