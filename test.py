@@ -50,7 +50,7 @@ for i, data in enumerate(dataset):
     elif opt.onnx:
         generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['renderred_image'], data['eye_parsing']])
     else:        
-        generated = model.inference(data['renderred_image'], data['eye_parsing'])%#, data['image'])
+        generated = model.inference(data['renderred_image'], data['eye_parsing'])#, data['image'])
         
     visuals = OrderedDict([ ('renderred_image', util.tensor2im(data['renderred_image'][0])),
                                     ('eye_parsing', util.tensor2im(data['eye_parsing'][0])),
