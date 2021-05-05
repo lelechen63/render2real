@@ -54,7 +54,7 @@ class BaseOptions():
         self.parser.add_argument('--no_instance', action='store_true', help='if specified, do *not* add instance map as input')        
         self.parser.add_argument('--instance_feat', action='store_true', help='if specified, add encoded instance features as input')
         self.parser.add_argument('--label_feat', action='store_true', help='if specified, add encoded label features as input')        
-        self.parser.add_argument('--eye_parsing', action='store_true', help='if specified, add encoded label features as input')        
+        self.parser.add_argument('--eye_parsing', action='store_false', help='if specified, add encoded label features as input')        
 
         self.parser.add_argument('--feat_num', type=int, default=3, help='vector length for encoded features')        
         self.parser.add_argument('--load_features', action='store_true', help='if specified, load precomputed feature maps')
