@@ -111,10 +111,13 @@ class Visualizer():
 
     # save image to the disk
     def save_images(self, webpage, visuals, image_path):
+        print (image_path, 'img path')
         image_dir = webpage.get_image_dir()
+        print (image_dir, 'img dir')
         short_path = ntpath.basename(image_path[0])
+        print (short_path, 'short path')
         name = os.path.splitext(short_path)[0]
-
+        print (name, 'name')
         webpage.add_header(name)
         ims = []
         txts = []
@@ -122,7 +125,11 @@ class Visualizer():
 
         for label, image_numpy in visuals.items():
             image_name = '%s_%s.jpg' % (name, label)
+            print (image_name, 'image_name')
+
             save_path = os.path.join(image_dir, image_name)
+
+            print (save_path, 'save_path')
             util.save_image(image_numpy, save_path)
 
             ims.append(image_name)
