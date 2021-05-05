@@ -44,13 +44,16 @@ for i, data in enumerate(dataset):
         torch.onnx.export(model, [data['renderred_image'], data['eye_parsing']],
                           opt.export_onnx, verbose=True)
         exit(0)
-    minibatch = 1 
+    minibatch = 1
+    parsing  = None:
+    if opt.eye_parsing:
+        parsing = data['eye_parsing']
     if opt.engine:
-        generated = run_trt_engine(opt.engine, minibatch, [data['renderred_image'], data['eye_parsing']])
+        generated = run_trt_engine(opt.engine, minibatch, [data['renderred_image'], parsing])
     elif opt.onnx:
-        generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['renderred_image'], data['eye_parsing']])
+        generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['renderred_image'], parsing])
     else:        
-        generated = model.inference(data['renderred_image'], data['eye_parsing'])#, data['image'])
+        generated = model.inference(data['renderred_image'], parsing)#, data['image'])
         
     visuals = OrderedDict([ ('renderred_image', util.tensor2im(data['renderred_image'][0])),
                                     ('eye_parsing', util.tensor2im(data['eye_parsing'][0])),
