@@ -114,7 +114,9 @@ class Visualizer():
         print (image_path, 'img path')
         image_dir = webpage.get_image_dir()
         print (image_dir, 'img dir')
-        short_path = ntpath.basename(image_path[0])
+        # short_path = ntpath.basename(image_path[0])
+        tmp = image_path[0].split('/')
+        short_path = tmp[-3] +"__" +tmp[-2] +'__' +tmp[-1]
         print (short_path, 'short path')
         name = os.path.splitext(short_path)[0]
         print (name, 'name')
