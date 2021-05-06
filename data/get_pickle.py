@@ -48,4 +48,47 @@ def get_image_pickle():
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open('/raid/celong/FaceScape/lists/img_test.pkl', 'wb') as handle:
         pickle.dump(test_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
-get_image_pickle()
+
+
+def get_paired_image_pickle():
+    _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
+    all_train_list = pickle.load(_file)
+    _file.close()
+    pid_train = {}
+    exp_train = {}
+
+    for item in all_train_list:
+        tmp = item.split('/')
+        pid = tmp[0]
+        motion = tmp[1]
+        if pid not in pid_train.keys():
+            pid_train[pid] = {}
+            pid_train[pid][motion] = [item]
+        else:
+            if motion not in pid_train[pid].keys():
+                pid_train[pid][motion] = [item]
+            else:
+                pid_train[pid][motion].append(item)
+        
+        if motion not in exp_train.keys():
+            exp_train[motion] = {}
+            exp_train[motion][pid] =[item]
+        else:
+            if pid not in exp_train[motion].keys:
+                exp_train[motion][pid] = [item]
+            else:
+                exp_train[motion][pid].append(item)
+
+    print (len(exp_train), len(exp_train[motion]), len(exp_train[motion][pid]))
+    print (exp_train[motion][pid])
+
+    print (len(pid_train), len(pid_train[pid]), len(pid_train[pid][motion]))
+    print (pid_train[pid][motion])
+    
+    with open('/raid/celong/FaceScape/lists/exp_train_list.pkl', 'wb') as handle:
+        pickle.dump(exp_train, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open('/raid/celong/FaceScape/lists/pid_train_list.pkl', 'wb') as handle:
+        pickle.dump(pid_train, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        
+get_paired_image_pickle()
+# get_image_pickle()

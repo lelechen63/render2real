@@ -22,9 +22,9 @@ class FacescapeDataset(BaseDataset):
 
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_paired_train.pkl"), "rb")
         else:
-            _file = open(os.path.join(opt.dataroot, "lists/img_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_paired_test.pkl"), "rb")
        
         self.data_list = pickle.load(_file)
         _file.close()
