@@ -15,7 +15,7 @@ def get_image_pickle():
 
     ids =  os.listdir(base_p)
     ids.sort()
-
+    invalid = []
     for id_p in ids:
         current_p = os.path.join( base_p , id_p)
         save_p1 = os.path.join( save_p , id_p)
@@ -43,9 +43,11 @@ def get_image_pickle():
 
                 else:
                     print (img_p, parsing_p)
+                    invalid.append(parsing_p)
                     continue
                 # print ('gg')
-    print (len(train_list))
+    print (len(train_list), len(invalid))
+
     with open('/raid/celong/FaceScape/lists/img_alone_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open('/raid/celong/FaceScape/lists/img_alone_test.pkl', 'wb') as handle:
