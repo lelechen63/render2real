@@ -20,7 +20,6 @@ class FacescapeDataset(BaseDataset):
         self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
         # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
 
-
         if opt.isTrain:
             _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
         else:

@@ -5,7 +5,51 @@ from PIL import Image, ImageChops
 import pickle 
 import cv2
 import numpy as np
-class FacescapeDataset(BaseDataset):
+import random
+
+def get_exp():
+    expressions = {
+        1: "1_neutral",
+        2: "2_smile",
+        3: "3_mouth_stretch",
+        4: "4_anger",
+        5: "5_jaw_left",
+        6: "6_jaw_right",
+        7: "7_jaw_forward",
+        8: "8_mouth_left",
+        9: "9_mouth_right",
+        10: "10_dimpler",
+        11: "11_chin_raiser",
+        12: "12_lip_puckerer",
+        13: "13_lip_funneler",
+        14: "14_sadness",
+        15: "15_lip_roll",
+        16: "16_grin",
+        17: "17_cheek_blowing",
+        18: "18_eye_closed",
+        19: "19_brow_raiser",
+        20: "20_brow_lower"
+    }
+    exps = []
+    for i in range(1,21):
+        exps.append(expressions[i])
+    return set(exps)
+def get_anlge_list():
+    angle_lists =  open("/raid/celong/lele/github/idinvert_pytorch/predef/angle_list.txt", 'r')
+    total_list = {}
+    while True:
+        line = angle_lists.readline()[:-1]
+        if not line:
+            break
+        tmp = line.split(',')
+        if tmp[0] +'/' + tmp[1] not in total_list.keys():
+
+            total_list[tmp[0] +'/' + tmp[1] ]  = {}
+        total_list[tmp[0] +'/' + tmp[1] ][tmp[2]] = [float(tmp[3]),float(tmp[4]), float(tmp[5])]
+    print (len(total_list))
+
+    return total_list
+class FacescapeDirDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot    
@@ -19,54 +63,57 @@ class FacescapeDataset(BaseDataset):
         ### input C (eye parsing images)
         self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
         # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
-
+        self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/img_paired_train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
+            
         else:
-            _file = open(os.path.join(opt.dataroot, "lists/img_paired_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_test.pkl"), "rb")
        
         self.data_list = pickle.load(_file)
         _file.close()
-
         
-    def __getitem__(self, index):        
+        dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
+        self.dic_list = pickle.load(dic_file)
+
+        self.angle_list = get_anlge_list()
+        
+    def __getitem__(self, index):
+
         ### input mask (binary mask to segment person out)
         mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
         # mask = Image.open(mask_path).convert('RGB')
         mask = cv2.imread(mask_path)[:,:,::-1]
-        ### input A (renderred image)
-        A_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_render.png' )   
-          
+        ### input A (real image)
+        A_path = os.path.join( self.dir_A , self.data_list[index] )   
+        
         #for debug
-        # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_render.png'    
+        # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
         A = cv2.imread(A_path)[:,:,::-1]
         A = A * mask
         A = Image.fromarray(np.uint8(A))
-
         params = get_params(self.opt, A.size)
-        
         transform = get_transform(self.opt, params)      
         A_tensor = transform(A)
 
-        B_tensor = 0
-        ### input B (real images)
-        B_path = os.path.join( self.dir_B , self.data_list[index] )   
-        #for debug
-        # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'  
-        B = cv2.imread(B_path)[:,:,::-1]
-        B = B * mask
-        B = Image.fromarray(np.uint8(B))
-        B_tensor = transform(B)
+        # randomly get paired image (same identity or same expression)
+        
+        tmp = self.data_list[index].split('/')
+        A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2]]
+        print (A_angle)
+        pid = tmp[0]
+        expresison = tmp[1]
 
+        toss = random.getrandbits(1)
+        # toss 1 -> same exp, diff iden; toss 0-> same iden, diff exp
+        if toss == 0:
+            pool = set(self.dic_list[pid].kyes) - expressions
+            B_exp = random.sample(pool, 1)[0]
+            B_angle_pool = self.angle_list[pid +'/' + B_exp]
+            print (B_angle_pool)
 
-        C_path =  os.path.join( self.dir_C , self.data_list[index][:-4] + '_parsing.png' )
-        #debug 
-        # C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    
-        C =  Image.open(C_path).convert('RGB')
-        C_tensor = transform(C)
-
-     
+    
         input_dict = { 'renderred_image':A_tensor, 'image': B_tensor, 'eye_parsing': C_tensor, 'path': A_path}
 
         return input_dict
@@ -75,4 +122,4 @@ class FacescapeDataset(BaseDataset):
         return len(self.data_list) // self.opt.batchSize * self.opt.batchSize
 
     def name(self):
-        return 'FacescapeDataset'
+        return 'FacescapeDirDataset'
