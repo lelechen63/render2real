@@ -42,7 +42,7 @@ def get_image_pickle():
                         test_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
 
                 else:
-                    print (img_p)
+                    print (img_p, parsing_p)
                     continue
                 # print ('gg')
     print (len(train_list))
