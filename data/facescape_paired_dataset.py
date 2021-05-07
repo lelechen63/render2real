@@ -109,14 +109,14 @@ class FacescapeDirDataset(BaseDataset):
         toss = random.getrandbits(1)
         # toss 1 -> same exp, diff iden; toss 0-> same iden, diff exp
         if toss == 0:
-            pool = set(self.dic_list[pid].kyes) - expressions
+            pool = set(self.dic_list[pid].kyes) - expresison
             B_exp = random.sample(pool, 1)[0]
             B_angle_pool = self.angle_list[pid +'/' + B_exp]
             print (B_angle_pool)
         else:
-            pool = set(self.dic_list[expressions].kyes) - pid
+            pool = set(self.dic_list[expresison].kyes) - pid
             B_id = random.sample(pool, 1)[0]
-            B_angle_pool = self.angle_list[B_id +'/' + expressions]
+            B_angle_pool = self.angle_list[B_id +'/' + expresison]
             print (B_angle_pool)
 
     
