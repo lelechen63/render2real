@@ -18,6 +18,7 @@ def get_image_pickle():
     ids =  os.listdir(base_p)
     ids.sort()
     invalid = []
+    total = 0
     for id_p in ids:
         current_p = os.path.join( base_p , id_p)
         save_p1 = os.path.join( save_p , id_p)
@@ -27,10 +28,11 @@ def get_image_pickle():
             current_p1 = os.path.join( current_p , motion_p)
             save_p2 = os.path.join( save_p1 , motion_p)
             if id_p +'__' + motion_p not  in valid_indx.keys():
-                print (id_p +'__' + motion_p)
+                print (id_p +'__' + motion_p,'!!!!!!!!!!!!!!!!')
                 hhh += 1
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
+                total_list +=1
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
                 output_p = os.path.join( save_p2 ,cam_idx + '_render.png')
                 parsing_p = img_p[:-4].replace('ffhq_aligned_img', 'fsmview_landmarks' ) + '_parsing.png'
@@ -49,7 +51,7 @@ def get_image_pickle():
                     invalid.append(parsing_p)
                     continue
                 # print ('gg')
-    print (len(train_list), len(test_list))
+    print (len(train_list), len(test_list),hhh, total)
 
     with open('/raid/celong/FaceScape/lists/img_alone_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
