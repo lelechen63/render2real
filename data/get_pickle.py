@@ -51,7 +51,7 @@ def get_image_pickle():
 
 
 def get_paired_image_pickle():
-    _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
+    _file = open(os.path.join('/raid/celong/FaceScape', "lists/img_train.pkl"), "rb")
     all_train_list = pickle.load(_file)
     _file.close()
     train_list  = {}
