@@ -73,7 +73,7 @@ def get_paired_image_pickle():
             train_list[motion] = {}
             train_list[motion][pid] =[item]
         else:
-            if pid not in train_list[motion].keys:
+            if pid not in train_list[motion].keys():
                 train_list[motion][pid] = [item]
             else:
                 train_list[motion][pid].append(item)
