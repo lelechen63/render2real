@@ -3,7 +3,7 @@ import os
 import random
 def get_image_pickle():
     
-    base_p = '/raid/celong/FaceScape/fsmview_renderings'
+    base_p = '/raid/celong/FaceScape/ffhq_aligned_img'
     save_p = '/raid/celong/FaceScape/ffhq_aligned_img'
 
     _file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/validface_list.pkl', "rb")
