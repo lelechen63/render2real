@@ -32,7 +32,7 @@ def get_image_pickle():
                 hhh += 1
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
-                total_list +=1
+                total +=1
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
                 output_p = os.path.join( save_p2 ,cam_idx + '_render.png')
                 parsing_p = img_p[:-4].replace('ffhq_aligned_img', 'fsmview_landmarks' ) + '_parsing.png'
