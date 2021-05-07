@@ -118,7 +118,7 @@ class FacescapeDirDataset(BaseDataset):
         else:
             pool = set(self.dic_list[expresison].keys()) - set(pid)
             B_id = random.sample(pool, 1)[0]
-            B_exp = expression
+            B_exp = expresison
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
             print (B_angle_pool)
 
