@@ -131,7 +131,7 @@ class FacescapeDirDataset(BaseDataset):
         diff = (tmp - A_angle).sum(1)
         small_index = diff.argsort()[0]
         print (small_index)
-        B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.png' )   
+        B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
         print (B_path)
 
         ### input mask (binary mask to segment person out)
