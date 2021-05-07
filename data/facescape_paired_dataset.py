@@ -123,7 +123,7 @@ class FacescapeDirDataset(BaseDataset):
             print (B_angle_pool)
 
 
-
+        B_tensor =None
     
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'map_type': toss, 'path': A_path}
 
