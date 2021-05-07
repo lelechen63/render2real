@@ -122,9 +122,34 @@ class FacescapeDirDataset(BaseDataset):
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
             print (B_angle_pool)
         
-        
+        # b = np.array(b)
+        tmp = []
+        for i in range(len(B_angle_pool)):
+            tmp.append(B_angle_pool[str(i)])
+        tmp = np.array(tmp)
 
-        B_tensor =1
+        diff = (tmp - A_angle).sum(1)
+        small_index = diff.argsort()[0]
+        print (small_index)
+        B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.png' )   
+        print (B_path)
+
+        ### input mask (binary mask to segment person out)
+        mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
+        # mask = Image.open(mask_path).convert('RGB')
+        mask = cv2.imread(mask_path)[:,:,::-1]
+      
+        #for debug
+        # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+        B = cv2.imread(B_path)[:,:,::-1]
+        B = B * mask
+        B = Image.fromarray(np.uint8(B))
+        params = get_params(self.opt, B.size)
+        transform = get_transform(self.opt, params)      
+        B_tensor = transform(B)
+
+
+        # B_tensor =1
     
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'map_type': toss, 'path': A_path}
 
