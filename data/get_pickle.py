@@ -81,7 +81,7 @@ def get_paired_image_pickle():
     print (len(train_list), len(train_list[motion]), len(train_list[motion][pid]))
     print (train_list[motion][pid])
 
-    print (len(train_list), len(train_list[pid]), len(pidtrain_list_train[pid][motion]))
+    print (len(train_list), len(train_list[pid]), len(train_list[pid][motion]))
     print (train_list[pid][motion])
     
     with open('/raid/celong/FaceScape/lists/img_dic_train.pkl', 'wb') as handle:
