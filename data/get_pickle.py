@@ -32,7 +32,8 @@ def get_image_pickle():
                 output_p = os.path.join( save_p2 ,cam_idx + '_render.png')
                 parsing_p = img_p[:-4].replace('ffhq_aligned_img', 'fsmview_landmarks' ) + '_parsing.png'
                 # print (img_p, output_p, parsing_p)
-                if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
+                # if os.path.exists(img_p) and os.path.exists(output_p) and os.path.exists(parsing_p) :
+                if os.path.exists(img_p)  and os.path.exists(parsing_p) :
                     # if id_p =='12':
                     # print ( os.path.join( id_p , motion_p, cam_idx + '.jpg'))
                     if k < 17:
@@ -44,14 +45,14 @@ def get_image_pickle():
                     continue
                 # print ('gg')
     print (len(train_list))
-    with open('/raid/celong/FaceScape/lists/img_train.pkl', 'wb') as handle:
+    with open('/raid/celong/FaceScape/lists/img_alone_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open('/raid/celong/FaceScape/lists/img_test.pkl', 'wb') as handle:
+    with open('/raid/celong/FaceScape/lists/img_alone_test.pkl', 'wb') as handle:
         pickle.dump(test_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def get_paired_image_pickle():
-    _file = open(os.path.join('/raid/celong/FaceScape', "lists/img_train.pkl"), "rb")
+    _file = open(os.path.join('/raid/celong/FaceScape', "lists/img_alone_train.pkl"), "rb")
     all_train_list = pickle.load(_file)
     _file.close()
     train_list  = {}
@@ -88,5 +89,5 @@ def get_paired_image_pickle():
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
         
+get_image_pickle()
 get_paired_image_pickle()
-# get_image_pickle()
