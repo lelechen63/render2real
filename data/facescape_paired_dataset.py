@@ -113,6 +113,11 @@ class FacescapeDirDataset(BaseDataset):
             B_exp = random.sample(pool, 1)[0]
             B_angle_pool = self.angle_list[pid +'/' + B_exp]
             print (B_angle_pool)
+        else:
+            pool = set(self.dic_list[expressions].kyes) - pid
+            B_id = random.sample(pool, 1)[0]
+            B_angle_pool = self.angle_list[B_id +'/' + expressions]
+            print (B_angle_pool)
 
     
         input_dict = { 'renderred_image':A_tensor, 'image': B_tensor, 'eye_parsing': C_tensor, 'path': A_path}
