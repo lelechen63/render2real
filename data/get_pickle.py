@@ -49,7 +49,7 @@ def get_image_pickle():
                     invalid.append(parsing_p)
                     continue
                 # print ('gg')
-    print (len(train_list), len(invalid))
+    print (len(train_list), hhh)
 
     with open('/raid/celong/FaceScape/lists/img_alone_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
