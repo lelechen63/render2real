@@ -66,10 +66,10 @@ class FacescapeDirDataset(BaseDataset):
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/img_train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_alone_train.pkl"), "rb")
             
         else:
-            _file = open(os.path.join(opt.dataroot, "lists/img_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/img_alone_test.pkl"), "rb")
        
         self.data_list = pickle.load(_file)
         _file.close()
@@ -101,7 +101,7 @@ class FacescapeDirDataset(BaseDataset):
         
         tmp = self.data_list[index].split('/')
         print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
-        A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2]]
+        A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         print (A_angle)
         pid = tmp[0]
         expresison = tmp[1]
