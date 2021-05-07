@@ -100,6 +100,7 @@ class FacescapeDirDataset(BaseDataset):
         # randomly get paired image (same identity or same expression)
         
         tmp = self.data_list[index].split('/')
+        print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2]]
         print (A_angle)
         pid = tmp[0]
