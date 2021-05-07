@@ -121,9 +121,10 @@ class FacescapeDirDataset(BaseDataset):
             B_exp = expresison
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
             print (B_angle_pool)
+        
+        
 
-
-        B_tensor =None
+        B_tensor =1
     
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'map_type': toss, 'path': A_path}
 
