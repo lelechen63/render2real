@@ -28,8 +28,6 @@ def get_image_pickle():
             current_p1 = os.path.join( current_p , motion_p)
             save_p2 = os.path.join( save_p1 , motion_p)
             if id_p +'__' + motion_p not  in valid_indx.keys():
-                print (id_p +'__' + motion_p,'!!!!!!!!!!!!!!!!')
-                hhh += 1
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
                 total +=1
@@ -51,7 +49,7 @@ def get_image_pickle():
                     invalid.append(parsing_p)
                     continue
                 # print ('gg')
-    print (len(train_list), len(test_list),hhh, total,len(invalid))
+    print (len(train_list), len(test_list), total,len(invalid))
 
     with open('/raid/celong/FaceScape/lists/img_alone_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)

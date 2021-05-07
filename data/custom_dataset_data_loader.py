@@ -4,9 +4,12 @@ from data.base_data_loader import BaseDataLoader
 
 def CreateDataset(opt):
     dataset = None
-    from data.facescape_dataset import FacescapeDataset
-    dataset = FacescapeDataset()
-
+    if opt.datasetname == 'fs':
+        from data.facescape_dataset import FacescapeDataset
+        dataset = FacescapeDataset()
+    elif opt.datasetname == 'fs_pair':
+        from data.facescape_paired_dataset import FacescapeDirDataset
+        dataset = FacescapeDirDataset()
     print("dataset [%s] was created" % (dataset.name()))
     dataset.initialize(opt)
     return dataset
