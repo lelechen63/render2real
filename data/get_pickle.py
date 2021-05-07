@@ -8,8 +8,10 @@ def get_image_pickle():
 
     _file = open( '/raid/celong/lele/github/idinvert_pytorch/predef/validface_list.pkl', "rb")
     valid_indx = pickle.load(_file)
+    print(len(valid_indx))
     # print (valid_indx.keys())
 
+    hhh = 0
     train_list = []
     test_list = []
 
@@ -26,6 +28,7 @@ def get_image_pickle():
             save_p2 = os.path.join( save_p1 , motion_p)
             if id_p +'__' + motion_p not  in valid_indx.keys():
                 print (id_p +'__' + motion_p)
+                hhh += 1
                 continue
             for cam_idx in valid_indx[ id_p +'__' + motion_p ]:
                 img_p = os.path.join( save_p2, cam_idx + '.jpg')
@@ -42,7 +45,7 @@ def get_image_pickle():
                         test_list.append( os.path.join( id_p , motion_p, cam_idx + '.jpg') )
 
                 else:
-                    print (img_p, parsing_p)
+                    # print (img_p, parsing_p)
                     invalid.append(parsing_p)
                     continue
                 # print ('gg')
