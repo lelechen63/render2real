@@ -81,6 +81,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss_pix = (loss_dict['A_pix'] + loss_dict['B_pix'] + loss_dict.get('mis_pix',0) ) 
         loss_vgg = loss_dict['A_vgg'] + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
 
+        loss_G = loss_pix + loss_vgg
         ############### Backward Pass ####################
         # update generator weights
         optimizer_G.zero_grad()
