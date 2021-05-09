@@ -212,11 +212,11 @@ class DisentNet(BaseModel):
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
                 id_code, exp_code = self.netEncoder(image)
-                fake_image = self.netDecoder(exp_code, id_code, viewpoint)
+                fake_image = self.netDecoder(exp_code, id_code, viewpoint[0])
         else:
 
             d_code, exp_code = self.netEncoder(image)
-            fake_image = self.netDecoder(exp_code, id_code, viewpoint)
+            fake_image = self.netDecoder(exp_code, id_code, viewpoint[0])
         return fake_image
 
 
