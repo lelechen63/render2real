@@ -62,11 +62,11 @@ def define_Dis_Enecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_d
     encoder.apply(weights_init)
     return encoder
 
-def define_Dis_Decoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+def define_Dis_Decoder(linearity, output_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
     if netG == 'disent':    
-        decoder = DisentDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+        decoder = DisentDecoder(linearity, output_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
     
     else:
         raise('generator not implemented!')
@@ -360,7 +360,7 @@ class DisentEncoder(nn.Module):
                        
 
 class DisentDecoder(nn.Module):
-    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+    def __init__(self, linearity, output_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
                  padding_type='reflect'):
         assert(n_blocks >= 0)
         super(DisentDecoder, self).__init__()        
@@ -372,7 +372,7 @@ class DisentDecoder(nn.Module):
             pass  
         ##################
         mult = 2**n_downsampling
-        
+
         model = []
         model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
 

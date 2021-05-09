@@ -23,13 +23,13 @@ class DisentNet(BaseModel):
             torch.backends.cudnn.benchmark = True
         self.isTrain = opt.isTrain
         input_nc = 3
-        netD_input_nc =3
+        output_nc =3
         linearity = not opt.no_linearity
         self.netEncoder = networks.define_Dis_Enecoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
 
-        self.netDecoder = networks.define_Dis_Decoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
+        self.netDecoder = networks.define_Dis_Decoder(linearity, output_nc, opt.code_n,opt.encoder_fc_n, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids) 
         
