@@ -322,6 +322,7 @@ class DisentEncoder(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         model = []
+        print (ngf, mult, '++++++')
         model.append(LinearBlock(ngf * mult, ngf*ngf, norm = 'none' , activation = 'relu'))
 
         for i in range(encoder_fc_n):
