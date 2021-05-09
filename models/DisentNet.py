@@ -249,6 +249,6 @@ class DisentNet(BaseModel):
             print('update learning rate: %f -> %f' % (self.old_lr, lr))
         self.old_lr = lr
 
-class InferenceDisentNet(Pix2PixHDModel):
+class InferenceDisentNet(DisentNet):
     def forward(self, image):
         return self.inference(image)
