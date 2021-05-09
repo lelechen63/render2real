@@ -98,8 +98,8 @@ class DisentNet(BaseModel):
 
     def forward(self, image, map_image, map_type, viewpoint, infer=False):
         print (viewpoint.shape)
-        A_viewpoint = viewpoint[0]
-        B_viewpoint = viewpoint[1]
+        A_viewpoint = viewpoint[:,0]
+        B_viewpoint = viewpoint[:,1]
         # Fake Generation
         A_id_code, A_exp_code = self.netEncoder(image)
 
@@ -212,11 +212,11 @@ class DisentNet(BaseModel):
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
                 id_code, exp_code = self.netEncoder(image)
-                fake_image = self.netDecoder(exp_code, id_code, viewpoint[0])
+                fake_image = self.netDecoder(exp_code, id_code, viewpoint[:,0])
         else:
 
             d_code, exp_code = self.netEncoder(image)
-            fake_image = self.netDecoder(exp_code, id_code, viewpoint[0])
+            fake_image = self.netDecoder(exp_code, id_code, viewpoint[:,0])
         return fake_image
 
 
