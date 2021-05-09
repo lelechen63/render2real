@@ -29,9 +29,9 @@ class DisentNet(BaseModel):
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
 
-        # self.netDecoder = networks.define_Dis_Decoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
-        #                                         opt.ngf, opt.netG, opt.n_downsample_global, 
-        #                                         opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids) 
+        self.netDecoder = networks.define_Dis_Decoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
+                                                opt.ngf, opt.netG, opt.n_downsample_global, 
+                                                opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids) 
         
         # # Discriminator network
         # if self.isTrain:
@@ -80,7 +80,7 @@ class DisentNet(BaseModel):
                     from sets import Set
                     finetune_list = Set()
 
-                params_dict = dict(self.netG.named_parameters())
+                params_dict = dict(self.netEncoder.named_parameters())
                 params = []
                 for key, value in params_dict.items():       
                     if key.startswith('model' + str(opt.n_local_enhancers)):                    
@@ -89,21 +89,11 @@ class DisentNet(BaseModel):
                 print('------------- Only training the local enhancer network (for %d epochs) ------------' % opt.niter_fix_global)
                 print('The layers that are finetuned are ', sorted(finetune_list))                         
             else:
-                params = list(self.netG.parameters())
+                params = list(self.netEncoder.parameters()) + list(self.netDecoder.parameters())    
                 
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
-            # optimizer D                        
-            params = list(self.netD.parameters())    
-            self.optimizer_D = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))
 
-  
-    def discriminate(self, test_image, use_pool=False):
-        if use_pool:            
-            fake_query = self.fake_pool.query(test_image)
-            return self.netD.forward(fake_query)
-        else:
-            return self.netD.forward(test_image)
 
     def forward(self, image, map_image, map_type, infer=False):
 
