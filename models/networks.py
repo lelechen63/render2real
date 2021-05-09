@@ -391,6 +391,12 @@ class DisentDecoder(nn.Module):
         model.append(LinearBlock(ngf*4 * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
         self.code_dec = nn.Sequential(*model)
 
+        ### resnet blocks
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+
+        self.resblocks = nn.Sequential(*model)
+
         ### upsample
         model = []         
         for i in range(n_downsampling):
