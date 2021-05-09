@@ -33,6 +33,7 @@ class DisentNet(BaseModel):
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids) 
         
+
         # # Discriminator network
         # if self.isTrain:
         #     use_sigmoid = opt.no_lsgan
@@ -95,19 +96,25 @@ class DisentNet(BaseModel):
 
 
 
-    def forward(self, image, map_image, map_type, infer=False):
-
+    def forward(self, image, map_image, map_type, viewpoint, infer=False):
+        
+        A_viewpoint = viewpoint[0]
+        B_viewpoint = viewpoint[1]
         # Fake Generation
         A_id_code, A_exp_code = self.netEncoder(image)
 
         B_id_code, B_exp_code = self.netEncoder(map_image)
 
         # reconstruction
-        Aexp_Aid_image = self.netDecoder(A_exp_code, A_id_code)
-        Bexp_Bid_image = self.netDecoder(B_exp_code, B_id_code)
+        Aexp_Aid_image = self.netDecoder(A_exp_code, A_id_code, A_viewpoint)
+        Bexp_Bid_image = self.netDecoder(B_exp_code, B_id_code, B_viewpoint)
 
         # mismatch reconstruction
-        Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code)
+        if map_type == 0:
+            Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code, A_viewpoint)
+        else:
+            Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code, B_viewpoint)
+
         # if map_type == 0: toss 0-> same iden, diff exp
         # replace B's exp_code with A's exp_code, feed(B's id_code, A's exp_code) to decoder, it will output A''s image.
         # same exp as A, same id as A/B, compute loss with A'
@@ -116,7 +123,10 @@ class DisentNet(BaseModel):
         # replace B's exp_code with A's exp_code, feed(B's id_code, A's exp_code) to decoder, it will output B''s image.
         # same exp as A/B, same id as B, compute loss with B'
 
-        Aid_Bexp_image = self.netDecoder(B_exp_code, A_id_code)
+        if map_type == 0:
+            Aid_Bexp_image = self.netDecoder(B_exp_code, A_id_code, B_viewpoint)
+        else:
+            Aid_Bexp_image = self.netDecoder(B_exp_code, A_id_code, A_viewpoint)
         # if map_type == 0: toss 0-> same iden, diff exp
         # replace A's exp_code with B's exp_code, feed(A's id_code, B's exp_code) to decoder, it will output B''s image.
         # same exp as B, same id as A/B, compute loss with B'
@@ -190,7 +200,7 @@ class DisentNet(BaseModel):
         return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Aid_Bexp_image] ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 
-    def inference(self, image):
+    def inference(self, image, viewpoint):
 
         # # real images for training
         # if real_image is not None:
@@ -198,21 +208,15 @@ class DisentNet(BaseModel):
 
         image = Variable(image.data.cuda())
         
-        A_id_code, A_exp_code = self.netEncoder(image)
-
-        B_id_code, B_exp_code = self.netEncoder(map_image)
-
-        Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code)
-
         # Fake Generation
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
                 id_code, exp_code = self.netEncoder(image)
-                fake_image = self.netDecoder(exp_code, id_code)
+                fake_image = self.netDecoder(exp_code, id_code, viewpoint)
         else:
 
             d_code, exp_code = self.netEncoder(image)
-            fake_image = self.netDecoder(exp_code, id_code)
+            fake_image = self.netDecoder(exp_code, id_code, viewpoint)
         return fake_image
 
 
@@ -239,5 +243,5 @@ class DisentNet(BaseModel):
         self.old_lr = lr
 
 class InferenceDisentNet(DisentNet):
-    def forward(self, image):
-        return self.inference(image)
+    def forward(self, image, viewpoint):
+        return self.inference(image, viewpoint)

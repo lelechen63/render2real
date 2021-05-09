@@ -71,6 +71,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         losses, generated = model(  image = Variable(data['image']) , 
                                     map_image =  Variable(data['pair_image']),
                                     map_type = data['pair_type'],
+                                    viewpoint = Variable(data['viewpoint']),
                                     infer=save_fake)
 
         # sum per device losses

@@ -103,6 +103,7 @@ class FacescapeDirDataset(BaseDataset):
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
+        viewpoint = [A_angle]
         pid = tmp[0]
         expresison = tmp[1]
 
@@ -123,7 +124,6 @@ class FacescapeDirDataset(BaseDataset):
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
             # print (B_angle_pool)
         
-        # b = np.array(b)
         tmp = []
         for i in range(len(B_angle_pool)):
             tmp.append(B_angle_pool[str(i)])
@@ -146,6 +146,7 @@ class FacescapeDirDataset(BaseDataset):
                 #for debug
                 # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
                 B = cv2.imread(B_path)[:,:,::-1]
+                viewpoint.append(tmp[str(small_index)])
                 break
             except:
                 continue
@@ -158,7 +159,7 @@ class FacescapeDirDataset(BaseDataset):
 
         # B_tensor =1
     
-        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'path': A_path}
+        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint 'path': A_path}
 
         return input_dict
 

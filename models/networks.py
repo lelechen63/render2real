@@ -46,7 +46,6 @@ def get_num_adain_params(model):
             num_adain_params += 2*m.num_features
     return num_adain_params
 
-
 def define_Dis_Enecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
@@ -296,7 +295,7 @@ class GlobalGenerator(nn.Module):
         output = self.output_layer(decoded)
         # print (output.shape, "output")
         return output        
-
+   
 
 class DisentEncoder(nn.Module):
     def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
@@ -391,6 +390,13 @@ class DisentDecoder(nn.Module):
         model.append(LinearBlock(ngf*4 * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
         self.code_dec = nn.Sequential(*model)
 
+        model = []
+        model.append(LinearBlock(3, ngf*2, norm = 'none' , activation = 'relu'))
+        for i in range(4):
+            model.append(LinearBlock(ngf*2, ngf*2, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*2, ngf  * 4, norm = 'none' , activation = 'relu'))
+        self.viewencoder = nn.Sequential(*model)
+
         ### resnet blocks
         # model = []
         # for i in range(n_blocks):
@@ -410,8 +416,9 @@ class DisentDecoder(nn.Module):
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
         self.output_layer = nn.Sequential(*model)
             
-    def forward(self, exp_code, id_code):
+    def forward(self, exp_code, id_code, viewpoint):
         # print (input.shape, 'input')
+        view_fea = self.viewencoder(viewpoint)
         exp_fea = self.exp_dec(exp_code)
         # print (exp_fea.shape, "exp_fea")
 
