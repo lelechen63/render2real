@@ -371,7 +371,8 @@ class DisentDecoder(nn.Module):
         if linearity:
             pass  
         ##################
-
+        mult = 2**n_downsampling
+        
         model = []
         model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
 
