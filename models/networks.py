@@ -47,10 +47,6 @@ def get_num_adain_params(model):
     return num_adain_params
 
 
-        activation = nn.ReLU(True)
-        padding_type='reflect'
-
-
 def define_Dis_Enecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
