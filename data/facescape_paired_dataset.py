@@ -130,19 +130,25 @@ class FacescapeDirDataset(BaseDataset):
         tmp = np.array(tmp)
 
         diff = (tmp - A_angle).sum(1)
-        small_index = diff.argsort()[0]
-        # print (small_index)
-        B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
-        # print (B_path)
+        diff = diff.argsort()
+        for kk in range(diff.shape[0]):
+            small_index = diff[kk]
+            try:
+                # print (small_index)
+                B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
+                # print (B_path)
 
-        ### input mask (binary mask to segment person out)
-        mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
-        # mask = Image.open(mask_path).convert('RGB')
-        mask = cv2.imread(mask_path)[:,:,::-1]
-      
-        #for debug
-        # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-        B = cv2.imread(B_path)[:,:,::-1]
+                ### input mask (binary mask to segment person out)
+                mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
+                # mask = Image.open(mask_path).convert('RGB')
+                mask = cv2.imread(mask_path)[:,:,::-1]
+            
+                #for debug
+                # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+                B = cv2.imread(B_path)[:,:,::-1]
+                break
+             except:
+                 continue
         B = B * mask
         B = Image.fromarray(np.uint8(B))
         params = get_params(self.opt, B.size)
