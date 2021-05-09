@@ -374,10 +374,10 @@ class DisentDecoder(nn.Module):
         mult = 2**n_downsampling
 
         model = []
-        model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
 
         for i in range(int(encoder_fc_n/2)):
-            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
         self.identity_dec = nn.Sequential(*model)
 
         model = []
@@ -386,6 +386,7 @@ class DisentDecoder(nn.Module):
             model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
         
         self.exp_dec = nn.Sequential(*model)
+
         model = []
         model.append(LinearBlock(ngf*4 * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
         self.code_dec = nn.Sequential(*model)
