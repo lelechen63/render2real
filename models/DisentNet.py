@@ -97,7 +97,6 @@ class DisentNet(BaseModel):
 
 
     def forward(self, image, map_image, map_type, viewpoint, infer=False):
-        print (viewpoint.shape)
         A_viewpoint = viewpoint[:,0]
         B_viewpoint = viewpoint[:,1]
         # Fake Generation
