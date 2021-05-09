@@ -174,19 +174,18 @@ class DisentNet(BaseModel):
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
         loss_G_pix = 0
-        if not self.opt.no_pix_loss:
-            # mismatch loss
-            if map_type == 0:
-                loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_image) * self.opt.lambda_pix
-                loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_map_image) * self.opt.lambda_pix
-            else:
-                loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
-                loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_image) * self.opt.lambda_pix
-            
-            # reconstruction loss
-            loss_G_pix3 = self.criterionFeat(Aexp_Aid_image, real_image) * self.opt.lambda_pix
-            loss_G_pix4 = self.criterionFeat(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
-            loss_G_pix = loss_G_pix1 + loss_G_pix2 
+        # mismatch loss
+        if map_type == 0:
+            loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_map_image) * self.opt.lambda_pix
+        else:
+            loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_image) * self.opt.lambda_pix
+        
+        # reconstruction loss
+        loss_G_pix3 = self.criterionFeat(Aexp_Aid_image, real_image) * self.opt.lambda_pix
+        loss_G_pix4 = self.criterionFeat(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
+        loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), None if not infer else [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image] ]
