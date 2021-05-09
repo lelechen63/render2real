@@ -164,7 +164,6 @@ class DisentNet(BaseModel):
                 loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_image) * self.opt.lambda_feat
                 loss_G_VGG2 = self.criterionVGG(Aid_Bexp_image, real_map_image) * self.opt.lambda_feat
             else:
-                print (Aexp_Bid_image.shape, real_map_image.shape,'!!!!!')
                 loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_map_image) * self.opt.lambda_feat
                 loss_G_VGG2 = self.criterionVGG(Aid_Bexp_image, real_image) * self.opt.lambda_feat
             

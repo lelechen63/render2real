@@ -345,17 +345,17 @@ class DisentEncoder(nn.Module):
 
     
     def forward(self, input):
-        print (input.shape, 'input')
+        # print (input.shape, 'input')
         encoded = self.CNNencoder(input)
-        print (encoded.shape, "encoded")
+        # print (encoded.shape, "encoded")
         encoded = self.resblocks(encoded)
-        print (encoded.shape, "encoded")
+        # print (encoded.shape, "encoded")
         encoded = self.avgpool(encoded).view(encoded.shape[0], -1)
-        print (encoded.shape, "encoded")
+        # print (encoded.shape, "encoded")
         identity_code = self.identity_enc(encoded)
-        print (identity_code.shape, "identity_code")
+        # print (identity_code.shape, "identity_code")
         expression_code = self.expression_enc(encoded)
-        print (expression_code.shape, "expression_code")
+        # print (expression_code.shape, "expression_code")
         return identity_code, expression_code          
                        
 
@@ -392,11 +392,11 @@ class DisentDecoder(nn.Module):
         self.code_dec = nn.Sequential(*model)
 
         ### resnet blocks
-        model = []
-        for i in range(n_blocks):
-            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+        # model = []
+        # for i in range(n_blocks):
+        #     model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
 
-        self.resblocks = nn.Sequential(*model)
+        # self.resblocks = nn.Sequential(*model)
 
         ### upsample
         model = []         
@@ -413,24 +413,24 @@ class DisentDecoder(nn.Module):
     def forward(self, exp_code, id_code):
         # print (input.shape, 'input')
         exp_fea = self.exp_dec(exp_code)
-        print (exp_fea.shape, "exp_fea")
+        # print (exp_fea.shape, "exp_fea")
 
         id_fea = self.identity_dec(id_code)
-        print (id_fea.shape, "id_fea")
+        # print (id_fea.shape, "id_fea")
 
         feature = torch.cat([exp_fea, id_fea], axis = 1)
-        print (feature.shape, "feature")
+        # print (feature.shape, "feature")
         code = self.code_dec(feature)
-        print (code.shape, "code")
+        # print (code.shape, "code")
 
         code = code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
-        print (code.shape, "code")
-        code = self.resblocks(code)
-        print (id_fea.shape, "id_fea")
+        # print (code.shape, "code")
+        # code = self.resblocks(code)
+        # print (id_fea.shape, "id_fea")
         decoded = self.decoder(code)
-        print (decoded.shape, "decoded")
+        # print (decoded.shape, "decoded")
         output = self.output_layer(decoded)
-        print (output.shape, "output")
+        # print (output.shape, "output")
         return output           
 
 
