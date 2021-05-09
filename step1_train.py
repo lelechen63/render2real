@@ -113,10 +113,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             visualizer.display_current_results(visuals, epoch, total_steps)
 
         ### save latest model
-        if total_steps % opt.save_latest_freq == save_delta:
-            print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
-            model.module.save('latest')            
-            np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
+        # if total_steps % opt.save_latest_freq == save_delta:
+        print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
+        model.module.save('latest')            
+        np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
 
         if epoch_iter >= dataset_size:
             break
