@@ -156,6 +156,7 @@ class FacescapeDirDataset(BaseDataset):
         transform = get_transform(self.opt, params)      
         B_tensor = transform(B)
 
+        viewpoint = np.asarray(viewpoint)
 
         # B_tensor =1
     
