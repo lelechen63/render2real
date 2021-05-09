@@ -147,8 +147,8 @@ class FacescapeDirDataset(BaseDataset):
                 # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
                 B = cv2.imread(B_path)[:,:,::-1]
                 break
-             except:
-                 continue
+            except:
+                continue
         B = B * mask
         B = Image.fromarray(np.uint8(B))
         params = get_params(self.opt, B.size)
