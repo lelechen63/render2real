@@ -107,14 +107,15 @@ class FacescapeDirDataset(BaseDataset):
         expresison = tmp[1]
 
         toss = random.getrandbits(1)
-        # toss 1 -> same exp, diff iden
+        # toss 0-> same iden, diff exp
         if toss == 0:
             pool = set(self.dic_list[pid].keys()) - set(expresison)
             B_exp = random.sample(pool, 1)[0]
             B_id = pid
             B_angle_pool = self.angle_list[pid +'/' + B_exp]
             print (B_angle_pool)
-        # toss 0-> same iden, diff exp
+
+        # toss 1 -> same exp, diff iden
         else:
             pool = set(self.dic_list[expresison].keys()) - set(pid)
             B_id = random.sample(pool, 1)[0]
@@ -151,7 +152,7 @@ class FacescapeDirDataset(BaseDataset):
 
         # B_tensor =1
     
-        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'map_type': toss, 'path': A_path}
+        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'path': A_path}
 
         return input_dict
 

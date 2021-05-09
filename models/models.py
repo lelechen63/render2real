@@ -13,6 +13,13 @@ def create_model(opt):
             model = Pix2PixHDFewshotModel()
         else:
             model = InferenceFewshotModel()
+    
+    elif opt.model == 'step1':
+        from .DisentNet import DisentNet
+        if opt.isTrain:
+            model = DisentNet()
+        else:
+            model = InferenceDisentNet()
     model.initialize(opt)
     if opt.verbose:
         print("model [%s] was created" % (model.name()))

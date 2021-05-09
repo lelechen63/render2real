@@ -8,7 +8,7 @@ from subprocess import call
 import fractions
 def lcm(a,b): return abs(a * b)/fractions.gcd(a,b) if a and b else 0
 
-from options.train_options import TrainOptions
+from options.step1_train_options import TrainOptions
 from data.data_loader import CreateDataLoader
 from models.models import create_model
 import util.util as util
@@ -42,10 +42,10 @@ model = create_model(opt)
 visualizer = Visualizer(opt)
 if opt.fp16:    
     from apex import amp
-    model, [optimizer_G, optimizer_D] = amp.initialize(model, [model.optimizer_G, model.optimizer_D], opt_level='O1')             
+    model, [optimizer_G] = amp.initialize(model, [model.optimizer_G], opt_level='O1')             
     model = torch.nn.DataParallel(model, device_ids=opt.gpu_ids)
 else:
-    optimizer_G, optimizer_D = model.module.optimizer_G, model.module.optimizer_D
+    optimizer_G = model.module.optimizer_G
 
 total_steps = (start_epoch-1) * dataset_size + epoch_iter
 
@@ -67,21 +67,19 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = total_steps % opt.display_freq == display_delta
 
         ############## Forward Pass ######################
-        if opt.eye_parsing:
-            losses, generated = model( renderred_image = Variable(data['renderred_image']), 
-                                        image = Variable(data['image']) , 
-                                        eye_parsing = Variable(data['eye_parsing']), 
-                                        infer=save_fake)
-        else:
-            losses, generated = model( Variable(data['renderred_image']), Variable(data['image']) , infer=save_fake)
-      
+    
+        losses, generated = model(  image = Variable(data['image']) , 
+                                    pair_image =  Variable(data['pair_image']),
+                                    pair_type = data['pair_type'],
+                                    infer=save_fake)
+
         # sum per device losses
         losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
         loss_dict = dict(zip(model.module.loss_names, losses))
 
         # calculate final loss scalar
-        loss_D = (loss_dict['D_fake'] + loss_dict['D_real']) * 0.5
-        loss_G = loss_dict['G_GAN'] + loss_dict.get('G_GAN_Feat',0) + loss_dict.get('G_VGG',0)
+        loss_pix = (loss_dict['A_pix'] + loss_dict['B_pix'] + loss_dict.get('mis_pix',0) ) 
+        loss_vgg = loss_dict['A_vgg'] + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
 
         ############### Backward Pass ####################
         # update generator weights
@@ -91,14 +89,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         else:
             loss_G.backward()          
         optimizer_G.step()
-
-        # update discriminator weights
-        optimizer_D.zero_grad()
-        if opt.fp16:                                
-            with amp.scale_loss(loss_D, optimizer_D) as scaled_loss: scaled_loss.backward()                
-        else:
-            loss_D.backward()        
-        optimizer_D.step()        
 
         ############## Display results and errors ##########
         ### print out errors
@@ -110,9 +100,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             #call(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"]) 
 
         ### display output images
+
         if save_fake:
-            visuals = OrderedDict([ ('renderred_image', util.tensor2im(data['renderred_image'][0])),
-                                    ('eye_parsing', util.tensor2im(data['eye_parsing'][0])),
+            visuals = OrderedDict([ ('image', util.tensor2im(data['image'][0])),
+                                    ('pair_image', util.tensor2im(data['pair_image'][0])),
                                    ('synthesized_image', util.tensor2im(generated.data[0])),
                                    ('real_image', util.tensor2im(data['image'][0]))]
                                 )

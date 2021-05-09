@@ -47,6 +47,40 @@ def get_num_adain_params(model):
     return num_adain_params
 
 
+        activation = nn.ReLU(True)
+        padding_type='reflect'
+
+
+def define_Dis_Enecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+             n_blocks_local=3, norm='instance', gpu_ids=[]):    
+    norm_layer = get_norm_layer(norm_type=norm)     
+    if netG == 'disent':    
+        encoder = DisentEncoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+    
+    else:
+        raise('generator not implemented!')
+    print(encoder)
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())   
+        encoder.cuda(gpu_ids[0])
+    encoder.apply(weights_init)
+    return encoder
+
+def define_Dis_Decoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+             n_blocks_local=3, norm='instance', gpu_ids=[]):    
+    norm_layer = get_norm_layer(norm_type=norm)     
+    if netG == 'disent':    
+        decoder = DisentDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+    
+    else:
+        raise('generator not implemented!')
+    print(decoder)
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())   
+        decoder.cuda(gpu_ids[0])
+    decoder.apply(weights_init)
+    return decoder
+
 
 def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
@@ -266,6 +300,134 @@ class GlobalGenerator(nn.Module):
         output = self.output_layer(decoded)
         # print (output.shape, "output")
         return output        
+
+
+class DisentEncoder(nn.Module):
+    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(DisentEncoder, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
+        ### downsample 16 times
+        for i in range(n_downsampling):
+            mult = 2**i
+            model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
+                      norm_layer(ngf * mult * 2), activation]
+        self.CNNencoder = nn.Sequential(*model)
+        model = []
+        ### resnet blocks
+        mult = 2**n_downsampling
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+
+        self.resblocks = nn.Sequential(*model)
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        model = []
+        model.append(LinearBlock(ngf * mult, ngf*ngf, norm = 'none' , activation = 'relu'))
+
+        for i in range(encoder_fc_n):
+            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*ngf, code_n, norm = 'none' , activation = 'relu'))
+        self.identity_enc = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(ngf * mult, ngf*ngf, norm = 'none' , activation = 'relu'))
+
+        for i in range(encoder_fc_n):
+            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*ngf, code_n, norm = 'none' , activation = 'relu'))
+        self.expression_enc = nn.Sequential(*model)
+
+        #################
+        # manipulate module
+        if linearity:
+            pass  
+        ##################
+
+    
+    def forward(self, input):
+        print (input.shape, 'input')
+        encoded = self.CNNencoder(input)
+        print (encoded.shape, "encoded")
+        encoded = self.resblocks(encoded)
+        print (encoded.shape, "encoded")
+        encoded = self.avgpool(encoded)
+        print (encoded.shape, "encoded")
+        identity_code = self.identity_enc(encoded)
+        print (identity_code.shape, "identity_code")
+        expression_code = self.expression_enc(decoded)
+        print (expression_code.shape, "expression_code")
+        return identity_code, expression_code          
+                       
+
+class DisentDecoder(nn.Module):
+    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(DisentDecoder, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        #################
+        # manipulate module
+        if linearity:
+            pass  
+        ##################
+
+        model = []
+        model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
+
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+        self.identity_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+        
+        self.exp_dec = nn.Sequential(*model)
+        model = []
+        model.append(LinearBlock(ngf*ngf * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
+        self.code_dec = nn.Sequential(*model)
+
+        ### upsample
+        model = []         
+        for i in range(n_downsampling):
+            mult = 2**(n_downsampling - i)
+            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult / 2)), activation]
+        self.decoder = nn.Sequential(*model)
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+            
+    def forward(self, exp_code, id_code):
+        # print (input.shape, 'input')
+        exp_fea = self.exp_dec(exp_code)
+        print (exp_fea.shape, "exp_fea")
+
+        id_fea = self.identity_dec(id_code)
+        print (id_fea.shape, "id_fea")
+
+        feature = th.cat([exp_fea, id_fea], axis = 1)
+        print (feature.shape, "feature")
+        code = self.code_dec(feature)
+        print (code.shape, "code")
+
+        code = code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure 
+        print (code.shape, "code")
+        id_fea = self.resblocks(encoded)
+        print (id_fea.shape, "id_fea")
+        decoded = self.decoder(id_fea)
+        print (decoded.shape, "decoded")
+        output = self.output_layer(decoded)
+        print (output.shape, "output")
+        return output           
+
 
 class GlobalGenerator_fewhsot(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, n_downsampling=3, n_blocks=9, norm_layer=nn.BatchNorm2d, 
