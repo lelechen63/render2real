@@ -1,6 +1,7 @@
 import torch
 
 def create_model(opt):
+    print ('+++++++', opt.model,'+++++++++')
     if opt.model == 'pix2pixHD':
         from .pix2pixHD_facescape import Pix2PixHDModel, InferenceModel
         if opt.isTrain:
