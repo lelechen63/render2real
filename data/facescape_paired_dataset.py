@@ -103,7 +103,6 @@ class FacescapeDirDataset(BaseDataset):
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
-        print (np.array(A_angle))
         viewpoint = [np.array(A_angle)]
         pid = tmp[0]
         expresison = tmp[1]
@@ -129,10 +128,8 @@ class FacescapeDirDataset(BaseDataset):
         for i in range(len(B_angle_pool)):
             tmp.append(B_angle_pool[str(i)])
         tmp = np.array(tmp)
-        print (tmp)
         diff = abs(tmp - A_angle).sum(1)
         
-        print (diff)
         for kk in range(diff.shape[0]):
             small_index = diff.argsort()[kk]
             try:
