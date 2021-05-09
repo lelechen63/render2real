@@ -130,7 +130,7 @@ class FacescapeDirDataset(BaseDataset):
             tmp.append(B_angle_pool[str(i)])
         tmp = np.array(tmp)
         print (tmp)
-        diff = (tmp - A_angle).sum(1)
+        diff = abs(tmp - A_angle).sum(1)
         
         print (diff)
         for kk in range(diff.shape[0]):
