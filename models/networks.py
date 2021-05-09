@@ -322,20 +322,19 @@ class DisentEncoder(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         model = []
-        print (ngf, mult, '++++++')
-        model.append(LinearBlock(ngf * mult, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
 
         for i in range(encoder_fc_n):
-            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
-        model.append(LinearBlock(ngf*ngf, code_n, norm = 'none' , activation = 'relu'))
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
         self.identity_enc = nn.Sequential(*model)
 
         model = []
-        model.append(LinearBlock(ngf * mult, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
 
         for i in range(encoder_fc_n):
-            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
-        model.append(LinearBlock(ngf*ngf, code_n, norm = 'none' , activation = 'relu'))
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
         self.expression_enc = nn.Sequential(*model)
 
         #################
@@ -351,7 +350,7 @@ class DisentEncoder(nn.Module):
         print (encoded.shape, "encoded")
         encoded = self.resblocks(encoded)
         print (encoded.shape, "encoded")
-        encoded = self.avgpool(encoded)
+        encoded = self.avgpool(encoded).view(encoded.shape[0], -1)
         print (encoded.shape, "encoded")
         identity_code = self.identity_enc(encoded)
         print (identity_code.shape, "identity_code")
@@ -382,13 +381,13 @@ class DisentDecoder(nn.Module):
         self.identity_dec = nn.Sequential(*model)
 
         model = []
-        model.append(LinearBlock(code_n, ngf*ngf, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
         for i in range(int(encoder_fc_n/2)):
-            model.append(LinearBlock(ngf*ngf, ngf*ngf, norm = 'none' , activation = 'relu'))
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
         
         self.exp_dec = nn.Sequential(*model)
         model = []
-        model.append(LinearBlock(ngf*ngf * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*4 * 2 , ngf * mult , norm = 'none' , activation = 'relu'))
         self.code_dec = nn.Sequential(*model)
 
         ### upsample
