@@ -159,7 +159,7 @@ class FacescapeDirDataset(BaseDataset):
 
         # B_tensor =1
     
-        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint 'path': A_path}
+        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'path': A_path}
 
         return input_dict
 
