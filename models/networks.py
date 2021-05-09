@@ -410,7 +410,7 @@ class DisentDecoder(nn.Module):
         id_fea = self.identity_dec(id_code)
         print (id_fea.shape, "id_fea")
 
-        feature = th.cat([exp_fea, id_fea], axis = 1)
+        feature = torch.cat([exp_fea, id_fea], axis = 1)
         print (feature.shape, "feature")
         code = self.code_dec(feature)
         print (code.shape, "code")
