@@ -103,8 +103,8 @@ class FacescapeDirDataset(BaseDataset):
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
-        print (A_angle)
-        viewpoint = [A_angle]
+        print (np.array(A_angle))
+        viewpoint = [np.array(A_angle)]
         pid = tmp[0]
         expresison = tmp[1]
 
