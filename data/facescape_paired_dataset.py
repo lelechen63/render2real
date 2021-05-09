@@ -131,10 +131,10 @@ class FacescapeDirDataset(BaseDataset):
         tmp = np.array(tmp)
         print (tmp)
         diff = (tmp - A_angle).sum(1)
-        diff = diff.argsort()
+        
         print (diff)
         for kk in range(diff.shape[0]):
-            small_index = diff[kk]
+            small_index = diff.argsort()[kk]
             try:
                 # print (small_index)
                 B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
