@@ -132,6 +132,7 @@ class FacescapeDirDataset(BaseDataset):
 
         diff = (tmp - A_angle).sum(1)
         diff = diff.argsort()
+        print (diff)
         for kk in range(diff.shape[0]):
             small_index = diff[kk]
             try:
