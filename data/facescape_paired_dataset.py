@@ -151,7 +151,7 @@ class FacescapeDirDataset(BaseDataset):
                 break
             except:
                 continue
-        viewpoint.append(tmp[str(small_index)])
+        viewpoint.append(tmp[small_index])
         B = B * mask
         B = Image.fromarray(np.uint8(B))
         params = get_params(self.opt, B.size)
