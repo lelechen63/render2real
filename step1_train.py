@@ -69,8 +69,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ############## Forward Pass ######################
     
         losses, generated = model(  image = Variable(data['image']) , 
-                                    pair_image =  Variable(data['pair_image']),
-                                    pair_type = data['pair_type'],
+                                    map_image =  Variable(data['pair_image']),
+                                    map_type = data['pair_type'],
                                     infer=save_fake)
 
         # sum per device losses
