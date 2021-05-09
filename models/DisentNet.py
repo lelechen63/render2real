@@ -170,7 +170,7 @@ class DisentNet(BaseModel):
             
             # reconstruction loss
             loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, real_image) * self.opt.lambda_feat
-            loss_G_VGG4 = self.criterionVGG(Bid_Bexp_image, real_map_image) * self.opt.lambda_feat
+            loss_G_VGG4 = self.criterionVGG(Bexp_Bid_image, real_map_image) * self.opt.lambda_feat
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
         loss_G_pix = 0
@@ -185,7 +185,7 @@ class DisentNet(BaseModel):
             
             # reconstruction loss
             loss_G_pix3 = self.criterionFeat(Aexp_Aid_image, real_image) * self.opt.lambda_pix
-            loss_G_pix4 = self.criterionFeat(Bid_Bexp_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix4 = self.criterionFeat(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
             loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
         # Only return the fake_B image if necessary to save BW
