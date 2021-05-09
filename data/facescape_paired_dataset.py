@@ -46,7 +46,7 @@ def get_anlge_list():
 
             total_list[tmp[0] +'/' + tmp[1] ]  = {}
         total_list[tmp[0] +'/' + tmp[1] ][tmp[2]] = [float(tmp[3]),float(tmp[4]), float(tmp[5])]
-    print (len(total_list))
+    # print (len(total_list))
 
     return total_list
 class FacescapeDirDataset(BaseDataset):
@@ -100,9 +100,9 @@ class FacescapeDirDataset(BaseDataset):
         # randomly get paired image (same identity or same expression)
         
         tmp = self.data_list[index].split('/')
-        print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
+        # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
-        print (A_angle)
+        # print (A_angle)
         pid = tmp[0]
         expresison = tmp[1]
 
@@ -113,7 +113,7 @@ class FacescapeDirDataset(BaseDataset):
             B_exp = random.sample(pool, 1)[0]
             B_id = pid
             B_angle_pool = self.angle_list[pid +'/' + B_exp]
-            print (B_angle_pool)
+            # print (B_angle_pool)
 
         # toss 1 -> same exp, diff iden
         else:
@@ -121,7 +121,7 @@ class FacescapeDirDataset(BaseDataset):
             B_id = random.sample(pool, 1)[0]
             B_exp = expresison
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
-            print (B_angle_pool)
+            # print (B_angle_pool)
         
         # b = np.array(b)
         tmp = []
@@ -131,9 +131,9 @@ class FacescapeDirDataset(BaseDataset):
 
         diff = (tmp - A_angle).sum(1)
         small_index = diff.argsort()[0]
-        print (small_index)
+        # print (small_index)
         B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
-        print (B_path)
+        # print (B_path)
 
         ### input mask (binary mask to segment person out)
         mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
