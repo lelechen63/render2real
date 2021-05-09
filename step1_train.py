@@ -105,8 +105,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         if save_fake:
             visuals = OrderedDict([ ('image', util.tensor2im(data['image'][0])),
                                     ('pair_image', util.tensor2im(data['pair_image'][0])),
-                                   ('synthesized_image', util.tensor2im(generated.data[0])),
-                                   ('real_image', util.tensor2im(data['image'][0]))]
+                                   ('Aexp_Aid_image', util.tensor2im(generated[0].data[0])),
+                                   ('Bexp_Bid_image', util.tensor2im(generated[1].data[0])),
+                                   ('Aexp_Bid_image', util.tensor2im(generated[2].data[0])),
+                                   ('Aid_Bexp_image', util.tensor2im(generated[3].data[0]))]
                                 )
             visualizer.display_current_results(visuals, epoch, total_steps)
 
