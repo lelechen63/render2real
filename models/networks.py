@@ -424,9 +424,9 @@ class DisentDecoder(nn.Module):
 
         code = code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure 
         print (code.shape, "code")
-        id_fea = self.resblocks(encoded)
+        code = self.resblocks(code)
         print (id_fea.shape, "id_fea")
-        decoded = self.decoder(id_fea)
+        decoded = self.decoder(code)
         print (decoded.shape, "decoded")
         output = self.output_layer(decoded)
         print (output.shape, "output")
