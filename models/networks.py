@@ -423,7 +423,7 @@ class DisentDecoder(nn.Module):
         code = self.code_dec(feature)
         print (code.shape, "code")
 
-        code = code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure 
+        code = code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
         print (code.shape, "code")
         code = self.resblocks(code)
         print (id_fea.shape, "id_fea")
