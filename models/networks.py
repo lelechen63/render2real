@@ -354,7 +354,7 @@ class DisentEncoder(nn.Module):
         print (encoded.shape, "encoded")
         identity_code = self.identity_enc(encoded)
         print (identity_code.shape, "identity_code")
-        expression_code = self.expression_enc(decoded)
+        expression_code = self.expression_enc(encoded)
         print (expression_code.shape, "expression_code")
         return identity_code, expression_code          
                        
