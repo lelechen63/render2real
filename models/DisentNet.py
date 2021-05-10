@@ -165,6 +165,8 @@ class DisentNet(BaseModel):
                    
         # VGG feature matching loss
         loss_G_VGG = 0
+        loss_G_VGG3 = 0
+        loss_G_VGG4 = 0
         if not self.opt.no_vgg_loss:
             # mismatch loss
             if map_type == 0:
