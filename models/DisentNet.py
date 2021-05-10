@@ -63,20 +63,21 @@ class DisentNet(BaseModel):
 
             # initialize optimizers
             # optimizer G
-           
-            params = list(self.netEncoderDecoder.parameters())  
-                
+            params = list(self.netEncoderDecoder.parameters())
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
 
     def forward(self, image, map_image, map_type, viewpoint, infer=False):
         A_viewpoint = viewpoint[:,0]
         B_viewpoint = viewpoint[:,1]
+
+        image = Variable(image.cuda())
+        map_image = Variable(map_image.cuda())
+        viewpoint = Variable(viewpoint.cuda())
+
         # Fake Generation
         A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, A_viewpoint, map_image, B_viewpoint, map_type)
 
-
-        print (image.max(), image.min(), Aexp_Aid_image.max(), Aexp_Aid_image.min())
         # mismatch reconstruction
         # Aexp_Bid_image
         # if map_type == 0: toss 0-> same iden, diff exp
@@ -96,9 +97,6 @@ class DisentNet(BaseModel):
         # replace A's exp_code with B's exp_code, feed(A's id_code, B's exp_code) to decoder, it will output A''s image.
         # same exp as A/B, same id as A, compute loss with A'
 
-        # real images for training
-        real_image = Variable(image.data.cuda())
-        real_map_image = Variable(map_image.data.cuda())
         ############################################################################
 
         # VGG feature matching loss
@@ -108,32 +106,32 @@ class DisentNet(BaseModel):
         if not self.opt.no_vgg_loss:
             # mismatch loss
             if map_type == 0:
-                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, real_map_image) * self.opt.lambda_feat
+                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, image) * self.opt.lambda_feat
+                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, map_image) * self.opt.lambda_feat
             else:
-                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_map_image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, real_image) * self.opt.lambda_feat
+                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, map_image) * self.opt.lambda_feat
+                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, image) * self.opt.lambda_feat
             
             # reconstruction loss
-            loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, real_image) * self.opt.lambda_feat
-            loss_G_VGG4 = self.criterionVGG(Bexp_Bid_image, real_map_image) * self.opt.lambda_feat
+            loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, image) * self.opt.lambda_feat
+            loss_G_VGG4 = self.criterionVGG(Bexp_Bid_image, map_image) * self.opt.lambda_feat
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
         loss_G_pix = 0
         # mismatch loss
         if map_type == 0:
-            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, real_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, map_image) * self.opt.lambda_pix
         else:
-            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, real_image) * self.opt.lambda_pix
+            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, map_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, image) * self.opt.lambda_pix
         
         # reconstruction loss
-        loss_G_pix3 = self.criterionPix(Aexp_Aid_image, real_image) * self.opt.lambda_pix
-        loss_G_pix4 = self.criterionPix(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
+        loss_G_pix3 = self.criterionPix(Aexp_Aid_image, image) * self.opt.lambda_pix
+        loss_G_pix4 = self.criterionPix(Bexp_Bid_image, map_image) * self.opt.lambda_pix
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
-        A_err_map = (Aexp_Aid_image - real_image)
+        A_err_map = (Aexp_Aid_image - image)
         print (A_err_map.shape)
 
         # Only return the fake_B image if necessary to save BW
