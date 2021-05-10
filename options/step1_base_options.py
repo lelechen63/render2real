@@ -23,8 +23,8 @@ class BaseOptions():
 
         # input/output sizes       
         self.parser.add_argument('--batchSize', type=int, default=8, help='input batch size')
-        self.parser.add_argument('--loadSize', type=int, default=1024, help='scale images to this size')
-        self.parser.add_argument('--fineSize', type=int, default=512, help='then crop to this size')
+        self.parser.add_argument('--loadSize', type=int, default=256, help='scale images to this size')
+        self.parser.add_argument('--fineSize', type=int, default=256, help='then crop to this size')
         self.parser.add_argument('--code_n', type=int, default=52, help='# of identity/expression code length')
         self.parser.add_argument('--encoder_fc_n', type=int, default=2, help='# of identity/expression code length')
 
