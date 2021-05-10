@@ -128,6 +128,7 @@ class FacescapeDirDataset(BaseDataset):
             tmp.append(B_angle_pool[str(i)])
         tmp = np.array(tmp)
         diff = abs(tmp - A_angle).sum(1)
+        #for debug
         
         for kk in range(diff.shape[0]):
             small_index = diff.argsort()[kk]
