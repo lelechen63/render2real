@@ -298,7 +298,7 @@ class GlobalGenerator(nn.Module):
    
 
 class DisentEncoder(nn.Module):
-    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
+    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
                  padding_type='reflect'):
         assert(n_blocks >= 0)
         super(DisentEncoder, self).__init__()        
