@@ -71,7 +71,7 @@ class DisentNet(BaseModel):
         A_viewpoint = viewpoint[:,0]
         B_viewpoint = viewpoint[:,1]
         # Fake Generation
-        A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, map_image, A_viewpoint, B_viewpoint, map_type)
+        A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, A_viewpoint, map_image, B_viewpoint, map_type)
 
 
         print (image.max(), image.min(), Aexp_Aid_image.max(), Aexp_Aid_image.min())
