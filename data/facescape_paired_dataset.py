@@ -111,7 +111,7 @@ class FacescapeDirDataset(BaseDataset):
             B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
             B = cv2.imread(B_path)[:,:,::-1]
             viewpoint.append(np.array(A_angle))
-
+            toss = 0
         else:
 
             toss = random.getrandbits(1)
