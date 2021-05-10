@@ -489,7 +489,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         identity_enc = nn.Sequential(
-                                    nn.Linear( gf * mult, ngf*4),
+                                    nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -500,7 +500,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     )
 
         expression_enc = nn.Sequential(
-                                    nn.Linear( gf * mult, ngf*4),
+                                    nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
