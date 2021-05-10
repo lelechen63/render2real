@@ -178,8 +178,7 @@ class DisentNet(BaseModel):
 
 
     def save(self, which_epoch):
-        self.save_network(self.netDecoder, 'DisE', which_epoch, self.gpu_ids)
-        self.save_network(self.netEncoder, 'DisD', which_epoch, self.gpu_ids)
+        self.save_network(self.netEncoderDecoder, 'DisED', which_epoch, self.gpu_ids)
         
 
     def update_learning_rate(self):
