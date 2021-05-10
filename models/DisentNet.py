@@ -12,7 +12,7 @@ class DisentNet(BaseModel):
         return 'DisentNet'
 
     def init_loss_filter(self, use_feat_loss, use_mismatch_loss):
-        flags = (use_mismatch_loss, use_mismatch_loss, True,use_feat_loss, use_feat_loss, use_mismatch_loss and use_feat_loss)
+        flags = (True, True, use_mismatch_loss,use_feat_loss, use_feat_loss, use_mismatch_loss and use_feat_loss)
         def loss_filter(A_pix_loss, B_pix_loss, pix_loss, A_feat_loss, B_feat_loss, mismatch_loss):
             return [l for (l,f) in zip((A_pix_loss,B_pix_loss, pix_loss, A_feat_loss,B_feat_loss,mismatch_loss),flags) if f]
         return loss_filter
