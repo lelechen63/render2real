@@ -19,7 +19,7 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--niter', type=int, default=100, help='# of iter at starting learning rate')
         self.parser.add_argument('--niter_decay', type=int, default=100, help='# of iter to linearly decay learning rate to zero')
         self.parser.add_argument('--beta1', type=float, default=0.5, help='momentum term of adam')
-        self.parser.add_argument('--lr', type=float, default=0.001, help='initial learning rate for adam')
+        self.parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
         self.parser.add_argument('--no_linearity', action='store_true', help='do *not* use least square GAN, if false, use vanilla GAN')
 
         # for discriminators        
