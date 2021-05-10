@@ -487,7 +487,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         self.resblocks = nn.Sequential(*model)
 
-        self.pool =  nn.MaxPool2d(3, stride=(2,2))
+        self.pool =  nn.MaxPool2d(4, stride=(2,2))
         self.identity_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
@@ -544,6 +544,9 @@ class DisentEncoderDecoder2(nn.Module):
 
         ### upsample
         model = []         
+        model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult ), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult )), activation]
+
         for i in range(n_downsampling):
             mult = 2**(n_downsampling - i)
             model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
@@ -561,7 +564,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         A_encoded = self.CNNencoder(A_img)
 
-        # A_encoded = self.pool(A_encoded)
+        A_encoded = self.pool(A_encoded)
 
         A_encoded = self.resblocks(A_encoded)
         print(A_encoded.shape)
