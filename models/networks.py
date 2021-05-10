@@ -487,6 +487,50 @@ class DisentEncoderDecoder2(nn.Module):
 
         self.resblocks = nn.Sequential(*model)
 
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        model = []
+        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
+
+        for i in range(encoder_fc_n):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
+        self.identity_enc = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
+
+        for i in range(encoder_fc_n):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
+        self.expression_enc = nn.Sequential(*model)
+        
+        model = []
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
+
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        self.identity_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        
+        self.exp_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(ngf*4 * 3 , ngf * mult , norm = 'none' , activation = 'relu'))
+        self.code_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(3, ngf*2, norm = 'none' , activation = 'relu'))
+        for i in range(2):
+            model.append(LinearBlock(ngf*2, ngf*2, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*2, ngf  * 4, norm = 'none' , activation = 'relu'))
+        self.viewencoder = nn.Sequential(*model)
+
+
+
         ### upsample
         model = []         
         for i in range(n_downsampling):
@@ -504,16 +548,23 @@ class DisentEncoderDecoder2(nn.Module):
     def forward(self, A_img, A_view, B_img , B_view, map_type ):
         return_list = []
 
-        # print (input.shape, 'input')
         A_encoded = self.CNNencoder(A_img)
-        # print (encoded.shape, "encoded")
         A_encoded = self.resblocks(A_encoded)
-        # print (encoded.shape, "encoded")
-       
-        A_decoded = self.decoder(A_encoded)
-        # print (decoded.shape, "decoded")
+        A_encoded = self.avgpool(A_encoded).view(A_encoded.shape[0], -1)
+
+        A_identity_code = self.identity_enc(A_encoded)
+        A_expression_code = self.expression_enc(A_encoded)
+
+        A_view_fea = self.viewencoder(A_view)
+        A_exp_fea = self.exp_dec(A_expression_code)
+        A_id_fea = self.identity_dec(A_identity_code)
+        A_feature = torch.cat([A_exp_fea, A_id_fea, A_view_fea], axis = 1)
+        A_code = self.code_dec(A_feature)
+        A_code = A_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+
+        A_decoded = self.decoder(A_code)
         recons_A = self.output_layer(A_decoded)
-        # print (output.shape, "output")
+
         return_list.append( recons_A)
         return_list.append( recons_A)
         return_list.append( recons_A)
