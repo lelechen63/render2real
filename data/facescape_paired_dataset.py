@@ -156,11 +156,11 @@ class FacescapeDirDataset(BaseDataset):
                 except:
                     continue
             viewpoint.append(tmp[small_index])
-            B = B * mask
-            B = Image.fromarray(np.uint8(B))
-            B_tensor = transform(B)
-            viewpoint = np.asarray(viewpoint)
-            viewpoint = torch.FloatTensor(viewpoint)
+        B = B * mask
+        B = Image.fromarray(np.uint8(B))
+        B_tensor = transform(B)
+        viewpoint = np.asarray(viewpoint)
+        viewpoint = torch.FloatTensor(viewpoint)
 
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'path': A_path}
 
