@@ -158,7 +158,7 @@ class DisentNet(BaseModel):
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
         # Only return the fake_B image if necessary to save BW
-        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Aid_Bexp_image] ]
+        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image] ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 
     def inference(self, image, viewpoint):
