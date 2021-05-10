@@ -73,7 +73,8 @@ class DisentNet(BaseModel):
 
         image = Variable(image.cuda())
         map_image = Variable(map_image.cuda())
-        viewpoint = Variable(viewpoint.cuda())
+        A_viewpoint = Variable(A_viewpoint.cuda())
+        B_viewpoint = Variable(B_viewpoint.cuda())
 
         # Fake Generation
         A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, A_viewpoint, map_image, B_viewpoint, map_type)
