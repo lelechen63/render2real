@@ -46,36 +46,20 @@ def get_num_adain_params(model):
             num_adain_params += 2*m.num_features
     return num_adain_params
 
-def define_Dis_Enecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+def define_Dis_EncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
     if netG == 'disent':    
-        encoder = DisentEncoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+        encoderdecoder = DisentEncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
     
     else:
         raise('generator not implemented!')
-    print(encoder)
+    print(encoderdecoder)
     if len(gpu_ids) > 0:
         assert(torch.cuda.is_available())   
-        encoder.cuda(gpu_ids[0])
-    encoder.apply(weights_init)
-    return encoder
-
-def define_Dis_Decoder(linearity, output_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
-             n_blocks_local=3, norm='instance', gpu_ids=[]):    
-    norm_layer = get_norm_layer(norm_type=norm)     
-    if netG == 'disent':    
-        decoder = DisentDecoder(linearity, output_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
-    
-    else:
-        raise('generator not implemented!')
-    print(decoder)
-    if len(gpu_ids) > 0:
-        assert(torch.cuda.is_available())   
-        decoder.cuda(gpu_ids[0])
-    decoder.apply(weights_init)
-    return decoder
-
+        encoderdecoder.cuda(gpu_ids[0])
+    encoderdecoder.apply(weights_init)
+    return encoderdecoder
 
 def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
@@ -297,11 +281,11 @@ class GlobalGenerator(nn.Module):
         return output        
    
 
-class DisentEncoder(nn.Module):
+class DisentEncoderDecoder(nn.Module):
     def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
                  padding_type='reflect'):
         assert(n_blocks >= 0)
-        super(DisentEncoder, self).__init__()        
+        super(DisentEncoderDecoder, self).__init__()        
         activation = nn.ReLU(True)        
 
         model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
@@ -342,20 +326,143 @@ class DisentEncoder(nn.Module):
             pass  
         ##################
 
+        model = []
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
+
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        self.identity_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
+        for i in range(int(encoder_fc_n/2)):
+            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
+        
+        self.exp_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(ngf*4 * 3 , ngf * mult , norm = 'none' , activation = 'relu'))
+        self.code_dec = nn.Sequential(*model)
+
+        model = []
+        model.append(LinearBlock(3, ngf*2, norm = 'none' , activation = 'relu'))
+        for i in range(2):
+            model.append(LinearBlock(ngf*2, ngf*2, norm = 'none' , activation = 'relu'))
+        model.append(LinearBlock(ngf*2, ngf  * 4, norm = 'none' , activation = 'relu'))
+        self.viewencoder = nn.Sequential(*model)
+
+        ### resnet blocks
+        # model = []
+        # for i in range(n_blocks):
+        #     model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+        # self.resblocks = nn.Sequential(*model)
+
+        ### upsample
+        model = []         
+        for i in range(n_downsampling):
+            mult = 2**(n_downsampling - i)
+            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult / 2)), activation]
+        self.decoder = nn.Sequential(*model)
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+
+
     
-    def forward(self, input):
+    def forward(self, A_img, A_view, B_img , B_view, map_type ):
+        return_list = []
+
         # print (input.shape, 'input')
-        encoded = self.CNNencoder(input)
+        A_encoded = self.CNNencoder(A_img)
         # print (encoded.shape, "encoded")
-        encoded = self.resblocks(encoded)
+        A_encoded = self.resblocks(A_encoded)
         # print (encoded.shape, "encoded")
-        encoded = self.avgpool(encoded).view(encoded.shape[0], -1)
+        A_encoded = self.avgpool(A_encoded).view(A_encoded.shape[0], -1)
         # print (encoded.shape, "encoded")
-        identity_code = self.identity_enc(encoded)
+        A_identity_code = self.identity_enc(A_encoded)
         # print (identity_code.shape, "identity_code")
-        expression_code = self.expression_enc(encoded)
+        A_expression_code = self.expression_enc(A_encoded)
         # print (expression_code.shape, "expression_code")
-        return identity_code, expression_code          
+        return_list.append(A_expression_code)
+        return_list.append( A_identity_code)
+
+        A_view_fea = self.viewencoder(A_view)
+        A_exp_fea = self.exp_dec(A_expression_code)
+        # print (exp_fea.shape, "exp_fea")
+        A_id_fea = self.identity_dec(A_identity_code)
+        # print (id_fea.shape, "id_fea")
+        A_feature = torch.cat([A_exp_fea, A_id_fea, A_view_fea], axis = 1)
+        # print (feature.shape, "feature")
+        A_code = self.code_dec(A_feature)
+        # print (code.shape, "code")
+        A_code = A_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+        # print (code.shape, "code")
+        # code = self.resblocks(code)
+        # print (id_fea.shape, "id_fea")
+        A_decoded = self.decoder(A_code)
+        # print (decoded.shape, "decoded")
+        recons_A = self.output_layer(A_decoded)
+        # print (output.shape, "output")
+        return_list.append( recons_A)
+
+        # print (input.shape, 'input')
+        B_encoded = self.CNNencoder(B_img)
+        # print (encoded.shape, "encoded")
+        B_encoded = self.resblocks(B_encoded)
+        # print (encoded.shape, "encoded")
+        B_encoded = self.avgpool(B_encoded).view(B_encoded.shape[0], -1)
+        # print (encoded.shape, "encoded")
+        B_identity_code = self.identity_enc(B_encoded)
+        # print (identity_code.shape, "identity_code")
+        B_expression_code = self.expression_enc(B_encoded)
+        # print (expression_code.shape, "expression_code")
+
+        return_list.append( B_expression_code)
+        return_list.append( B_identity_code)
+
+        B_view_fea = self.viewencoder(B_view)
+        B_exp_fea = self.exp_dec(B_expression_code)
+        B_id_fea = self.identity_dec(B_identity_code)
+
+        B_feature = torch.cat([B_exp_fea, B_id_fea, A_view_fea], axis = 1)
+        # print (feature.shape, "feature")
+        B_code = self.code_dec(B_feature)
+        # print (code.shape, "code")
+        B_code = B_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+        # print (code.shape, "code")
+        # code = self.resblocks(code)
+        # print (id_fea.shape, "id_fea")
+        B_decoded = self.decoder(B_code)
+        # print (decoded.shape, "decoded")
+        recons_B = self.output_layer(B_decoded)
+
+        return_list.append( recons_B)
+        if map_type == 0:
+            Aexp_Bid_fea = torch.cat([A_exp_fea, B_id_fea, A_view_fea], axis = 1)
+        else:
+            Aexp_Bid_fea = torch.cat([A_exp_fea, B_id_fea, B_view_fea], axis = 1)
+
+        Aexp_Bid_code = self.code_dec(Aexp_Bid_fea)
+        Aexp_Bid_code = Aexp_Bid_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+        Aexp_Bid_decoded = self.decoder(Aexp_Bid_code)
+        recons_Aexp_Bid = self.output_layer(Aexp_Bid_decoded)
+
+        return_list.append( recons_Aexp_Bid)
+        if map_type == 0:
+            Bexp_Aid_fea = torch.cat([B_exp_fea, A_id_fea, B_view_fea], axis = 1)
+        else:
+            Bexp_Aid_fea = torch.cat([B_exp_fea, A_id_fea, A_view_fea], axis = 1)
+
+        Bexp_Aid_code = self.code_dec(Bexp_Aid_fea)
+        Bexp_Aid_code = Bexp_Aid_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+        Bexp_Aid_decoded = self.decoder(Bexp_Aid_code)
+        recons_Bexp_Aid = self.output_layer(Bexp_Aid_decoded)
+    
+        return_list.append( recons_Bexp_Aid)
+
+        return return_list
                        
 
 class DisentDecoder(nn.Module):

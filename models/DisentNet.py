@@ -25,29 +25,18 @@ class DisentNet(BaseModel):
         input_nc = 3
         output_nc =3
         linearity = not opt.no_linearity
-        self.netEncoder = networks.define_Dis_Enecoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
+        self.netEncoderDecoder = networks.define_Dis_EnecoderDecoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
 
-        self.netDecoder = networks.define_Dis_Decoder(linearity, output_nc, opt.code_n,opt.encoder_fc_n, 
-                                                opt.ngf, opt.netG, opt.n_downsample_global, 
-                                                opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids) 
-        
-
-        # # Discriminator network
-        # if self.isTrain:
-        #     use_sigmoid = opt.no_lsgan
-        #     self.netD = networks.define_D(netD_input_nc, opt.ndf, opt.n_layers_D, opt.norm, use_sigmoid, 
-        #                                   opt.num_D, not opt.no_ganFeat_loss, gpu_ids=self.gpu_ids)
-            
+     
         if self.opt.verbose:
                 print('---------- Networks initialized -------------')
 
         # load networks
         if not self.isTrain or opt.continue_train or opt.load_pretrain:
             pretrained_path = '' if not self.isTrain else opt.load_pretrain
-            self.load_network(self.netEencoder, 'DisE', opt.which_epoch, pretrained_path)    
-            self.load_network(self.netDecoder, 'DisD', opt.which_epoch, pretrained_path)            
+            self.load_network(self.netEncoderDecoder, 'DisED', opt.which_epoch, pretrained_path)    
         
             # if self.isTrain:
             #     self.load_network(self.netD, 'D', opt.which_epoch, pretrained_path)  
@@ -73,7 +62,7 @@ class DisentNet(BaseModel):
             # initialize optimizers
             # optimizer G
            
-            params = list(self.netEncoder.parameters()) + list(self.netDecoder.parameters())    
+            params = list(self.netEncoderDecoder.parameters())  
                 
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
@@ -82,21 +71,12 @@ class DisentNet(BaseModel):
         A_viewpoint = viewpoint[:,0]
         B_viewpoint = viewpoint[:,1]
         # Fake Generation
-        A_id_code, A_exp_code = self.netEncoder(image)
+        A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, map_image, A_viewpoint, B_viewpoint, map_type)
 
-        B_id_code, B_exp_code = self.netEncoder(map_image)
-
-        # reconstruction
-        Aexp_Aid_image = self.netDecoder(A_exp_code, A_id_code, A_viewpoint)
-        Bexp_Bid_image = self.netDecoder(B_exp_code, B_id_code, B_viewpoint)
 
         print (image.max(), image.min(), Aexp_Aid_image.max(), Aexp_Aid_image.min())
         # mismatch reconstruction
-        if map_type == 0:
-            Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code, A_viewpoint)
-        else:
-            Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code, B_viewpoint)
-
+        # Aexp_Bid_image
         # if map_type == 0: toss 0-> same iden, diff exp
         # replace B's exp_code with A's exp_code, feed(B's id_code, A's exp_code) to decoder, it will output A''s image.
         # same exp as A, same id as A/B, compute loss with A'
@@ -105,10 +85,7 @@ class DisentNet(BaseModel):
         # replace B's exp_code with A's exp_code, feed(B's id_code, A's exp_code) to decoder, it will output B''s image.
         # same exp as A/B, same id as B, compute loss with B'
 
-        if map_type == 0:
-            Aid_Bexp_image = self.netDecoder(B_exp_code, A_id_code, B_viewpoint)
-        else:
-            Aid_Bexp_image = self.netDecoder(B_exp_code, A_id_code, A_viewpoint)
+        # Bexp_Aid_image
         # if map_type == 0: toss 0-> same iden, diff exp
         # replace A's exp_code with B's exp_code, feed(A's id_code, B's exp_code) to decoder, it will output B''s image.
         # same exp as B, same id as A/B, compute loss with B'
@@ -156,10 +133,10 @@ class DisentNet(BaseModel):
             # mismatch loss
             if map_type == 0:
                 loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Aid_Bexp_image, real_map_image) * self.opt.lambda_feat
+                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, real_map_image) * self.opt.lambda_feat
             else:
                 loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, real_map_image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Aid_Bexp_image, real_image) * self.opt.lambda_feat
+                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, real_image) * self.opt.lambda_feat
             
             # reconstruction loss
             loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, real_image) * self.opt.lambda_feat
@@ -170,10 +147,10 @@ class DisentNet(BaseModel):
         # mismatch loss
         if map_type == 0:
             loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionFeat(Bexp_Aid_image, real_map_image) * self.opt.lambda_pix
         else:
             loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionFeat(Aid_Bexp_image, real_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionFeat(Bexp_Aid_image, real_image) * self.opt.lambda_pix
         
         # reconstruction loss
         loss_G_pix3 = self.criterionFeat(Aexp_Aid_image, real_image) * self.opt.lambda_pix
@@ -191,7 +168,7 @@ class DisentNet(BaseModel):
         # Fake Generation
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
-                id_code, exp_code = self.netEncoder(image)
+                id_code, exp_code = self.netEncoderDecoder(image)
                 fake_image = self.netDecoder(exp_code, id_code, viewpoint[:,0])
         else:
 
