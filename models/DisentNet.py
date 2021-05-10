@@ -133,7 +133,7 @@ class DisentNet(BaseModel):
         loss_G_pix4 = self.criterionPix(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
-        A_err_map = (Aexp_Aid_image - real_image).sum(1).unsqueeze(1)
+        A_err_map = (Aexp_Aid_image - real_image)
         print (A_err_map.shape)
 
         # Only return the fake_B image if necessary to save BW
