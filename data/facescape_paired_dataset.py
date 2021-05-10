@@ -82,8 +82,8 @@ class FacescapeDirDataset(BaseDataset):
                 
         #for debug
         if opt.debug:
-            A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'   
-            mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png' )   
+            A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg' 
+            mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'  
         else:
             A_path = os.path.join( self.dir_A , self.data_list[index] ) 
             mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
