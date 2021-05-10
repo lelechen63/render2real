@@ -151,7 +151,7 @@ class FacescapeDirDataset(BaseDataset):
         viewpoint.append(tmp[small_index])
         B = B * mask
         B = Image.fromarray(np.uint8(B))
-        params = get_params(self.opt, B.size)
+        # params = get_params(self.opt, B.size)
         transform = get_transform(self.opt, params)      
         B_tensor = transform(B)
         viewpoint = np.asarray(viewpoint)
