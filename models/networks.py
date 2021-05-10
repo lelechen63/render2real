@@ -561,7 +561,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         A_encoded = self.CNNencoder(A_img)
 
-        A_encoded = self.pool(A_encoded)
+        # A_encoded = self.pool(A_encoded)
 
         A_encoded = self.resblocks(A_encoded)
         print(A_encoded.shape)
