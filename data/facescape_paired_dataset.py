@@ -70,7 +70,7 @@ class FacescapeDirDataset(BaseDataset):
         else:
             _file = open(os.path.join(opt.dataroot, "lists/img_alone_test.pkl"), "rb")
        
-        self.data_list = pickle.load(_file)[:1]
+        self.data_list = pickle.load(_file)#[:1]
         _file.close()
         
         dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
@@ -79,16 +79,17 @@ class FacescapeDirDataset(BaseDataset):
         self.angle_list = get_anlge_list()
         
     def __getitem__(self, index):
-
+                
+        #for debug
+        if opt.debug:
+            A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'   
+            mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png' )   
+        else:
+            A_path = os.path.join( self.dir_A , self.data_list[index] ) 
+            mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
         ### input mask (binary mask to segment person out)
-        mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
-        # mask = Image.open(mask_path).convert('RGB')
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
-        A_path = os.path.join( self.dir_A , self.data_list[index] )   
-        
-        #for debug
-        # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
         A = cv2.imread(A_path)[:,:,::-1]
         A = A * mask
         A = Image.fromarray(np.uint8(A))
@@ -96,8 +97,7 @@ class FacescapeDirDataset(BaseDataset):
         transform = get_transform(self.opt, params)      
         A_tensor = transform(A)
 
-        # randomly get paired image (same identity or same expression)
-        
+        small_index = 0
         tmp = self.data_list[index].split('/')
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
@@ -106,55 +106,61 @@ class FacescapeDirDataset(BaseDataset):
         pid = tmp[0]
         expresison = tmp[1]
 
-        toss = random.getrandbits(1)
-        # toss 0-> same iden, diff exp
-        if toss == 0:
-            pool = set(self.dic_list[pid].keys()) - set(expresison)
-            B_exp = random.sample(pool, 1)[0]
-            B_id = pid
-            B_angle_pool = self.angle_list[pid +'/' + B_exp]
-            # print (B_angle_pool)
+        # randomly get paired image (same identity or same expression)
+        if opt.debug:
+            B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+            B = cv2.imread(B_path)[:,:,::-1]
+            viewpoint.append(np.array(A_angle))
 
-        # toss 1 -> same exp, diff iden
         else:
-            pool = set(self.dic_list[expresison].keys()) - set(pid)
-            B_id = random.sample(pool, 1)[0]
-            B_exp = expresison
-            B_angle_pool = self.angle_list[B_id +'/' + expresison]
-            # print (B_angle_pool)
-        
-        tmp = []
-        for i in range(len(B_angle_pool)):
-            tmp.append(B_angle_pool[str(i)])
-        tmp = np.array(tmp)
-        diff = abs(tmp - A_angle).sum(1)
-        #for debug
-        
-        for kk in range(diff.shape[0]):
-            small_index = diff.argsort()[kk]
-            try:
-                # print (small_index)
-                B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
-                # print (B_path)
 
-                ### input mask (binary mask to segment person out)
-                mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
-                # mask = Image.open(mask_path).convert('RGB')
-                mask = cv2.imread(mask_path)[:,:,::-1]
+            toss = random.getrandbits(1)
+            # toss 0-> same iden, diff exp
+            if toss == 0:
+                pool = set(self.dic_list[pid].keys()) - set(expresison)
+                B_exp = random.sample(pool, 1)[0]
+                B_id = pid
+                B_angle_pool = self.angle_list[pid +'/' + B_exp]
+                # print (B_angle_pool)
+
+            # toss 1 -> same exp, diff iden
+            else:
+                pool = set(self.dic_list[expresison].keys()) - set(pid)
+                B_id = random.sample(pool, 1)[0]
+                B_exp = expresison
+                B_angle_pool = self.angle_list[B_id +'/' + expresison]
+                # print (B_angle_pool)
             
-                #for debug
-                # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-                B = cv2.imread(B_path)[:,:,::-1]
+            tmp = []
+            for i in range(len(B_angle_pool)):
+                tmp.append(B_angle_pool[str(i)])
+            tmp = np.array(tmp)
+            diff = abs(tmp - A_angle).sum(1)
+            
+            for kk in range(diff.shape[0]):
+                small_index = diff.argsort()[kk]
+                try:
+                    # print (small_index)
+                    B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
+                    # print (B_path)
+
+                    ### input mask (binary mask to segment person out)
+                    mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
+                    # mask = Image.open(mask_path).convert('RGB')
+                    mask = cv2.imread(mask_path)[:,:,::-1]
                 
-                break
-            except:
-                continue
-        viewpoint.append(tmp[small_index])
-        B = B * mask
-        B = Image.fromarray(np.uint8(B))
-        B_tensor = transform(B)
-        viewpoint = np.asarray(viewpoint)
-        viewpoint = torch.FloatTensor(viewpoint)
+                    #for debug
+                    # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+                    B = cv2.imread(B_path)[:,:,::-1]
+                    break
+                except:
+                    continue
+            viewpoint.append(tmp[small_index])
+            B = B * mask
+            B = Image.fromarray(np.uint8(B))
+            B_tensor = transform(B)
+            viewpoint = np.asarray(viewpoint)
+            viewpoint = torch.FloatTensor(viewpoint)
 
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'path': A_path}
 
