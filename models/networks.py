@@ -392,7 +392,7 @@ class DisentDecoder(nn.Module):
 
         model = []
         model.append(LinearBlock(3, ngf*2, norm = 'none' , activation = 'relu'))
-        for i in range(4):
+        for i in range(2):
             model.append(LinearBlock(ngf*2, ngf*2, norm = 'none' , activation = 'relu'))
         model.append(LinearBlock(ngf*2, ngf  * 4, norm = 'none' , activation = 'relu'))
         self.viewencoder = nn.Sequential(*model)
