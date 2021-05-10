@@ -89,9 +89,10 @@ class FacescapeDirDataset(BaseDataset):
         
         #for debug
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-        A = cv2.imread(A_path)[:,:,::-1]
-        A = A * mask
-        A = Image.fromarray(np.uint8(A))
+        # A = cv2.imread(A_path)[:,:,::-1]
+        # A = A * mask
+        # A = Image.fromarray(np.uint8(A))
+        A = Image.open(A_path)    
         params = get_params(self.opt, A.size)
         transform = get_transform(self.opt, params)      
         A_tensor = transform(A)
@@ -154,6 +155,7 @@ class FacescapeDirDataset(BaseDataset):
         # params = get_params(self.opt, B.size)
         transform = get_transform(self.opt, params)      
         B_tensor = transform(B)
+
         viewpoint = np.asarray(viewpoint)
         viewpoint = torch.FloatTensor(viewpoint)
 
