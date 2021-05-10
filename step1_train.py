@@ -111,7 +111,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
                                    ('Bexp_Bid_image', util.tensor2im(generated[1].data[0])),
                                    ('Aexp_Bid_image', util.tensor2im(generated[2].data[0])),
                                    ('Aid_Bexp_image', util.tensor2im(generated[3].data[0])),
-                                   ('errormap', util.tensor2im(errormap[0]))
+                                   ('errormap', util.tensor2im(errormap.data[0]))
                                    ]
                                 )
             visualizer.display_current_results(visuals, epoch, total_steps)
