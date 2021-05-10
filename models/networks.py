@@ -487,7 +487,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         self.resblocks = nn.Sequential(*model)
 
-        self.pool =  nn.MaxPool2d(4, stride=(2,2))
+        self.pool =  nn.MaxPool2d(3, stride=(2,2))
         self.identity_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
