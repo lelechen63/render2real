@@ -46,7 +46,6 @@ def get_anlge_list():
 
             total_list[tmp[0] +'/' + tmp[1] ]  = {}
         total_list[tmp[0] +'/' + tmp[1] ][tmp[2]] = [float(tmp[3]),float(tmp[4]), float(tmp[5])]
-    # print (len(total_list))
 
     return total_list
 class FacescapeDirDataset(BaseDataset):
@@ -71,11 +70,11 @@ class FacescapeDirDataset(BaseDataset):
         else:
             _file = open(os.path.join(opt.dataroot, "lists/img_alone_test.pkl"), "rb")
        
-        self.data_list = pickle.load(_file)
+        self.data_list = pickle.load(_file)[:10]
         _file.close()
         
         dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
-        self.dic_list = pickle.load(dic_file)
+        self.dic_list = pickle.load(dic_file)#[:10]
 
         self.angle_list = get_anlge_list()
         

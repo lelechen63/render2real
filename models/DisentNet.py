@@ -52,7 +52,6 @@ class DisentNet(BaseModel):
             # if self.isTrain:
             #     self.load_network(self.netD, 'D', opt.which_epoch, pretrained_path)  
                 
-
         # set loss functions and optimizers
         if self.isTrain:
             if opt.pool_size > 0 and (len(self.gpu_ids)) > 1:
@@ -93,7 +92,6 @@ class DisentNet(BaseModel):
                 params = list(self.netEncoder.parameters()) + list(self.netDecoder.parameters())    
                 
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
-
 
 
     def forward(self, image, map_image, map_type, viewpoint, infer=False):
