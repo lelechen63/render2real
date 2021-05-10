@@ -29,7 +29,7 @@ opt.print_freq = lcm(opt.print_freq, opt.batchSize)
 if opt.debug:
     opt.display_freq = 1
     opt.print_freq = 1
-    opt.niter = 1
+    # opt.niter = 1
     opt.niter_decay = 0
     opt.max_dataset_size = 10
 
