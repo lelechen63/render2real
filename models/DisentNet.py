@@ -72,24 +72,8 @@ class DisentNet(BaseModel):
 
             # initialize optimizers
             # optimizer G
-            if opt.niter_fix_global > 0:                
-                import sys
-                if sys.version_info >= (3,0):
-                    finetune_list = set()
-                else:
-                    from sets import Set
-                    finetune_list = Set()
-
-                params_dict = dict(self.netEncoder.named_parameters())
-                params = []
-                for key, value in params_dict.items():       
-                    if key.startswith('model' + str(opt.n_local_enhancers)):                    
-                        params += [value]
-                        finetune_list.add(key.split('.')[0])  
-                print('------------- Only training the local enhancer network (for %d epochs) ------------' % opt.niter_fix_global)
-                print('The layers that are finetuned are ', sorted(finetune_list))                         
-            else:
-                params = list(self.netEncoder.parameters()) + list(self.netDecoder.parameters())    
+           
+            params = list(self.netEncoder.parameters()) + list(self.netDecoder.parameters())    
                 
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
@@ -220,14 +204,6 @@ class DisentNet(BaseModel):
         self.save_network(self.netDecoder, 'DisE', which_epoch, self.gpu_ids)
         self.save_network(self.netEncoder, 'DisD', which_epoch, self.gpu_ids)
         
-
-    def update_fixed_params(self):
-        # after fixing the global generator for a number of iterations, also start finetuning it
-        params = list(self.netDecoder.parameters()) + list(self.netEncoder.parameters())
-             
-        self.optimizer_G = torch.optim.Adam(params, lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
-        if self.opt.verbose:
-            print('------------ Now also finetuning global generator -----------')
 
     def update_learning_rate(self):
         lrd = self.opt.lr / self.opt.niter_decay

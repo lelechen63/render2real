@@ -135,10 +135,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         model.module.save(epoch)
         np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
-    ### instead of only training the local enhancer, train the entire network after certain iterations
-    if (opt.niter_fix_global != 0) and (epoch == opt.niter_fix_global):
-        model.module.update_fixed_params()
-
     ### linearly decay learning rate after certain iterations
-    if epoch > opt.niter:
-        model.module.update_learning_rate()
+    # if epoch > opt.niter:
+    #     model.module.update_learning_rate()
