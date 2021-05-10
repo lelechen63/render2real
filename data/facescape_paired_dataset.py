@@ -133,19 +133,15 @@ class FacescapeDirDataset(BaseDataset):
         for kk in range(diff.shape[0]):
             small_index = diff.argsort()[kk]
             try:
-                # print (small_index)
                 B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
-                # print (B_path)
-
                 ### input mask (binary mask to segment person out)
-                mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
-                # mask = Image.open(mask_path).convert('RGB')
-                mask = cv2.imread(mask_path)[:,:,::-1]
+                # mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
+                # mask = cv2.imread(mask_path)[:,:,::-1]
             
-                #for debug
-                # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-                B = cv2.imread(B_path)[:,:,::-1]
-                
+                # #for debug
+                # # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+                # B = cv2.imread(B_path)[:,:,::-1]
+                B = Image.open(B_path)    
                 break
             except:
                 continue
