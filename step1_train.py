@@ -115,10 +115,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             visualizer.display_current_results(visuals, epoch, total_steps)
 
         ### save latest model
-        if total_steps % opt.save_latest_freq == save_delta:
-            print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
-            model.module.save('latest')            
-            np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
+        # if total_steps % opt.save_latest_freq == save_delta:
+        #     print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
+        #     model.module.save('latest')            
+        #     np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
 
         if epoch_iter >= dataset_size:
             break
@@ -129,11 +129,11 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
           (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
 
     ### save model for this epoch
-    if epoch % opt.save_epoch_freq == 0:
-        print('saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))        
-        model.module.save('latest')
-        model.module.save(epoch)
-        np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
+    # if epoch % opt.save_epoch_freq == 0:
+    #     print('saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))        
+    #     model.module.save('latest')
+    #     model.module.save(epoch)
+    #     np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
     ### linearly decay learning rate after certain iterations
     # if epoch > opt.niter:
