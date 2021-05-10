@@ -89,10 +89,9 @@ class FacescapeDirDataset(BaseDataset):
         
         #for debug
         # A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-        # A = cv2.imread(A_path)[:,:,::-1]
-        # A = A * mask
-        # A = Image.fromarray(np.uint8(A))
-        A = Image.open(A_path)    
+        A = cv2.imread(A_path)[:,:,::-1]
+        A = A * mask
+        A = Image.fromarray(np.uint8(A))
         params = get_params(self.opt, A.size)
         transform = get_transform(self.opt, params)      
         A_tensor = transform(A)
@@ -133,25 +132,26 @@ class FacescapeDirDataset(BaseDataset):
         for kk in range(diff.shape[0]):
             small_index = diff.argsort()[kk]
             try:
+                # print (small_index)
                 B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
+                # print (B_path)
+
                 ### input mask (binary mask to segment person out)
-                # mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
-                # mask = cv2.imread(mask_path)[:,:,::-1]
+                mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
+                # mask = Image.open(mask_path).convert('RGB')
+                mask = cv2.imread(mask_path)[:,:,::-1]
             
-                # #for debug
-                # # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-                # B = cv2.imread(B_path)[:,:,::-1]
-                B = Image.open(B_path)    
+                #for debug
+                # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+                B = cv2.imread(B_path)[:,:,::-1]
+                
                 break
             except:
                 continue
         viewpoint.append(tmp[small_index])
         B = B * mask
         B = Image.fromarray(np.uint8(B))
-        # params = get_params(self.opt, B.size)
-        transform = get_transform(self.opt, params)      
         B_tensor = transform(B)
-
         viewpoint = np.asarray(viewpoint)
         viewpoint = torch.FloatTensor(viewpoint)
 

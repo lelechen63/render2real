@@ -133,8 +133,11 @@ class DisentNet(BaseModel):
         loss_G_pix4 = self.criterionPix(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
+        A_err_map = (Aexp_Aid_image - real_image).sum(1)
+        print (A_err_map)
+
         # Only return the fake_B image if necessary to save BW
-        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image] ]
+        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image], A_err_map ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 
     def inference(self, image, viewpoint):

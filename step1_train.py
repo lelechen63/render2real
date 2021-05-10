@@ -68,7 +68,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
         ############## Forward Pass ######################
     
-        losses, generated = model(  image = Variable(data['image']) , 
+        losses, generated, errormap = model(  image = Variable(data['image']) , 
                                     map_image =  Variable(data['pair_image']),
                                     map_type = data['pair_type'],
                                     viewpoint = Variable(data['viewpoint']),
@@ -110,7 +110,9 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
                                    ('Aexp_Aid_image', util.tensor2im(generated[0].data[0])),
                                    ('Bexp_Bid_image', util.tensor2im(generated[1].data[0])),
                                    ('Aexp_Bid_image', util.tensor2im(generated[2].data[0])),
-                                   ('Aid_Bexp_image', util.tensor2im(generated[3].data[0]))]
+                                   ('Aid_Bexp_image', util.tensor2im(generated[3].data[0])),
+                                   ('errormap', util.tensor2im(errormap[0].data[0]))
+                                   ]
                                 )
             visualizer.display_current_results(visuals, epoch, total_steps)
 
