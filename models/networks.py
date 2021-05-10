@@ -487,7 +487,7 @@ class DisentEncoderDecoder2(nn.Module):
 
         self.resblocks = nn.Sequential(*model)
 
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.pool =  nn.MaxPool2d(3, stride=(2,2))
         self.identity_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
@@ -561,7 +561,10 @@ class DisentEncoderDecoder2(nn.Module):
 
         A_encoded = self.CNNencoder(A_img)
         A_encoded = self.resblocks(A_encoded)
-        A_encoded = self.avgpool(A_encoded).view(A_encoded.shape[0], -1)
+        print(A_encoded.shape)
+        A_encoded = self.pool(A_encoded)
+        print(A_encoded.shape)
+        A_encoded = A_encoded.view(A_encoded.shape[0], -1)
 
         # A_identity_code = self.identity_enc(A_encoded)
         # A_expression_code = self.expression_enc(A_encoded)
