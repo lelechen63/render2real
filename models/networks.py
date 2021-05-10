@@ -488,48 +488,59 @@ class DisentEncoderDecoder2(nn.Module):
         self.resblocks = nn.Sequential(*model)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        model = []
-        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
+        identity_enc = nn.Sequential(
+                                    nn.Linear( gf * mult, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,code_n),
+                                    nn.ReLU(True),
+                                    )
 
-        for i in range(encoder_fc_n):
-            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
-        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
-        self.identity_enc = nn.Sequential(*model)
-
-        model = []
-        model.append(LinearBlock(ngf * mult, ngf*4, norm = 'none' , activation = 'relu'))
-
-        for i in range(encoder_fc_n):
-            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
-        model.append(LinearBlock(ngf*4, code_n, norm = 'none' , activation = 'relu'))
-        self.expression_enc = nn.Sequential(*model)
-        
-        model = []
-        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
-
-        for i in range(int(encoder_fc_n/2)):
-            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
-        self.identity_dec = nn.Sequential(*model)
-
-        model = []
-        model.append(LinearBlock(code_n, ngf*4, norm = 'none' , activation = 'relu'))
-        for i in range(int(encoder_fc_n/2)):
-            model.append(LinearBlock(ngf*4, ngf*4, norm = 'none' , activation = 'relu'))
-        
-        self.exp_dec = nn.Sequential(*model)
-
-        model = []
-        model.append(LinearBlock(ngf*4 * 3 , ngf * mult , norm = 'none' , activation = 'relu'))
-        self.code_dec = nn.Sequential(*model)
-
-        model = []
-        model.append(LinearBlock(3, ngf*2, norm = 'none' , activation = 'relu'))
-        for i in range(2):
-            model.append(LinearBlock(ngf*2, ngf*2, norm = 'none' , activation = 'relu'))
-        model.append(LinearBlock(ngf*2, ngf  * 4, norm = 'none' , activation = 'relu'))
-        self.viewencoder = nn.Sequential(*model)
-
-
+        expression_enc = nn.Sequential(
+                                    nn.Linear( gf * mult, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,code_n),
+                                    nn.ReLU(True),
+                                    )
+        identity_dec = nn.Sequential(
+                                    nn.Linear( code_n, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,ngf*4),
+                                    nn.ReLU(True),
+                                    )
+        exp_dec = nn.Sequential(
+                                    nn.Linear( code_n, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,ngf*4),
+                                    nn.ReLU(True),
+                                    )
+        viewencoder = nn.Sequential(
+                                    nn.Linear( 3, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*4),
+                                    nn.ReLU(True)
+                                    )
+        code_dec = nn.Sequential(
+                                    nn.Linear( ngf*3, ngf*mult),
+                                    nn.ReLU(True)
+                                    )
 
         ### upsample
         model = []         
