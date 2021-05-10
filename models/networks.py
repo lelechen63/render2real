@@ -366,7 +366,7 @@ class DisentEncoderDecoder(nn.Module):
         self.decoder = nn.Sequential(*model)
 
         model = []
-        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]    
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, 3, kernel_size=7, padding=0), nn.Tanh()]    
         self.output_layer = nn.Sequential(*model)
 
 
