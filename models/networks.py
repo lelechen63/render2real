@@ -488,7 +488,7 @@ class DisentEncoderDecoder2(nn.Module):
         self.resblocks = nn.Sequential(*model)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        identity_enc = nn.Sequential(
+        self.identity_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
@@ -499,7 +499,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.ReLU(True),
                                     )
 
-        expression_enc = nn.Sequential(
+        self.expression_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
@@ -509,7 +509,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.Linear( ngf*4,code_n),
                                     nn.ReLU(True),
                                     )
-        identity_dec = nn.Sequential(
+        self.identity_dec = nn.Sequential(
                                     nn.Linear( code_n, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
@@ -519,7 +519,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.Linear( ngf*4,ngf*4),
                                     nn.ReLU(True),
                                     )
-        exp_dec = nn.Sequential(
+        self.exp_dec = nn.Sequential(
                                     nn.Linear( code_n, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
@@ -529,7 +529,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.Linear( ngf*4,ngf*4),
                                     nn.ReLU(True),
                                     )
-        viewencoder = nn.Sequential(
+        self.viewencoder = nn.Sequential(
                                     nn.Linear( 3, ngf*2),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*2, ngf*2),
@@ -537,7 +537,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.Linear( ngf*2, ngf*4),
                                     nn.ReLU(True)
                                     )
-        code_dec = nn.Sequential(
+        self.code_dec = nn.Sequential(
                                     nn.Linear( ngf*3, ngf*mult),
                                     nn.ReLU(True)
                                     )
