@@ -538,7 +538,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.ReLU(True)
                                     )
         self.code_dec = nn.Sequential(
-                                    nn.Linear( ngf*3, ngf*mult),
+                                    nn.Linear( ngf*4 * 3, ngf*mult),
                                     nn.ReLU(True)
                                     )
 
