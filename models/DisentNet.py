@@ -201,12 +201,8 @@ class DisentNet(BaseModel):
 
     def inference(self, image, viewpoint):
 
-        # # real images for training
-        # if real_image is not None:
-        #     real_image = Variable(image.data.cuda())
-
         image = Variable(image.data.cuda())
-        
+        viewpoint = Variable(viewpoint.data.cuda())
         # Fake Generation
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
