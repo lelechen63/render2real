@@ -81,7 +81,7 @@ class FacescapeDirDataset(BaseDataset):
     def __getitem__(self, index):
                 
         #for debug
-        if opt.debug:
+        if self.opt.debug:
             A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg' 
             mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'  
         else:
@@ -107,7 +107,7 @@ class FacescapeDirDataset(BaseDataset):
         expresison = tmp[1]
 
         # randomly get paired image (same identity or same expression)
-        if opt.debug:
+        if self.opt.debug:
             B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
             B = cv2.imread(B_path)[:,:,::-1]
             viewpoint.append(np.array(A_angle))
