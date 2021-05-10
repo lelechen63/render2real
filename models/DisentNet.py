@@ -106,6 +106,7 @@ class DisentNet(BaseModel):
         Aexp_Aid_image = self.netDecoder(A_exp_code, A_id_code, A_viewpoint)
         Bexp_Bid_image = self.netDecoder(B_exp_code, B_id_code, B_viewpoint)
 
+        print (image.max(), image.min(), Aexp_Aid_image.max(), Aexp_Aid_image.min())
         # mismatch reconstruction
         if map_type == 0:
             Aexp_Bid_image = self.netDecoder(A_exp_code, B_id_code, A_viewpoint)
