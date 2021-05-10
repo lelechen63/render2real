@@ -46,7 +46,7 @@ class BaseOptions():
         # for generator
         self.parser.add_argument('--netG', type=str, default='disent', help='selects model to use for netG')
         self.parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in first conv layer')
-        self.parser.add_argument('--n_downsample_global', type=int, default=5, help='number of downsampling layers in netG') 
+        self.parser.add_argument('--n_downsample_global', type=int, default=8, help='number of downsampling layers in netG') 
         self.parser.add_argument('--n_blocks_global', type=int, default=9, help='number of residual blocks in the global generator network')
         self.parser.add_argument('--niter_fix_global', type=int, default=0, help='number of epochs that we only train the outmost local enhancer')        
 
