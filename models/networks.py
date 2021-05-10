@@ -50,7 +50,7 @@ def define_Dis_EncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, net
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
     if netG == 'disent':    
-        encoderdecoder = DisentEncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+        encoderdecoder = DisentEncoderDecoder2(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
     
     else:
         raise('generator not implemented!')
@@ -463,7 +463,68 @@ class DisentEncoderDecoder(nn.Module):
         return_list.append( recons_Bexp_Aid)
 
         return return_list
-                       
+
+
+class DisentEncoderDecoder2(nn.Module):
+    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(DisentEncoderDecoder2, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
+        ### downsample 16 times
+        for i in range(n_downsampling):
+            mult = 2**i
+            model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
+                      norm_layer(ngf * mult * 2), activation]
+        self.CNNencoder = nn.Sequential(*model)
+        model = []
+        ### resnet blocks
+        mult = 2**n_downsampling
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+
+        self.resblocks = nn.Sequential(*model)
+
+        ### upsample
+        model = []         
+        for i in range(n_downsampling):
+            mult = 2**(n_downsampling - i)
+            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
+                       norm_layer(int(ngf * mult / 2)), activation]
+        self.decoder = nn.Sequential(*model)
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, 3, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+
+
+    
+    def forward(self, A_img, A_view, B_img , B_view, map_type ):
+        return_list = []
+
+        # print (input.shape, 'input')
+        A_encoded = self.CNNencoder(A_img)
+        # print (encoded.shape, "encoded")
+        A_encoded = self.resblocks(A_encoded)
+        # print (encoded.shape, "encoded")
+       
+        A_decoded = self.decoder(A_encoded)
+        # print (decoded.shape, "decoded")
+        recons_A = self.output_layer(A_decoded)
+        # print (output.shape, "output")
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+        return_list.append( recons_A)
+     
+
+        return return_list     
 
 class DisentDecoder(nn.Module):
     def __init__(self, linearity, output_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=9, norm_layer=nn.BatchNorm2d, 
