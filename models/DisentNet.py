@@ -53,6 +53,8 @@ class DisentNet(BaseModel):
                     
             self.criterionGAN = networks.GANLoss(use_lsgan=not opt.no_lsgan, tensor=self.Tensor)   
             self.criterionFeat = torch.nn.L1Loss()
+
+            self.criterionPix = torch.nn.MSELoss()
             if not opt.no_vgg_loss:             
                 self.criterionVGG = networks.VGGLoss(self.gpu_ids)
                 
@@ -98,33 +100,7 @@ class DisentNet(BaseModel):
         real_image = Variable(image.data.cuda())
         real_map_image = Variable(map_image.data.cuda())
         ############################################################################
-        #We do not use any gan loss right now.
-        # Fake Detection and Loss
-        # pred_fake_pool = self.discriminate( cat_input, fake_image, use_pool=True)
-        # loss_D_fake = self.criterionGAN(pred_fake_pool, False)        
 
-        # Real Detection and Loss  # BUG!!!!  
-        # loss_G_GAN = 0
-        # loss_D_real =0
-        # loss_D_fake =0 
-        # if self.opt.gan_loss:     
-        #     pred_real = self.discriminate( cat_input, real_image)
-        #     loss_D_real = self.criterionGAN(pred_real, True)
-
-        #     # GAN loss (Fake Passability Loss)        
-        #     pred_fake = self.netD.forward(torch.cat((cat_input, fake_image), dim=1))        
-        #     loss_G_GAN = self.criterionGAN(pred_fake, True)               
-        
-        # GAN feature matching loss
-        # loss_G_GAN_Feat = 0
-        # if not self.opt.no_ganFeat_loss:
-        #     feat_weights = 4.0 / (self.opt.n_layers_D + 1)
-        #     D_weights = 1.0 / self.opt.num_D
-        #     for i in range(self.opt.num_D):
-        #         for j in range(len(pred_fake[i])-1):
-        #             loss_G_GAN_Feat += D_weights * feat_weights * \
-        #                 self.criterionFeat(pred_fake[i][j], pred_real[i][j].detach()) * self.opt.lambda_feat
-                   
         # VGG feature matching loss
         loss_G_VGG = 0
         loss_G_VGG3 = 0
@@ -146,15 +122,15 @@ class DisentNet(BaseModel):
         loss_G_pix = 0
         # mismatch loss
         if map_type == 0:
-            loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionFeat(Bexp_Aid_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, real_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, real_map_image) * self.opt.lambda_pix
         else:
-            loss_G_pix1 = self.criterionFeat(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionFeat(Bexp_Aid_image, real_image) * self.opt.lambda_pix
+            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, real_map_image) * self.opt.lambda_pix
+            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, real_image) * self.opt.lambda_pix
         
         # reconstruction loss
-        loss_G_pix3 = self.criterionFeat(Aexp_Aid_image, real_image) * self.opt.lambda_pix
-        loss_G_pix4 = self.criterionFeat(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
+        loss_G_pix3 = self.criterionPix(Aexp_Aid_image, real_image) * self.opt.lambda_pix
+        loss_G_pix4 = self.criterionPix(Bexp_Bid_image, real_map_image) * self.opt.lambda_pix
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
 
         # Only return the fake_B image if necessary to save BW
