@@ -562,7 +562,7 @@ class DisentEncoderDecoder2(nn.Module):
         A_encoded = self.CNNencoder(A_img)
 
         A_encoded = self.pool(A_encoded)
-        
+
         A_encoded = self.resblocks(A_encoded)
         print(A_encoded.shape)
         A_encoded = self.pool(A_encoded)
@@ -577,7 +577,7 @@ class DisentEncoderDecoder2(nn.Module):
         # A_id_fea = self.identity_dec(A_identity_code)
         # A_feature = torch.cat([A_exp_fea, A_id_fea, A_view_fea], axis = 1)
         # A_code = self.code_dec(A_feature)
-        A_code = A_encoded.unsqueeze(2).unsqueeze(3).repeat(1, 1, 32,32) # not sure 
+        A_code = A_encoded.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure 
 
         A_decoded = self.decoder(A_code)
         recons_A = self.output_layer(A_decoded)
