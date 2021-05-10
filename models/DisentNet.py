@@ -128,9 +128,11 @@ class DisentNet(BaseModel):
             loss_G_pix2 = self.criterionPix(Bexp_Aid_image, image) * self.opt.lambda_pix
         
         # reconstruction loss
-        loss_G_pix3 = self.criterionPix(Aexp_Aid_image, image) * self.opt.lambda_pix
+        # loss_G_pix3 = self.criterionPix(Aexp_Aid_image, image) * self.opt.lambda_pix
         loss_G_pix4 = self.criterionPix(Bexp_Bid_image, map_image) * self.opt.lambda_pix
         loss_G_pix = loss_G_pix1 + loss_G_pix2 
+
+        loss_G_pix3 = ( ( Aexp_Aid_image - image ) ** 2 ).mean()
 
         A_err_map = (Aexp_Aid_image - image)
         print (A_err_map.shape)

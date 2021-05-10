@@ -58,7 +58,6 @@ class FacescapeDataset(BaseDataset):
         B = Image.fromarray(np.uint8(B))
         B_tensor = transform(B)
 
-
         C_path =  os.path.join( self.dir_C , self.data_list[index][:-4] + '_parsing.png' )
         #debug 
         # C_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_parsing.png'    

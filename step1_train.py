@@ -86,11 +86,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss_G = loss_dict['A_pix']
         ############### Backward Pass ####################
         # update generator weights
-        optimizer_G.zero_grad()
-        if opt.fp16:                                
-            with amp.scale_loss(loss_G, optimizer_G) as scaled_loss: scaled_loss.backward()                
-        else:
-            loss_G.backward()          
+        optimizer_G.zero_grad()    
+        loss_G.backward()          
         optimizer_G.step()
 
         ############## Display results and errors ##########
