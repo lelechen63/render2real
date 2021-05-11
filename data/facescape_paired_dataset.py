@@ -2,6 +2,7 @@ import os.path
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
 from PIL import Image, ImageChops
+import json
 import pickle 
 import cv2
 import numpy as np
@@ -61,6 +62,10 @@ class FacescapeDirDataset(BaseDataset):
 
         ### input C (eye parsing images)
         self.dir_C = os.path.join(opt.dataroot, "fsmview_landmarks")
+
+        ### json 
+        self.dir_json = os.path.join(opt.dataroot, "fsmview_images")
+
         # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
         self.exp_set =  get_exp()
 
@@ -79,14 +84,26 @@ class FacescapeDirDataset(BaseDataset):
         self.angle_list = get_anlge_list()
         
     def __getitem__(self, index):
-                
+
+        tmp = self.data_list[index].split('/')
         #for debug
         if self.opt.debug:
             A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg' 
-            mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'  
+            mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'
+            json_path = '/raid/celong/FaceScape/fsmview_images/1/1_neutral/params.json'
         else:
             A_path = os.path.join( self.dir_A , self.data_list[index] ) 
-            mask_path =os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )   
+            mask_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )
+            json_path = os.path.join( self.dir_json , tmp[0], tmp[1], 'params.json' )
+        
+        f  = open(json_path , 'r')
+        params = json.load(f)
+        print (params.keys())
+        print ('%s_Rt' % tmp[:-4])
+        print ('++++')
+        Rt = np.array(params['%s_Rt' % tmp[:-4]])
+        print (Rt.shape, '+++++')
+
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
@@ -98,11 +115,11 @@ class FacescapeDirDataset(BaseDataset):
         A_tensor = transform(A)
 
         small_index = 0
-        tmp = self.data_list[index].split('/')
+        
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
-        viewpoint = [np.array(A_angle)]
+        viewpoint = [Rt]
         pid = tmp[0]
         expresison = tmp[1]
 
