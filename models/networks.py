@@ -574,29 +574,29 @@ class DisentEncoderDecoder2(nn.Module):
                         norm_layer(ngf * 8), 
                         nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 8), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 8), 
+                        # nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 4), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 4), 
+                        # nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 4), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 4), 
+                        # nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 2), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 2), 
+                        # nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 2), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 2), 
+                        # nn.ReLU(True),
 
-                        nn.ConvTranspose2d(ngf * 2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf), 
+                        # nn.ReLU(True),
                     )
 
         model = []
