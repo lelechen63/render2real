@@ -466,12 +466,12 @@ class DisentEncoderDecoder(nn.Module):
         for i in range(map_type.shape[0]):
             print (A_expression_code.shape, B_id_fea.shape, A_view_fea.shape, i)
             if map_type[i] == 0:
-                Aexp_Bid_fea.append( torch.cat([A_exp_fea[:,i], B_id_fea[:,i], A_view_fea[:,i]], axis = 1) )
-                Bexp_Aid_fea.append( torch.cat([B_exp_fea[:,i], A_id_fea[:,i], B_view_fea[:,i]], axis = 1) )
+                Aexp_Bid_fea.append( torch.cat([A_exp_fea[i], B_id_fea[i], A_view_fea[i]], axis = 0) )
+                Bexp_Aid_fea.append( torch.cat([B_exp_fea[i], A_id_fea[i], B_view_fea[i]], axis = 0) )
 
             else:
-                Aexp_Bid_fea.append( torch.cat([A_exp_fea[:,i], B_id_fea[:,i], B_view_fea[:,i]], axis = 1) )
-                Bexp_Aid_fea.append( torch.cat([B_exp_fea[:,i], A_id_fea[:,i], A_view_fea[:,i]], axis = 1) )
+                Aexp_Bid_fea.append( torch.cat([A_exp_fea[i], B_id_fea[i], B_view_fea[i]], axis = 0) )
+                Bexp_Aid_fea.append( torch.cat([B_exp_fea[i], A_id_fea[i], A_view_fea[i]], axis = 0) )
 
         Aexp_Bid_fea = torch.stack(Aexp_Bid_fea, dim = 1)
         Bexp_Aid_fea = torch.stack(Bexp_Aid_fea, dim = 1)
