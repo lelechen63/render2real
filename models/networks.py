@@ -472,15 +472,13 @@ class DisentEncoderDecoder2(nn.Module):
         super(DisentEncoderDecoder2, self).__init__()        
         activation = nn.ReLU(True)        
 
-        model = [nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0), norm_layer(ngf), activation]
         ### downsample 16 times
-        for i in range(n_downsampling):
-            mult = 2**i
-            model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
-                      norm_layer(ngf * mult * 2), activation]
-        self.CNNencoder = nn.Sequential(*model)
         
         self.CNNencoder = nn.Sequential(
+                            nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0),
+                            norm_layer(ngf), 
+                            nn.ReLU(True),  
+
                             nn.Conv2d(ngf , ngf  * 2, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 2),
                             nn.ReLU(True),  # 512
