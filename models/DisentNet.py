@@ -127,7 +127,7 @@ class DisentNet(BaseModel):
         loss_G_pix2 = 0
         # mismatch loss
         for i in range(map_type.shape[0]):
-                if map_type[i] == 0:
+            if map_type[i] == 0:
                 loss_G_pix1 += self.criterionPix(Aexp_Bid_image[i], image[i]) * self.opt.lambda_pix
                 loss_G_pix2 += self.criterionPix(Bexp_Aid_image[i], map_image[i]) * self.opt.lambda_pix
             else:
