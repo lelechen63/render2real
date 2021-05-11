@@ -104,14 +104,18 @@ class DisentNet(BaseModel):
         loss_G_VGG = 0
         loss_G_VGG3 = 0
         loss_G_VGG4 = 0
+        loss_G_VGG1 = 0
+        loss_G_VGG2 = 0
+        print (Aexp_Bid_image.shape)
         if not self.opt.no_vgg_loss:
             # mismatch loss
-            if map_type == 0:
-                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, map_image) * self.opt.lambda_feat
-            else:
-                loss_G_VGG1 = self.criterionVGG(Aexp_Bid_image, map_image) * self.opt.lambda_feat
-                loss_G_VGG2 = self.criterionVGG(Bexp_Aid_image, image) * self.opt.lambda_feat
+            for i in range(map_type.shape[0]):
+                if map_type[i] == 0:
+                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_image[i], image[i]) * self.opt.lambda_feat
+                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_image[i], map_image[i]) * self.opt.lambda_feat
+                else:
+                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_image[i], map_image[i]) * self.opt.lambda_feat
+                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_image[i], image[i]) * self.opt.lambda_feat
             
             # reconstruction loss
             loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, image) * self.opt.lambda_feat
@@ -119,13 +123,16 @@ class DisentNet(BaseModel):
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
         loss_G_pix = 0
+        loss_G_pix1 = 0
+        loss_G_pix2 = 0
         # mismatch loss
-        if map_type == 0:
-            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, map_image) * self.opt.lambda_pix
-        else:
-            loss_G_pix1 = self.criterionPix(Aexp_Bid_image, map_image) * self.opt.lambda_pix
-            loss_G_pix2 = self.criterionPix(Bexp_Aid_image, image) * self.opt.lambda_pix
+        for i in range(map_type.shape[0]):
+                if map_type[i] == 0:
+                loss_G_pix1 += self.criterionPix(Aexp_Bid_image[i], image[i]) * self.opt.lambda_pix
+                loss_G_pix2 += self.criterionPix(Bexp_Aid_image[i], map_image[i]) * self.opt.lambda_pix
+            else:
+                loss_G_pix1 += self.criterionPix(Aexp_Bid_image[i], map_image[i]) * self.opt.lambda_pix
+                loss_G_pix2 += self.criterionPix(Bexp_Aid_image[i], image[i]) * self.opt.lambda_pix
         
         # reconstruction loss
         # loss_G_pix3 = self.criterionPix(Aexp_Aid_image, image) * self.opt.lambda_pix
