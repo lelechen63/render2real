@@ -461,9 +461,7 @@ class DisentEncoderDecoder(nn.Module):
         recons_B = self.output_layer(B_decoded)
 
         return_list.append( recons_B)
-        print (map_type.shape)
 
-        print (A_exp_fea.shape)
         Aexp_Bid_fea =[]
         for i in range(map_type.shape[0]):
             if map_type[i] == 0:
