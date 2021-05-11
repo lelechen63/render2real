@@ -610,6 +610,11 @@ class DisentEncoderDecoder2(nn.Module):
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, 3, kernel_size=7, padding=0), nn.Tanh()]    
         self.output_layer = nn.Sequential(*model)
 
+        model = []
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * 16, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+
+        self.resblocks = nn.Sequential(*model)
 
     
     def forward(self, A_img, A_view, B_img , B_view, map_type ):
