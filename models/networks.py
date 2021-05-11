@@ -465,7 +465,7 @@ class DisentEncoderDecoder(nn.Module):
         Aexp_Bid_fea =[]
         for i in range(map_type.shape[0]):
             if map_type[i] == 0:
-        
+                print (A_expression_code.shape, B_id_fea.shape, A_view_fea.shape)
                 Aexp_Bid_fea.append( torch.cat([A_exp_fea[:,i], B_id_fea[:,i], A_view_fea[:,i]], axis = 1) )
                 Bexp_Aid_fea.append( torch.cat([B_exp_fea[:,i], A_id_fea[:,i], B_view_fea[:,i]], axis = 1) )
 
