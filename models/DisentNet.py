@@ -134,7 +134,7 @@ class DisentNet(BaseModel):
 
         loss_G_pix3 = ( ( Aexp_Aid_image - image ) ** 2 ).mean()
 
-        A_err_map = (Aexp_Aid_image - image)
+        A_err_map = (Aexp_Aid_image - image).sum(1)
 
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image], A_err_map ]
