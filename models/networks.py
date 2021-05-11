@@ -574,29 +574,29 @@ class DisentEncoderDecoder2(nn.Module):
                         norm_layer(ngf * 8), 
                         nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf * 8), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 8), 
+                        nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf * 4), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 4), 
+                        nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf * 4), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 4), 
+                        nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf * 2), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 2), 
+                        nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf * 2), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 2), 
+                        nn.ReLU(True),
 
-                        # nn.ConvTranspose2d(ngf * 2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
-                        # norm_layer(ngf), 
-                        # nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf), 
+                        nn.ReLU(True),
                     )
 
         model = []
@@ -632,10 +632,10 @@ class DisentEncoderDecoder2(nn.Module):
         A_feature = torch.cat([A_exp_fea, A_id_fea, A_view_fea], axis = 1)
         A_code = self.code_dec(A_feature)
         print (A_code.shape)
-        A_code = A_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        A_code = A_code.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
         print (A_code.shape, '++++')
 
-        A_decoded = self.decoder(A_encoded)
+        A_decoded = self.decoder(A_code)
         recons_A = self.output_layer(A_decoded)
 
         return_list.append( recons_A)
