@@ -91,6 +91,7 @@ class FacescapeDirDataset(BaseDataset):
             A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg' 
             mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'
             json_path = '/raid/celong/FaceScape/fsmview_images/1/1_neutral/params.json'
+            tmp = [ '1', '1_neutral', '1.jpg']
         else:
             A_path = os.path.join( self.dir_A , self.data_list[index] ) 
             mask_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )
@@ -98,10 +99,7 @@ class FacescapeDirDataset(BaseDataset):
         
         f  = open(json_path , 'r')
         params = json.load(f)
-        try:
-            viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
-        except:
-            print (self.data_list[index] )
+        viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
