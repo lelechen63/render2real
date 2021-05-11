@@ -479,14 +479,41 @@ class DisentEncoderDecoder2(nn.Module):
             model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1),
                       norm_layer(ngf * mult * 2), activation]
         self.CNNencoder = nn.Sequential(*model)
-        model = []
-        ### resnet blocks
-        mult = 2**n_downsampling
-        for i in range(n_blocks):
-            model += [ResnetBlock(ngf * mult, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+        
+        self.CNNencoder = nn.Sequential(
+                            nn.Conv2d(ngf , ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            activation = nn.ReLU(True),  # 512
 
-        self.resblocks = nn.Sequential(*model)
+                            nn.Conv2d(ngf*2 , ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            activation = nn.ReLU(True),  #256
 
+                            nn.Conv2d(ngf*2 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            activation = nn.ReLU(True), # 128
+
+                            nn.Conv2d(ngf*4 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            activation = nn.ReLU(True), # 64
+
+                            nn.Conv2d(ngf*4 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            activation = nn.ReLU(True),  #32
+
+                            nn.Conv2d(ngf*8 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            activation = nn.ReLU(True),  #16
+
+                            nn.Conv2d(ngf*8 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 16),
+                            activation = nn.ReLU(True),  #8
+
+                            nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 16),
+                            activation = nn.ReLU(True),  #4
+                        )
+        
         # self.pool =  nn.MaxPool2d(3, stride=(2,2))
         self.identity_enc = nn.Sequential(
                                     nn.Linear( ngf * mult, ngf*4),
@@ -552,6 +579,40 @@ class DisentEncoderDecoder2(nn.Module):
             model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
                        norm_layer(int(ngf * mult / 2)), activation]
         self.decoder = nn.Sequential(*model)
+
+        self.decoded = nn.Sequential(
+                        nn.ConvTranspose2d(ngf * 16, ngf * 16, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf *16), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 16, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf *8), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf * 8), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf * 4), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf * 4), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf * 2), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf * 2), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf *2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer((ngf ), 
+                        nn.ReLU(True),
+        )
 
         model = []
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, 3, kernel_size=7, padding=0), nn.Tanh()]    
