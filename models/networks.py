@@ -485,7 +485,7 @@ class DisentEncoderDecoder2(nn.Module):
                             norm_layer(ngf  * 2),
                             activation = nn.ReLU(True),  # 512
 
-                            nn.Conv2d( ngf * 2, ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            nn.Conv2d( ngf * 2, ngf  * 2, 3, 2, 1),
                             norm_layer(ngf  * 2),
                             activation = nn.ReLU(True),  #256
 
