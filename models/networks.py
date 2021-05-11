@@ -483,35 +483,35 @@ class DisentEncoderDecoder2(nn.Module):
         self.CNNencoder = nn.Sequential(
                             nn.Conv2d(ngf , ngf  * 2, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 2),
-                            activation = nn.ReLU(True),  # 512
+                            nn.ReLU(True),  # 512
 
-                            nn.Conv2d( ngf * 2, ngf  * 2, 3, 2, 1),
+                            nn.Conv2d( ngf * 2, ngf  * 2, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 2),
-                            activation = nn.ReLU(True),  #256
+                            nn.ReLU(True),  #256
 
                             nn.Conv2d(ngf*2 , ngf  * 4, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 4),
-                            activation = nn.ReLU(True), # 128
+                            nn.ReLU(True), # 128
 
                             nn.Conv2d(ngf*4 , ngf  * 4, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 4),
-                            activation = nn.ReLU(True), # 64
+                            nn.ReLU(True), # 64
 
                             nn.Conv2d(ngf*4 , ngf  * 8, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 8),
-                            activation = nn.ReLU(True),  #32
+                            nn.ReLU(True),  #32
 
                             nn.Conv2d(ngf*8 , ngf  * 8, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 8),
-                            activation = nn.ReLU(True),  #16
+                            nn.ReLU(True),  #16
 
                             nn.Conv2d(ngf*8 , ngf  * 16, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 16),
-                            activation = nn.ReLU(True),  #8
+                            nn.ReLU(True),  #8
 
                             nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 16),
-                            activation = nn.ReLU(True),  #4
+                            nn.ReLU(True),  #4
                         )
         
         # self.pool =  nn.MaxPool2d(3, stride=(2,2))
