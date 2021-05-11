@@ -98,6 +98,7 @@ class FacescapeDirDataset(BaseDataset):
         
         f  = open(json_path , 'r')
         params = json.load(f)
+        print (self.data_list[index])
         viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
