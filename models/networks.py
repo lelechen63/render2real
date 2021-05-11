@@ -50,7 +50,7 @@ def define_Dis_EncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, net
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
     if netG == 'disent':    
-        encoderdecoder = DisentEncoderDecoder2(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+        encoderdecoder = DisentEncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
     
     else:
         raise('generator not implemented!')
