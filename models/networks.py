@@ -463,6 +463,7 @@ class DisentEncoderDecoder(nn.Module):
         return_list.append( recons_B)
 
         Aexp_Bid_fea =[]
+        Bexp_Aid_fea = []
         for i in range(map_type.shape[0]):
             print (A_expression_code.shape, B_id_fea.shape, A_view_fea.shape, i)
             if map_type[i] == 0:
