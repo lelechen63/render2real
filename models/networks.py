@@ -507,9 +507,9 @@ class DisentEncoderDecoder2(nn.Module):
                             norm_layer(ngf  * 16),
                             nn.ReLU(True),  #8
 
-                            nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
-                            norm_layer(ngf  * 16),
-                            nn.ReLU(True),  #4
+                            # nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            # norm_layer(ngf  * 16),
+                            # nn.ReLU(True),  #4
                         )
         
         # self.pool =  nn.MaxPool2d(3, stride=(2,2))
