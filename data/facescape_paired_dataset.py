@@ -98,12 +98,7 @@ class FacescapeDirDataset(BaseDataset):
         
         f  = open(json_path , 'r')
         params = json.load(f)
-        print (params.keys())
-        print ('%s_Rt' % tmp[2][:-4])
-        print ('++++')
-        Rt = np.array(params['%s_Rt' %  tmp[2][:-4]])
-        print (Rt.shape, '+++++')
-
+        viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).view(-1)]
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
@@ -119,7 +114,7 @@ class FacescapeDirDataset(BaseDataset):
         # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
-        viewpoint = [Rt]
+        
         pid = tmp[0]
         expresison = tmp[1]
 
@@ -127,7 +122,7 @@ class FacescapeDirDataset(BaseDataset):
         if self.opt.debug:
             B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
             B = cv2.imread(B_path)[:,:,::-1]
-            viewpoint.append(np.array(A_angle))
+            viewpoint.append(viewpoint[0])
             toss = 0
         else:
 
@@ -172,7 +167,11 @@ class FacescapeDirDataset(BaseDataset):
                     break
                 except:
                     continue
-            viewpoint.append(tmp[small_index])
+            json_path = os.path.join( self.dir_json , B_id, B_exp, 'params.json' )
+            f  = open(json_path , 'r')
+            params = json.load(f)
+            viewpoint.append(np.array(params['%d_Rt' %  small_index]))
+
         B = B * mask
         B = Image.fromarray(np.uint8(B))
         B_tensor = transform(B)
