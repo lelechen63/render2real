@@ -461,6 +461,9 @@ class DisentEncoderDecoder(nn.Module):
         recons_B = self.output_layer(B_decoded)
 
         return_list.append( recons_B)
+        print (map_type.shape)
+
+        print (A_exp_fea.shape)
         if map_type == 0:
             Aexp_Bid_fea = torch.cat([A_exp_fea, B_id_fea, A_view_fea], axis = 1)
         else:
