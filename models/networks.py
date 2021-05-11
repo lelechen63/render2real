@@ -437,7 +437,7 @@ class DisentEncoderDecoder(nn.Module):
         return_list.append( recons_A)
 
         B_encoded = self.CNNencoder(B_img)
-        B_encoded = self.resblocks(B_encoded)view(B_encoded.shape[0], -1)
+        B_encoded = self.resblocks(B_encoded).view(B_encoded.shape[0], -1)
         B_identity_code = self.identity_enc(B_encoded)
         B_expression_code = self.expression_enc(B_encoded)
 
