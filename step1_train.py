@@ -29,7 +29,7 @@ opt.print_freq = lcm(opt.print_freq, opt.batchSize)
 if opt.debug:
     opt.display_freq = 1
     opt.print_freq = 1
-    # opt.niter = 1
+    opt.niter = 1
     opt.niter_decay = 0
     opt.max_dataset_size = 10
 
@@ -79,11 +79,11 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss_dict = dict(zip(model.module.loss_names, losses))
 
         # calculate final loss scalar
-        # loss_pix = (loss_dict['A_pix'] + loss_dict.get('B_pix',0) + loss_dict.get('mis_pix',0) ) 
-        # loss_vgg = loss_dict.get('A_vgg',0) + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
+        loss_pix = (loss_dict['A_pix'] + loss_dict.get('B_pix',0) + loss_dict.get('mis_pix',0) ) 
+        loss_vgg = loss_dict.get('A_vgg',0) + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
 
-        # loss_G = loss_pix + loss_vgg
-        loss_G = loss_dict['A_pix']
+        loss_G = loss_pix + loss_vgg
+        # loss_G = loss_dict['A_pix']
         ############### Backward Pass ####################
         # update generator weights
         optimizer_G.zero_grad()    
@@ -114,11 +114,11 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
                                  ])
             visualizer.display_current_results(visuals, epoch, total_steps)
 
-        ### save latest model
-        # if total_steps % opt.save_latest_freq == save_delta:
-        #     print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
-        #     model.module.save('latest')            
-        #     np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
+        ## save latest model
+        if total_steps % opt.save_latest_freq == save_delta:
+            print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
+            model.module.save('latest')            
+            np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
 
         if epoch_iter >= dataset_size:
             break
@@ -128,13 +128,13 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
     print('End of epoch %d / %d \t Time Taken: %d sec' %
           (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
 
-    ### save model for this epoch
-    # if epoch % opt.save_epoch_freq == 0:
-    #     print('saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))        
-    #     model.module.save('latest')
-    #     model.module.save(epoch)
-    #     np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
+    ## save model for this epoch
+    if epoch % opt.save_epoch_freq == 0:
+        print('saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))        
+        model.module.save('latest')
+        model.module.save(epoch)
+        np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
-    ### linearly decay learning rate after certain iterations
-    # if epoch > opt.niter:
-    #     model.module.update_learning_rate()
+    ## linearly decay learning rate after certain iterations
+    if epoch > opt.niter:
+        model.module.update_learning_rate()
