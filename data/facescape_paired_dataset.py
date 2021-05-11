@@ -99,9 +99,9 @@ class FacescapeDirDataset(BaseDataset):
         f  = open(json_path , 'r')
         params = json.load(f)
         print (params.keys())
-        print ('%s_Rt' % [-1][:-4])
+        print ('%s_Rt' % tmp[-1][:-4])
         print ('++++')
-        Rt = np.array(params['%s_Rt' % tmp[:-4]])
+        Rt = np.array(params['%s_Rt' %  tmp[-1][:-4]])
         print (Rt.shape, '+++++')
 
         ### input mask (binary mask to segment person out)
