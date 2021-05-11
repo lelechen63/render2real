@@ -98,8 +98,10 @@ class FacescapeDirDataset(BaseDataset):
         
         f  = open(json_path , 'r')
         params = json.load(f)
-        print (self.data_list[index])
-        viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
+        try:
+            viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
+        except:
+            print (self.data_list[index])
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
@@ -171,8 +173,10 @@ class FacescapeDirDataset(BaseDataset):
             json_path = os.path.join( self.dir_json , B_id, B_exp, 'params.json' )
             f  = open(json_path , 'r')
             params = json.load(f)
-            viewpoint.append(np.array(params['%d_Rt' %  small_index]).flatten())
-
+            try:
+                viewpoint.append(np.array(params['%d_Rt' %  small_index]).flatten())
+            except:
+                print (json_path)    
         B = B * mask
         B = Image.fromarray(np.uint8(B))
         B_tensor = transform(B)
