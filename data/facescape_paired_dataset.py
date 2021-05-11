@@ -36,7 +36,7 @@ def get_exp():
         exps.append(expressions[i])
     return set(exps)
 def get_anlge_list():
-    angle_lists =  open("/raid/celong/lele/github/idinvert_pytorch/predef/angle_list.txt", 'r')
+    angle_lists =  open("/raid/celong/lele/github/idinvert_pytorch/predef/angle_list2.txt", 'r')
     total_list = {}
     while True:
         line = angle_lists.readline()[:-1]
