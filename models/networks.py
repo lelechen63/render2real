@@ -574,12 +574,6 @@ class DisentEncoderDecoder2(nn.Module):
         # model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult ), kernel_size=3, stride=2, padding=1, output_padding=1),
         #                norm_layer(int(ngf * mult )), activation]
 
-        for i in range(n_downsampling):
-            mult = 2**(n_downsampling - i)
-            model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=2, padding=1, output_padding=1),
-                       norm_layer(int(ngf * mult / 2)), activation]
-        self.decoder = nn.Sequential(*model)
-
         self.decoded = nn.Sequential(
                         nn.ConvTranspose2d(ngf * 16, ngf * 16, kernel_size=3, stride=2, padding=1, output_padding=1),
                         norm_layer((ngf *16), 
