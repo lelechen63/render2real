@@ -101,7 +101,7 @@ class FacescapeDirDataset(BaseDataset):
         try:
             viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
         except:
-            print (self.data_list[index])
+            print (self.data_list[index] )
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)
