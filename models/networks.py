@@ -466,7 +466,7 @@ class DisentEncoderDecoder(nn.Module):
         for i in range(map_type.shape[0]):
             if map_type[i] == 0:
         
-                Aexp_Bid_fea.append( torch.cat([A_exp_fea[:,i], B_id_fea[i], A_view_fea[:,i]], axis = 1) )
+                Aexp_Bid_fea.append( torch.cat([A_exp_fea[:,i], B_id_fea[:,i], A_view_fea[:,i]], axis = 1) )
                 Bexp_Aid_fea.append( torch.cat([B_exp_fea[:,i], A_id_fea[:,i], B_view_fea[:,i]], axis = 1) )
 
             else:
@@ -932,7 +932,7 @@ class MultiscaleDiscriminator(nn.Module):
         if self.getIntermFeat:
             result = [input]
             for i in range(len(model)):
-                result.append(model[:,i](result[-1]))
+                result.append(model[i](result[-1]))
             return result[1:]
         else:
             return [model(input)]
