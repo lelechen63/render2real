@@ -514,7 +514,7 @@ class DisentEncoderDecoder2(nn.Module):
         
         # self.pool =  nn.MaxPool2d(3, stride=(2,2))
         self.identity_enc = nn.Sequential(
-                                    nn.Linear( ngf * mult, ngf*4),
+                                    nn.Linear( ngf * 16, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -525,7 +525,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     )
 
         self.expression_enc = nn.Sequential(
-                                    nn.Linear( ngf * mult, ngf*4),
+                                    nn.Linear( ngf * 16, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -563,7 +563,7 @@ class DisentEncoderDecoder2(nn.Module):
                                     nn.ReLU(True)
                                     )
         self.code_dec = nn.Sequential(
-                                    nn.Linear( ngf*4 * 3, ngf*mult),
+                                    nn.Linear( ngf*4 * 3, ngf*16),
                                     nn.ReLU(True)
                                     )
 
