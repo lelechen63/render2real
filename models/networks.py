@@ -638,7 +638,9 @@ class DisentEncoderDecoder2(nn.Module):
         A_id_fea = self.identity_dec(A_identity_code)
         A_feature = torch.cat([A_exp_fea, A_id_fea, A_view_fea], axis = 1)
         A_code = self.code_dec(A_feature)
+        print (A_code.shape)
         A_code = A_encoded.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        print (A_code.shape, '++++')
 
         A_decoded = self.decoder(A_encoded)
         recons_A = self.output_layer(A_decoded)
