@@ -365,7 +365,7 @@ class DisentEncoderDecoder(nn.Module):
                                     nn.ReLU(True),
                                     )
         self.viewencoder = nn.Sequential(
-                                    nn.Linear( 3, ngf*2),
+                                    nn.Linear( 12, ngf*2),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*2, ngf*2),
                                     nn.ReLU(True),
