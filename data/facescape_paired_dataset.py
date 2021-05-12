@@ -86,13 +86,6 @@ class FacescapeDirDataset(BaseDataset):
     def __getitem__(self, index):
 
         tmp = self.data_list[index].split('/')
-        #for debug
-        # if self.opt.debug:
-        #     A_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg' 
-        #     mask_path = '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1_mask.png'
-        #     json_path = '/raid/celong/FaceScape/fsmview_images/1/1_neutral/params.json'
-        #     tmp = [ '1', '1_neutral', '1.jpg']
-        # else:
         A_path = os.path.join( self.dir_A , self.data_list[index] ) 
         mask_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )
         json_path = os.path.join( self.dir_json , tmp[0], tmp[1], 'params.json' )
@@ -112,7 +105,6 @@ class FacescapeDirDataset(BaseDataset):
 
         small_index = 0
         
-        # print ( self.angle_list[tmp[0] +'/' + tmp[1]].keys())
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
         # print (A_angle)
         
@@ -120,13 +112,6 @@ class FacescapeDirDataset(BaseDataset):
         expresison = tmp[1]
 
         # randomly get paired image (same identity or same expression)
-        # if self.opt.debug:
-        #     B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
-        #     B = cv2.imread(B_path)[:,:,::-1]
-        #     viewpoint.append(viewpoint[0])
-        #     toss = 0
-        # else:
-
         toss = random.getrandbits(1)
         # toss 0-> same iden, diff exp
         if toss == 0:
@@ -134,17 +119,15 @@ class FacescapeDirDataset(BaseDataset):
             B_exp = random.sample(pool, 1)[0]
             B_id = pid
             B_angle_pool = self.angle_list[pid +'/' + B_exp]
-            # print (B_angle_pool)
-
         # toss 1 -> same exp, diff iden
         else:
             pool = set(self.dic_list[expresison].keys()) - set(pid)
             B_id = random.sample(pool, 1)[0]
             B_exp = expresison
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
-            # print (B_angle_pool)
         
         tmp = []
+        print (toss, '----',  self.data_list[index],'----', B_id,'----',  B_exp, '----',   B_angle_pool)
         for i in range(len(B_angle_pool)):
             tmp.append(B_angle_pool[str(i)])
         tmp = np.array(tmp)
@@ -156,14 +139,10 @@ class FacescapeDirDataset(BaseDataset):
                 # print (small_index)
                 B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
                 # print (B_path)
-
                 ### input mask (binary mask to segment person out)
                 mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
                 # mask = Image.open(mask_path).convert('RGB')
-                mask = cv2.imread(mask_path)[:,:,::-1]
-            
-                #for debug
-                # B_path =  '/raid/celong/FaceScape/ffhq_aligned_img/1/1_neutral/1.jpg'    
+                mask = cv2.imread(mask_path)[:,:,::-1] 
                 B = cv2.imread(B_path)[:,:,::-1]
                 break
             except:
