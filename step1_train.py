@@ -110,7 +110,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             B_img = util.tensor2im(data['pair_image'][0])
             B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
             B_img = util.writeText(B_img, data['B_path'][0])
-
+            print (data['A_path'][0], data['B_path'][0])
             visuals = OrderedDict([
                                     ('image', A_img),
                                     ('pair_image', B_img),
