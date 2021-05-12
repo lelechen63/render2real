@@ -29,7 +29,7 @@ def writeText(img, text):
 
     composite_img = cv2.putText(img, text, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
                                 2.0, (255, 255, 255), 5, cv2.LINE_AA, False)
-    return img
+    return composite_img
 
 
 # Converts a one-hot tensor into a colorful label map

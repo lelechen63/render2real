@@ -101,7 +101,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             #call(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"]) 
 
         ### display output images
-        # save_fake = True
+        save_fake = True
         if save_fake:
             A_img = util.tensor2im(data['image'][0])
             print (A_img.shape)
