@@ -29,7 +29,7 @@ def writeText(img, text):
     print (type(img), type(text))
     print(img.shape, text)
     composite_img = cv2.putText(img, text, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
-                                2.0, (255, 255, 255), 5, cv2.LINE_AA, False)
+                                1.0, (255, 255, 255), 1, cv2.LINE_AA, False)
     return composite_img
 
 
