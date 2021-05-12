@@ -127,7 +127,7 @@ class FacescapeDirDataset(BaseDataset):
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
         
         tmp = []
-        print (toss, '----',  self.data_list[index],'----', B_id,'----',  B_exp, '----',   B_angle_pool)
+        print (toss, '----',  self.data_list[index],'----', B_id,'----',  B_exp)
         for i in range(len(B_angle_pool)):
             tmp.append(B_angle_pool[str(i)])
         tmp = np.array(tmp)
