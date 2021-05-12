@@ -179,7 +179,7 @@ class FacescapeDirDataset(BaseDataset):
         viewpoint = np.asarray(viewpoint)
         viewpoint = torch.FloatTensor(viewpoint)
 
-        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'path': A_path}
+        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'A_path': A_path, 'B_path': B_path }
 
         return input_dict
 

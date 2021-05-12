@@ -103,14 +103,21 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### display output images
         # save_fake = True
         if save_fake:
-            visuals = OrderedDict([ ('image', util.tensor2im(data['image'][0])),
-                                    ('pair_image', util.tensor2im(data['pair_image'][0])),
+            A_img = util.tensor2im(data['image'][0])
+            A_img = cv2.putText(A_img, data['A_path'[0]], (50,50), fcv2.FONT_HERSHEY_SIMPLEXont, 
+                   1, (255, 0, 0), 2, cv2.LINE_AA)
+            B_img = util.tensor2im(data['pair_image'][0])
+            B_img = cv2.putText(B_img, data['B_path'[0]], (50,50), fcv2.FONT_HERSHEY_SIMPLEXont, 
+                   1, (255, 0, 0), 2, cv2.LINE_AA)
+
+            visuals = OrderedDict([
+                                    ('image', A_img),
+                                    ('pair_image', B_img),
                                    ('Aexp_Aid_image', util.tensor2im(generated[0].data[0])),
                                    ('Bexp_Bid_image', util.tensor2im(generated[1].data[0])),
                                    ('Aexp_Bid_image', util.tensor2im(generated[2].data[0])),
                                    ('Aid_Bexp_image', util.tensor2im(generated[3].data[0])),
                                    ('errormap', util.tensor2im(errormap.data[0]))
-                                   
                                  ])
             visualizer.display_current_results(visuals, epoch, total_steps)
 
