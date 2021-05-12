@@ -111,6 +111,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
             B_img = util.writeText(B_img, data['B_path'][0])
 
+            print (data['A_path'])
+            print (data['B_path'])
             ggg1 = data['A_path'][0].split('/')
             ggg2 = data['B_path'][0].split('/')
             print (ggg1, ggg2)
