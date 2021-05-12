@@ -115,6 +115,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             ggg2 = data['B_path'][0].split('/')
             if ggg1[0] != ggg2[0] and ggg1[1] != ggg2[1]:
                 print (ggg1, ggg2)
+                print (ffffff)
             
             visuals = OrderedDict([
                                     ('image', A_img),
