@@ -104,9 +104,7 @@ class FacescapeDirDataset(BaseDataset):
         A_tensor = transform(A)
 
         small_index = 0
-        
         A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
-        # print (A_angle)
         
         pid = tmp[0]
         expresison = tmp[1]
@@ -126,12 +124,11 @@ class FacescapeDirDataset(BaseDataset):
             B_exp = expresison
             B_angle_pool = self.angle_list[B_id +'/' + expresison]
         
-        tmp = []
-        print (toss, '----',  self.data_list[index],'----', B_id,'----',  B_exp)
+        ggg = []
         for i in range(len(B_angle_pool)):
-            tmp.append(B_angle_pool[str(i)])
-        tmp = np.array(tmp)
-        diff = abs(tmp - A_angle).sum(1)
+            ggg.append(B_angle_pool[str(i)])
+        ggg = np.array(ggg)
+        diff = abs(ggg - A_angle).sum(1)
         
         for kk in range(diff.shape[0]):
             small_index = diff.argsort()[kk]
@@ -157,7 +154,8 @@ class FacescapeDirDataset(BaseDataset):
         B_tensor = transform(B)
         viewpoint = np.asarray(viewpoint)
         viewpoint = torch.FloatTensor(viewpoint)
-
+        if pid != B_id and expresison != B_exp:
+            print (self.data_list[index], B_id, B_exp)
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'A_path': self.data_list[index][:-4] , 'B_path': os.path.join(B_id, B_exp, str(small_index)) }
 
         return input_dict
