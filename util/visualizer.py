@@ -42,6 +42,7 @@ class Visualizer():
                 try:
                     s = StringIO()
                 except:
+                    print ('!!!!!!!!', label)
                     s = BytesIO()
                 scipy.misc.toimage(image_numpy).save(s, format="jpeg")
                 # Create an Image object

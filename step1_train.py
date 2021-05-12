@@ -110,19 +110,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             B_img = util.tensor2im(data['pair_image'][0])
             B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
             B_img = util.writeText(B_img, data['B_path'][0])
-
-            print (data['A_path'])
-            print (data['B_path'])
-            ggg1 = data['A_path'][0].split('/')
-            ggg2 = data['B_path'][0].split('/')
-            print (ggg1, ggg2)
-            if ggg1[0] != ggg2[0] and ggg1[1] != ggg2[1]:
-                print (ggg1, ggg2)
-                print (ffffff)
-            print ('============')
-            cv2.imwrite('./tmp/' + ggg1[0] +'__' + ggg1[1]+'__' + ggg1[2] +'.png', cv2.hconcat([A_img, B_img]) )
-            cv2.imwrite('./tmp/' + ggg2[0] +'__' + ggg2[1]+'__' + ggg2[2] +'.png', cv2.hconcat([A_img, B_img]) )
-
+            
             visuals = OrderedDict([
                                     ('image', A_img),
                                     ('pair_image', B_img),
