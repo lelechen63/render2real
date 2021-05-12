@@ -156,6 +156,7 @@ class FacescapeDirDataset(BaseDataset):
         viewpoint = torch.FloatTensor(viewpoint)
         if pid != B_id and expresison != B_exp:
             print (self.data_list[index], B_id, B_exp)
+            print (gg)
         input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'A_path': self.data_list[index][:-4] , 'B_path': os.path.join(B_id, B_exp, str(small_index)) }
 
         return input_dict
