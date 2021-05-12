@@ -42,7 +42,6 @@ class Visualizer():
                 try:
                     s = StringIO()
                 except:
-                    print ('!!!!!!!!', label)
                     s = BytesIO()
                 scipy.misc.toimage(image_numpy).save(s, format="jpeg")
                 # Create an Image object
@@ -60,6 +59,7 @@ class Visualizer():
                         img_path = os.path.join(self.img_dir, 'epoch%.3d_%s_%d.jpg' % (epoch, label, i))
                         util.save_image(image_numpy[i], img_path)
                 else:
+                    print ('!!!!!!!!!!!!!!!!!')
                     img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.jpg' % (epoch, label))
                     util.save_image(image_numpy, img_path)
 
