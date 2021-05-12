@@ -37,8 +37,7 @@ class Visualizer():
     def display_current_results(self, visuals, epoch, step):
         if self.tf_log: # show images in tensorboard output
             img_summaries = []
-            for label, image_numpy in visuals.items():
-                     
+            for label, image_numpy in visuals.items(): 
                 # Write the image to a string
                 try:
                     s = StringIO()
