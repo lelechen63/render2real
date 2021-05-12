@@ -54,14 +54,9 @@ class Visualizer():
 
         if self.use_html: # save images to a html file
             for label, image_numpy in visuals.items():
-                if isinstance(image_numpy, list):
-                    for i in range(len(image_numpy)):
-                        img_path = os.path.join(self.img_dir, 'epoch%.3d_%s_%d.jpg' % (epoch, label, i))
-                        util.save_image(image_numpy[i], img_path)
-                else:
-                    print ('!!!!!!!!!!!!!!!!!')
-                    img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.jpg' % (epoch, label))
-                    util.save_image(image_numpy, img_path)
+               
+                img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.jpg' % (epoch, label))
+                util.save_image(image_numpy, img_path)
 
             # update website
             webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=30)
@@ -72,17 +67,10 @@ class Visualizer():
                 links = []
 
                 for label, image_numpy in visuals.items():
-                    if isinstance(image_numpy, list):
-                        for i in range(len(image_numpy)):
-                            img_path = 'epoch%.3d_%s_%d.jpg' % (n, label, i)
-                            ims.append(img_path)
-                            txts.append(label+str(i))
-                            links.append(img_path)
-                    else:
-                        img_path = 'epoch%.3d_%s.jpg' % (n, label)
-                        ims.append(img_path)
-                        txts.append(label)
-                        links.append(img_path)
+                    img_path = 'epoch%.3d_%s.jpg' % (n, label)
+                    ims.append(img_path)
+                    txts.append(label)
+                    links.append(img_path)
                 if len(ims) < 10:
                     webpage.add_images(ims, txts, links, width=self.win_size)
                 else:
