@@ -104,22 +104,12 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = True
         if save_fake:
             A_img = util.tensor2im(data['image'][0])
-            # A_img = np.array(A_img)
             A_img = np.ascontiguousarray(A_img, dtype=np.uint8)
-
-            print (A_img.shape)
-            print(type(A_img))
             A_img = util.writeText(A_img, data['A_path'][0])
-            # A_img = cv2.putText(A_img, data['A_path'][0], (50,50), cv2.FONT_HERSHEY_SIMPLEX, 
-            #        1, (255, 0, 0), 2, cv2.LINE_AA)
-            
+           
             B_img = util.tensor2im(data['pair_image'][0])
-            # B_img = np.array(B_img)
             B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
-
             B_img = util.writeText(B_img, data['B_path'][0])
-            # B_img = cv2.putText(B_img, data['B_path'][0], (50,50), cv2.FONT_HERSHEY_SIMPLEX, 
-            #        1, (255, 0, 0), 2, cv2.LINE_AA)
 
             visuals = OrderedDict([
                                     ('image', A_img),
