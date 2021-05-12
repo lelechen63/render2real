@@ -121,6 +121,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
                 print (ffffff)
             print ('============')
             cv2.imwrite('./tmp/' + ggg1[0] +'__' + ggg1[1]+'__' + ggg1[2] +'.png', cv2.hconcat([A_img, B_img]) )
+            cv2.imwrite('./tmp/' + ggg2[0] +'__' + ggg2[1]+'__' + ggg2[2] +'.png', cv2.hconcat([A_img, B_img]) )
 
             visuals = OrderedDict([
                                     ('image', A_img),
