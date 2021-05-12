@@ -106,11 +106,16 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             A_img = util.tensor2im(data['image'][0])
             A_img = np.ascontiguousarray(A_img, dtype=np.uint8)
             A_img = util.writeText(A_img, data['A_path'][0])
-           
+            
             B_img = util.tensor2im(data['pair_image'][0])
             B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
             B_img = util.writeText(B_img, data['B_path'][0])
-            print (data['A_path'][0], data['B_path'][0])
+
+            ggg1 = data['A_path'][0].split('/')
+            ggg2 = data['B_path'][0].split('/')
+            if ggg1[0] != ggg2[0] and ggg1[1] != ggg2[1]:
+                print (ggg1, ggg2)
+            
             visuals = OrderedDict([
                                     ('image', A_img),
                                     ('pair_image', B_img),
