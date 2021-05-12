@@ -37,16 +37,8 @@ class Visualizer():
     def display_current_results(self, visuals, epoch, step):
         if self.tf_log: # show images in tensorboard output
             img_summaries = []
-            # cc = 0
             for label, image_numpy in visuals.items():
-                # if cc = 0:
-                #     A_path = image_numpy
-                #     cc += 1
-                #     continue
-                # elif cc = 1:
-                #     B_path = image_numpy
-                #     cc += 1
-                #     continue                
+                     
                 # Write the image to a string
                 try:
                     s = StringIO()
@@ -57,7 +49,6 @@ class Visualizer():
                 img_sum = self.tf.Summary.Image(encoded_image_string=s.getvalue(), height=image_numpy.shape[0], width=image_numpy.shape[1])
                 # Create a Summary value
                 img_summaries.append(self.tf.Summary.Value(tag=label, image=img_sum))
-                cc += 1
             # Create and write Summary
             summary = self.tf.Summary(value=img_summaries)
             self.writer.add_summary(summary, step)
