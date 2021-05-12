@@ -7,7 +7,7 @@ from collections import OrderedDict
 from subprocess import call
 import fractions
 def lcm(a,b): return abs(a * b)/fractions.gcd(a,b) if a and b else 0
-
+import cv2
 from options.step1_train_options import TrainOptions
 from data.data_loader import CreateDataLoader
 from models.models import create_model
