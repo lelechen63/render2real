@@ -113,6 +113,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
             ggg1 = data['A_path'][0].split('/')
             ggg2 = data['B_path'][0].split('/')
+            print (ggg1, ggg2)
             if ggg1[0] != ggg2[0] and ggg1[1] != ggg2[1]:
                 print (ggg1, ggg2)
                 print (ffffff)
