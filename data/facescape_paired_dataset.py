@@ -199,7 +199,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
         self.dic_list = pickle.load(dic_file)#[:10]
         # self.facial_seg = PIL.ImageOps.invert(PIL.Image.open("../predef/facial_mask_v10.png"))
-        self.facial_seg = cv2.imread("../predef/facial_mask_v10.png")[:,:,::-1]
+        self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
     def __getitem__(self, index):
 
         tmp = self.data_list[index].split('/')
