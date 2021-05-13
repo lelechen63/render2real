@@ -20,6 +20,12 @@ def create_model(opt):
             model = DisentNet()
         else:
             model = InferenceDisentNet()
+    elif opt.model == 'texmesh_step1':
+        from .TexMeshDisentNet import TexMeshDisentNet
+        if opt.isTrain:
+            model = TexMeshDisentNet()
+        else:
+            model = InferenceTexMeshDisentNet()
     model.initialize(opt)
     if opt.verbose:
         print("model [%s] was created" % (model.name()))

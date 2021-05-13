@@ -61,6 +61,21 @@ def define_Dis_EncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, net
     encoderdecoder.apply(weights_init)
     return encoderdecoder
 
+def define_TexMesh_EncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+             n_blocks_local=3, norm='instance', gpu_ids=[]):    
+    norm_layer = get_norm_layer(norm_type=norm)     
+    if netG == 'textmesh_dis':    
+        encoderdecoder = TexMeshEncoderDecoder(linearity, input_nc, code_n,encoder_fc_n, ngf, n_downsample_global, n_blocks_global)       
+    
+    else:
+        raise('generator not implemented!')
+    print(encoderdecoder)
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())   
+        encoderdecoder.cuda(gpu_ids[0])
+    encoderdecoder.apply(weights_init)
+    return encoderdecoder
+
 def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
@@ -488,6 +503,250 @@ class DisentEncoderDecoder(nn.Module):
         recons_Bexp_Aid = self.output_layer(Bexp_Aid_decoded)
     
         return_list.append( recons_Bexp_Aid)
+
+        return return_list
+
+
+class TexMeshEncoderDecoder(nn.Module):
+    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(TexMeshEncoderDecoder, self).__init__()        
+        activation = nn.ReLU(True)     
+
+        self.CNNencoder = nn.Sequential(
+                            nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0),
+                            norm_layer(ngf), 
+                            nn.ReLU(True),  
+
+                            nn.Conv2d(ngf , ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            nn.ReLU(True),  # 512
+
+                            nn.Conv2d( ngf * 2, ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            nn.ReLU(True),  #256
+
+                            nn.Conv2d(ngf*2 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            nn.ReLU(True), # 128
+
+                            nn.Conv2d(ngf*4 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            nn.ReLU(True), # 64
+
+                            nn.Conv2d(ngf*4 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            nn.ReLU(True),  #32
+
+                            nn.Conv2d(ngf*8 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            nn.ReLU(True),  #16
+
+                            nn.Conv2d(ngf*8 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 16),
+                            nn.ReLU(True),  #8
+
+                            nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 16),
+                            nn.ReLU(True),  #4
+
+                        )
+        
+        self.identity_enc = nn.Sequential(
+                                    nn.Linear( ngf * 16 * 4 + ngf * 4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,code_n),
+                                    nn.ReLU(True),
+                                    )
+
+        self.expression_enc = nn.Sequential(
+                                    nn.Linear( ngf * 16 * 4 + ngf * 4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,code_n),
+                                    nn.ReLU(True),
+                                    )
+        self.identity_dec = nn.Sequential(
+                                    nn.Linear( code_n, ngf*4),
+                                    nn.ReLU(True),
+                                    # nn.Linear( ngf*4, ngf*4),
+                                    # nn.ReLU(True),
+                                    # nn.Linear( ngf*4, ngf*4),
+                                    # nn.ReLU(True),
+                                    nn.Linear( ngf*4,ngf*4),
+                                    nn.ReLU(True),
+                                    )
+        self.exp_dec = nn.Sequential(
+                                    nn.Linear( code_n, ngf*4),
+                                    nn.ReLU(True),
+                                    # nn.Linear( ngf*4, ngf*4),
+                                    # nn.ReLU(True),
+                                    # nn.Linear( ngf*4, ngf*4),
+                                    # nn.ReLU(True),
+                                    nn.Linear( ngf*4,ngf*4),
+                                    nn.ReLU(True),
+                                    )
+        self.meshencoder = nn.Sequential(
+                                    nn.Linear( 6601*3, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*2),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*2, ngf*4),
+                                    nn.ReLU(True)
+                                    )
+        self.tex_fc_dec = nn.Sequential(
+                                    nn.Linear( ngf*4 * 2, ngf*16),
+                                    nn.ReLU(True)
+                                    )
+        self.mesh_fc_dec = nn.Sequential(
+                                    nn.Linear( ngf*4 * 2, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, 6601 * 3),
+                                    )
+        ### upsample
+
+        self.tex_decoder = nn.Sequential(
+                        nn.ConvTranspose2d(ngf * 16, ngf * 16, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 16), 
+                        nn.ReLU(True),
+                        nn.ConvTranspose2d(ngf * 16, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 8), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 8, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 8), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 4), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 4, ngf * 4, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 4), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 2), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf * 2), 
+                        nn.ReLU(True),
+
+                        nn.ConvTranspose2d(ngf * 2, ngf , kernel_size=3, stride=2, padding=1, output_padding=1),
+                        norm_layer(ngf), 
+                        nn.ReLU(True),
+                    )
+
+
+        model = []
+        model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, 3, kernel_size=7, padding=0), nn.Tanh()]    
+        self.output_layer = nn.Sequential(*model)
+
+        model = []
+        for i in range(n_blocks):
+            model += [ResnetBlock(ngf * 16, padding_type=padding_type, activation=activation, norm_layer=norm_layer)]
+
+        self.resblocks = nn.Sequential(*model)
+
+    
+    def forward(self, A_tex, A_mesh, B_tex , B_mesh, map_type ):
+        return_list = []
+
+        A_tex_encoded = self.CNNencoder(A_tex)
+        A_tex_encoded = self.resblocks(A_tex_encoded).view(A_tex_encoded.shape[0], -1)
+        A_mesh_encoded = self.meshencoder(A_mesh)
+        A_encoded= torch.cat([A_mesh_encoded, A_tex_encoded], 1)
+        
+        A_identity_code = self.identity_enc(A_encoded)
+        A_expression_code = self.expression_enc(A_encoded)
+        return_list.append(A_expression_code)
+        return_list.append( A_identity_code)
+
+        A_exp_fea = self.exp_dec(A_expression_code)
+        A_id_fea = self.identity_dec(A_identity_code)
+        A_feature = torch.cat([A_exp_fea, A_id_fea], axis = 1)
+        A_rec_mesh = self.mesh_fc_dec(A_feature)
+        return_list.append( A_rec_mesh)
+
+        A_tex_dec = self.tex_fc_dec(A_feature)
+
+        A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        A_decoded = self.tex_decoder(A_tex_dec)
+        A_rec_tex = self.output_layer(A_decoded)
+        return_list.append( A_rec_tex)        
+
+        B_tex_encoded = self.CNNencoder(B_tex)
+        B_tex_encoded = self.resblocks(B_tex_encoded).view(B_tex_encoded.shape[0], -1)
+        B_mesh_encoded = self.meshencoder(B_mesh)
+        B_encoded= torch.cat([B_mesh_encoded, B_tex_encoded], 1)
+        
+        B_identity_code = self.identity_enc(B_encoded)
+        B_expression_code = self.expression_enc(B_encoded)
+        return_list.append(B_expression_code)
+        return_list.append( B_identity_code)
+
+        B_exp_fea = self.exp_dec(B_expression_code)
+        B_id_fea = self.identity_dec(B_identity_code)
+        B_feature = torch.cat([B_exp_fea, B_id_fea], axis = 1)
+        B_rec_mesh = self.mesh_fc_dec(B_feature)
+        return_list.append( B_rec_mesh)
+
+        B_tex_dec = self.tex_fc_dec(B_feature)
+
+        B_tex_dec = B_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        B_decoded = self.tex_decoder(B_tex_dec)
+        B_rec_tex = self.output_layer(B_decoded)
+        return_list.append( B_rec_tex)
+
+        Aexp_Bid_fea =[]
+        Bexp_Aid_fea = []
+        for i in range(map_type.shape[0]):
+            if map_type[i] == 0:
+                Aexp_Bid_fea.append( torch.cat([A_exp_fea[i], B_id_fea[i], A_view_fea[i]], axis = 0) )
+                Bexp_Aid_fea.append( torch.cat([B_exp_fea[i], A_id_fea[i], B_view_fea[i]], axis = 0) )
+            else:
+                Aexp_Bid_fea.append( torch.cat([A_exp_fea[i], B_id_fea[i], B_view_fea[i]], axis = 0) )
+                Bexp_Aid_fea.append( torch.cat([B_exp_fea[i], A_id_fea[i], A_view_fea[i]], axis = 0) )
+
+        Aexp_Bid_fea = torch.stack(Aexp_Bid_fea, dim = 0)
+        Bexp_Aid_fea = torch.stack(Bexp_Aid_fea, dim = 0)
+
+        Aexp_Bid_mesh = self.mesh_fc_dec(Aexp_Bid_fea)
+        return_list.append( Aexp_Bid_mesh)
+
+        Aexp_Bid_tex_dec = self.tex_fc_dec(Aexp_Bid_fea)
+
+        Aexp_Bid_tex_dec = Aexp_Bid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        Aexp_Bid_decoded = self.tex_decoder(Aexp_Bid_tex_dec)
+        Aexp_Bid_rec_tex = self.output_layer(Aexp_Bid_decoded)
+        return_list.append( Aexp_Bid_rec_tex)
+
+        Bexp_Aid_mesh = self.mesh_fc_dec(Bexp_Aid_fea)
+        return_list.append( Bexp_Aid_mesh)
+
+        Bexp_Aid_tex_dec = self.tex_fc_dec(Bexp_Aid_fea)
+        Bexp_Aid_tex_dec = Bexp_Aid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        Bexp_Aid_decoded = self.tex_decoder(Bexp_Aid_tex_dec)
+        Bexp_Aid_rec_tex = self.output_layer(Bexp_Aid_decoded)
+        return_list.append( Bexp_Aid_rec_tex)
+
 
         return return_list
 
