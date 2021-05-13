@@ -172,7 +172,7 @@ class FacescapeMeshTexDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot    
-        img_size = (1024,1024)
+        self.img_size = (1024,1024)
 
         ### input A (texture and mesh)
         self.dir_A = os.path.join(opt.dataroot, "textured_meshes")
@@ -201,7 +201,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
         self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
-        self.facial_seg = cv2.resize(self.facial_seg, img_size, interpolation = cv2.INTER_AREA)
+        self.facial_seg = cv2.resize(self.facial_seg, self.img_size, interpolation = cv2.INTER_AREA)
     def __getitem__(self, index):
 
         tmp = self.data_list[index].split('/')
@@ -210,7 +210,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex_path = os.path.join( self.dir_A , self.data_list[index] + '.jpg')
         # mesh 
         tex = cv2.imread(tex_path)[:,:,::-1]
-        tex = cv2.resize(tex, img_size, interpolation = cv2.INTER_AREA)
+        tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
@@ -242,7 +242,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.jpg')
         # mesh 
         tex = cv2.imread(tex_path)[:,:,::-1]
-        tex = cv2.resize(tex, img_size, interpolation = cv2.INTER_AREA)
+        tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
