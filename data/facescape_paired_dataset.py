@@ -172,6 +172,7 @@ class FacescapeMeshTexDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot    
+        img_size = (1024,1024)
 
         ### input A (texture and mesh)
         self.dir_A = os.path.join(opt.dataroot, "textured_meshes")
@@ -200,6 +201,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.dic_list = pickle.load(dic_file)#[:10]
         # self.facial_seg = PIL.ImageOps.invert(PIL.Image.open("../predef/facial_mask_v10.png"))
         self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
+        self.facial_seg = cv2.resize(self.facial_seg, img_size, interpolation = cv2.INTER_AREA)
     def __getitem__(self, index):
 
         tmp = self.data_list[index].split('/')
@@ -208,76 +210,22 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex_path = os.path.join( self.dir_A , self.data_list[index] + '.jpg')
         # mesh 
         tex = cv2.imread(tex_path)[:,:,::-1]
-        print (tex.shape, self.facial_seg.shape)
+        tex = cv2.resize(tex, img_size, interpolation = cv2.INTER_AREA)
+        tex = tex * self.facial_seg
+        tex = Image.fromarray(np.uint8(tex))
+        params = get_params(self.opt, tex.size)
+        transform = get_transform(self.opt, params)      
+        tex_tensor = transform(tex)
+
+        print (tex_tensor.shape)
         mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
 
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
+        vertices=vertices.reshape(:, 4, 3)
+        vertices = vertices[:, 0, :].reshape(-1)
         print( vertices.shape )
-
-        ### input mask (binary mask to segment person out)
-        mask = cv2.imread(mask_path)[:,:,::-1]
-        ### input A (real image)
-        A = cv2.imread(A_path)[:,:,::-1]
-        A = A * mask
-        A = Image.fromarray(np.uint8(A))
-        params = get_params(self.opt, A.size)
-        transform = get_transform(self.opt, params)      
-        A_tensor = transform(A)
-
-        small_index = 0
-        A_angle = self.angle_list[tmp[0] +'/' + tmp[1]][tmp[2][:-4]]
-        
-        pid = tmp[0]
-        expresison = tmp[1]
-
-        # randomly get paired image (same identity or same expression)
-        toss = random.getrandbits(1)
-        # toss 0-> same iden, diff exp
-        if toss == 0:
-            pool = set(self.dic_list[pid].keys()) - set(expresison)
-            B_exp = random.sample(pool, 1)[0]
-            B_id = pid
-            B_angle_pool = self.angle_list[pid +'/' + B_exp]
-        # toss 1 -> same exp, diff iden
-        else:
-            pool = set(self.dic_list[expresison].keys()) - set(pid)
-            B_id = random.sample(pool, 1)[0]
-            B_exp = expresison
-            B_angle_pool = self.angle_list[B_id +'/' + expresison]
-        
-        ggg = []
-        for i in range(len(B_angle_pool)):
-            ggg.append(B_angle_pool[str(i)])
-        ggg = np.array(ggg)
-        diff = abs(ggg - A_angle).sum(1)
-        
-        for kk in range(diff.shape[0]):
-            small_index = diff.argsort()[kk]
-            try:
-                # print (small_index)
-                B_path =  os.path.join( self.dir_A ,  B_id, B_exp, str(small_index) +'.jpg' )   
-                # print (B_path)
-                ### input mask (binary mask to segment person out)
-                mask_path =os.path.join( self.dir_A ,B_id, B_exp, str(small_index)+ '_mask.png' )   
-                # mask = Image.open(mask_path).convert('RGB')
-                mask = cv2.imread(mask_path)[:,:,::-1] 
-                B = cv2.imread(B_path)[:,:,::-1]
-                break
-            except:
-                continue
-        json_path = os.path.join( self.dir_json , B_id, B_exp, 'params.json' )
-        f  = open(json_path , 'r')
-        params = json.load(f)
-        
-        viewpoint.append(np.array(params['%d_Rt' %  small_index]).flatten())
-        B = B * mask
-        B = Image.fromarray(np.uint8(B))
-        B_tensor = transform(B)
-        viewpoint = np.asarray(viewpoint)
-        viewpoint = torch.FloatTensor(viewpoint)
-
-        input_dict = { 'image':A_tensor, 'pair_image': B_tensor, 'pair_type': toss, 'viewpoint' : viewpoint, 'A_path': self.data_list[index][:-4] , 'B_path': os.path.join(B_id, B_exp, str(small_index)) }
+        input_dict = { 'tex':tex_tensor, 'mesh': vertices, 'A_path': self.data_list[index]  }
 
         return input_dict
 
