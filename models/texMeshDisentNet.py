@@ -67,17 +67,20 @@ class TexMeshDisentNet(BaseModel):
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
 
-    def forward(self, image, map_image, map_type, viewpoint, infer=False):
-        A_viewpoint = viewpoint[:,0]
-        B_viewpoint = viewpoint[:,1]
-
-        image = Variable(image.cuda())
-        map_image = Variable(map_image.cuda())
-        A_viewpoint = Variable(A_viewpoint.cuda())
-        B_viewpoint = Variable(B_viewpoint.cuda())
+    def forward(self, Atex, Amesh, Btex, Bmesh, map_type, infer=False):
+        
+        Atex = Variable(Atex.cuda())
+        Btex = Variable(map_imageBtex.cuda())
+        Amesh = Variable(Amesh.cuda())
+        Bmesh = Variable(Bmesh.cuda())
 
         # Fake Generation
-        A_exp_code, A_id_code,Aexp_Aid_image, B_exp_code, B_id_code, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image   = self.netEncoderDecoder(image, A_viewpoint, map_image, B_viewpoint, map_type)
+        A_exp_code, A_id_code, \
+        Aexp_Aid_mesh, Aexp_Aid_tex,\
+        B_exp_code, B_id_code,\
+        Bexp_Bid_mesh, Bexp_Bid_tex, \
+        Aexp_Bid_mesh, Aexp_Bid_tex, \
+        Bexp_Aid_mesh, Bexp_Aid_image   = self.netEncoderDecoder(Atex, Amesh, Btex, Bmesh, map_type)
 
         # mismatch reconstruction
         # Aexp_Bid_image
@@ -99,7 +102,7 @@ class TexMeshDisentNet(BaseModel):
         # same exp as A/B, same id as A, compute loss with A'
 
         ############################################################################
-
+        # tex loss
         # VGG feature matching loss
         loss_G_VGG = 0
         loss_G_VGG3 = 0
@@ -110,15 +113,15 @@ class TexMeshDisentNet(BaseModel):
             # mismatch loss
             for i in range(map_type.shape[0]):
                 if map_type[i] == 0:
-                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_image[i].unsqueeze(0), image[i].unsqueeze(0)) * self.opt.lambda_feat
-                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_image[i].unsqueeze(0), map_image[i].unsqueeze(0)) * self.opt.lambda_feat
+                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat
+                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat
                 else:
-                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_image[i].unsqueeze(0), map_image[i].unsqueeze(0)) * self.opt.lambda_feat
-                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_image[i].unsqueeze(0), image[i].unsqueeze(0)) * self.opt.lambda_feat
+                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat
+                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat
             
             # reconstruction loss
-            loss_G_VGG3 = self.criterionVGG(Aexp_Aid_image, image) * self.opt.lambda_feat
-            loss_G_VGG4 = self.criterionVGG(Bexp_Bid_image, map_image) * self.opt.lambda_feat
+            loss_G_VGG3 = self.criterionVGG(Aexp_Aid_tex, Atex) * self.opt.lambda_feat
+            loss_G_VGG4 = self.criterionVGG(Bexp_Bid_tex, Btex) * self.opt.lambda_feat
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
         loss_G_pix = 0
@@ -134,16 +137,30 @@ class TexMeshDisentNet(BaseModel):
                 loss_G_pix2 += self.criterionPix(Bexp_Aid_image[i].unsqueeze(0), image[i].unsqueeze(0)) * self.opt.lambda_pix
         
         # reconstruction loss
-        # loss_G_pix3 = self.criterionPix(Aexp_Aid_image, image) * self.opt.lambda_pix
-        loss_G_pix4 = self.criterionPix(Bexp_Bid_image, map_image) * self.opt.lambda_pix
-        loss_G_pix = loss_G_pix1 + loss_G_pix2 
-
-        loss_G_pix3 = ( ( Aexp_Aid_image - image ) ** 2 ).mean()
-
+        loss_G_pix3 = self.criterionPix(Aexp_Aid_tex, Atex) * self.opt.lambda_pix
+        loss_G_pix4 = self.criterionPix(Bexp_Bid_tex, Btex) * self.opt.lambda_pix
+        loss_G_pix = loss_G_pix1 + loss_G_pix2
+        ######################################################################
+        #mesh loss
+        loss_mesh1 = 0
+        loss_mesh2 = 0
+        loss_mesh3 = self.criterionPix(Aexp_Aid_mesh, Amesh)* self.opt.lambda_mesh
+        loss_mesh4 = self.criterionPix(Bexp_Bid_mesh, Bmesh)* self.opt.lambda_mesh
+        # mismatch loss
+        for i in range(map_type.shape[0]):
+            if map_type[i] == 0:
+                loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh
+                loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh
+            else:
+                loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh
+                loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh
+        loss_G_mesh = loss_G_pix1 + loss_G_pix2
+        ################################
         A_err_map = (Aexp_Aid_image - image).sum(1).unsqueeze(1)
 
         # Only return the fake_B image if necessary to save BW
-        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG), [Aexp_Aid_image, Bexp_Bid_image, Aexp_Bid_image, Bexp_Aid_image], A_err_map ]
+        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh), \
+                 [Aexp_Aid_mesh, Aexp_Aid_tex,  Bexp_Bid_mesh, Bexp_Bid_tex, Aexp_Bid_mesh, Aexp_Bid_tex, Bexp_Aid_mesh, Bexp_Aid_tex], A_err_map ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 
     def inference(self, image, viewpoint):

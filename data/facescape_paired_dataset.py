@@ -197,9 +197,9 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.data_list = pickle.load(_file)#[:1]
         _file.close()
         
-        dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
-        self.dic_list = pickle.load(dic_file)#[:10]
-        # self.facial_seg = PIL.ImageOps.invert(PIL.Image.open("../predef/facial_mask_v10.png"))
+        ids = open(os.path.join(opt.dataroot, "lists/ids.pkl"), "rb")
+        self.id_set = set(pickle.load(ids))
+        self.exp_set = get_exp()
         self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
         self.facial_seg = cv2.resize(self.facial_seg, img_size, interpolation = cv2.INTER_AREA)
     def __getitem__(self, index):
@@ -215,17 +215,48 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
-        tex_tensor = transform(tex)
+        A_tex_tensor = transform(tex)
 
-        print (tex_tensor.shape)
+        print (A_tex_tensor.shape)
         mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
 
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
         vertices=vertices.reshape(:, 4, 3)
-        vertices = vertices[:, 0, :].reshape(-1)
-        print( vertices.shape )
-        input_dict = { 'tex':tex_tensor, 'mesh': vertices, 'A_path': self.data_list[index]  }
+        A_vertices = vertices[:, 0, :].reshape(-1)
+        print( A_vertices.shape )
+
+        toss = random.getrandbits(1)
+        # toss 0-> same iden, diff exp
+        if toss == 0:
+            pool = self.exp_set - set(tmp[-1])
+            B_exp = random.sample(pool, 1)[0]
+            B_id = tmp[0]
+        # toss 1 -> same exp, diff iden
+        else:
+            pool = self.id_set - set(tmp[0])
+            B_id = random.sample(pool, 1)[0]
+            B_exp = tmp[-1]
+        
+        # tex 
+        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.jpg')
+        # mesh 
+        tex = cv2.imread(tex_path)[:,:,::-1]
+        tex = cv2.resize(tex, img_size, interpolation = cv2.INTER_AREA)
+        tex = tex * self.facial_seg
+        tex = Image.fromarray(np.uint8(tex))
+        params = get_params(self.opt, tex.size)
+        transform = get_transform(self.opt, params)      
+        B_tex_tensor = transform(tex)
+
+        print (B_tex_tensor.shape)
+        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.obj')
+        mesh = trimesh.load(mesh_path, process=False)
+        vertices = mesh.vertices
+        vertices=vertices.reshape(:, 4, 3)
+        B_vertices = vertices[:, 0, :].reshape(-1)
+        print( B_vertices.shape)
+        input_dict = { 'Atex':A_tex_tensor, 'Amesh': A_vertices, 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': B_vertices, 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
 
         return input_dict
 

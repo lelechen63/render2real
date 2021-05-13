@@ -68,8 +68,11 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
         ############## Forward Pass ######################
     
-        losses, generated, errormap = model(  tex = Variable(data['tex']) , 
-                                    mesh =  Variable(data['mesh']),
+        losses, generated, errormap = model(  Atex = Variable(data['Atex']) , 
+                                    Amesh =  Variable(data['Amesh']),
+                                    Btex = Variable(data['Btex']) , 
+                                    Bmesh =  Variable(data['Bmesh']),
+                                    map_type = data['map_type'],
                                     infer=save_fake)
 
         # sum per device losses
@@ -101,21 +104,21 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### display output images
         # save_fake = True
         if save_fake:
-            A_img = util.tensor2im(data['image'][0])
-            A_img = np.ascontiguousarray(A_img, dtype=np.uint8)
-            A_img = util.writeText(A_img, data['A_path'][0])
+            Atex = util.tensor2im(data['Atex'][0])
+            Atex = np.ascontiguousarray(Atex, dtype=np.uint8)
+            Atex = util.writeText(Atex, data['A_path'][0])
             
-            B_img = util.tensor2im(data['pair_image'][0])
-            B_img = np.ascontiguousarray(B_img, dtype=np.uint8)
-            B_img = util.writeText(B_img, data['B_path'][0])
+            Btex = util.tensor2im(data['Btex'][0])
+            Btex = np.ascontiguousarray(Btex, dtype=np.uint8)
+            Btex = util.writeText(Btex, data['B_path'][0])
             
             visuals = OrderedDict([
-                                    ('image', A_img),
-                                    ('pair_image', B_img),
-                                   ('Aexp_Aid_image', util.tensor2im(generated[0].data[0])),
-                                   ('Bexp_Bid_image', util.tensor2im(generated[1].data[0])),
-                                   ('Aexp_Bid_image', util.tensor2im(generated[2].data[0])),
-                                   ('Aid_Bexp_image', util.tensor2im(generated[3].data[0])),
+                                    ('Atex', Atex),
+                                    ('Btex', Btex),
+                                   ('Aexp_Aid_tex', util.tensor2im(generated[1].data[0])),
+                                   ('Bexp_Bid_tex', util.tensor2im(generated[3].data[0])),
+                                   ('Aexp_Bid_tex', util.tensor2im(generated[5].data[0])),
+                                   ('Aid_Bexp_tex', util.tensor2im(generated[7].data[0])),
                                    ('errormap', util.tensor2im(errormap.data[0]))
                                  ])
             visualizer.display_current_results(visuals, epoch, total_steps)
