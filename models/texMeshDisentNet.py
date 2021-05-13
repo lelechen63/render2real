@@ -163,7 +163,7 @@ class TexMeshDisentNet(BaseModel):
                  [Aexp_Aid_mesh, Aexp_Aid_tex,  Bexp_Bid_mesh, Bexp_Bid_tex, Aexp_Bid_mesh, Aexp_Bid_tex, Bexp_Aid_mesh, Bexp_Aid_tex], A_err_map ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 
-    def inference(self, image, viewpoint):
+    def inference(self, Atex, Amesh, Btex, Bmesh, map_type):
 
         image = Variable(image.data.cuda())
         viewpoint = Variable(viewpoint.data.cuda())
