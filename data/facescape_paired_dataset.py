@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 import random
 import torch
-import trimesh, os
+import trimesh, os, time
 def get_exp():
     expressions = {
         1: "1_neutral",
@@ -204,6 +204,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.facial_seg = cv2.resize(self.facial_seg, self.img_size, interpolation = cv2.INTER_AREA)
     def __getitem__(self, index):
         print ('1')
+        t = time.time()
         tmp = self.data_list[index].split('/')
         # id_p , 'models_reg', motion_p
         # tex 
@@ -217,15 +218,18 @@ class FacescapeMeshTexDataset(BaseDataset):
         transform = get_transform(self.opt, params)      
         A_tex_tensor = transform(tex)
         print (A_tex_tensor.shape)
+        print (time.time() -t )
         print ('2')
 
         mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
-        print ('3')
         mesh = trimesh.load(mesh_path, process=False)
+        print (time.time() -t, '3' )
         vertices = mesh.vertices
         vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
         print( A_vertices.shape )
+        print (time.time() -t, '3' )
+
         print ('4')
 
         toss = random.getrandbits(1)
