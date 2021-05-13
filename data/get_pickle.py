@@ -104,15 +104,18 @@ def get_texmesh_pickle():
     ids =  os.listdir(base_p)
     ids.sort()
     for id_p in ids:
-        current_p = os.path.join( base_p , id_p)
-        all_motions = os.listdir(current_p)
+        current_p = os.path.join( base_p , id_p, 'models_reg')
+        all_files = os.listdir(current_p)
+        all_motions = []
+        for f  in all_files:
+            if 'jpg' in f:
+                all_motions.append(f[:-4])
         random.shuffle(all_motions)
         for k, motion_p in enumerate(all_motions):
-            current_p1 = os.path.join( current_p , motion_p)
             if k < 17:
-                train_list.append( os.path.join( id_p , motion_p) )
+                train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
             else:
-                test_list.append( os.path.join( id_p , motion_p) )
+                test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
 
     print (len(train_list), len(test_list))
 
