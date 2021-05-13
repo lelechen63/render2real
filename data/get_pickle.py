@@ -94,6 +94,32 @@ def get_paired_image_pickle():
     with open('/raid/celong/FaceScape/lists/img_dic_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
-        
-get_image_pickle()
-get_paired_image_pickle()
+
+def get_texmesh_pickle():
+    
+    base_p = '/raid/celong/FaceScape/textured_meshes'
+
+    train_list = []
+    test_list = []
+    ids =  os.listdir(base_p)
+    ids.sort()
+    for id_p in ids:
+        current_p = os.path.join( base_p , id_p)
+        all_motions = os.listdir(current_p)
+        random.shuffle(all_motions)
+        for k, motion_p in enumerate(all_motions):
+            current_p1 = os.path.join( current_p , motion_p)
+            if k < 17:
+                train_list.append( os.path.join( id_p , motion_p) )
+            else:
+                test_list.append( os.path.join( id_p , motion_p) )
+
+    print (len(train_list), len(test_list))
+
+    with open('/raid/celong/FaceScape/lists/texmesh_train.pkl', 'wb') as handle:
+        pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open('/raid/celong/FaceScape/lists/texmesh_train.pkl', 'wb') as handle:
+        pickle.dump(test_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+get_texmesh_pickle()
+# get_paired_image_pickle()
