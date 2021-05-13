@@ -203,7 +203,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
         self.facial_seg = cv2.resize(self.facial_seg, self.img_size, interpolation = cv2.INTER_AREA)
     def __getitem__(self, index):
-
+        print ('1')
         tmp = self.data_list[index].split('/')
         # id_p , 'models_reg', motion_p
         # tex 
@@ -216,15 +216,17 @@ class FacescapeMeshTexDataset(BaseDataset):
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
         A_tex_tensor = transform(tex)
-
         print (A_tex_tensor.shape)
-        mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
+        print ('2')
 
+        mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
+        print ('3')
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
         vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
         print( A_vertices.shape )
+        print ('4')
 
         toss = random.getrandbits(1)
         # toss 0-> same iden, diff exp
