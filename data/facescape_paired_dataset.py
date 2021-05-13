@@ -222,7 +222,7 @@ class FacescapeMeshTexDataset(BaseDataset):
 
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
-        vertices=vertices.reshape(:, 4, 3)
+        vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
         print( A_vertices.shape )
 
@@ -249,13 +249,11 @@ class FacescapeMeshTexDataset(BaseDataset):
         transform = get_transform(self.opt, params)      
         B_tex_tensor = transform(tex)
 
-        print (B_tex_tensor.shape)
         tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.obj')
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
         vertices=vertices.reshape(-1, 4, 3)
         B_vertices = vertices[:, 0, :].reshape(-1)
-        print( B_vertices.shape)
         input_dict = { 'Atex':A_tex_tensor, 'Amesh': A_vertices, 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': B_vertices, 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
 
         return input_dict
