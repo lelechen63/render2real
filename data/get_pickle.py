@@ -117,6 +117,7 @@ def get_texmesh_pickle():
             else:
                 test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
 
+    print (test_list[:10])
     print (len(train_list), len(test_list))
 
     with open('/raid/celong/FaceScape/lists/texmesh_train.pkl', 'wb') as handle:
