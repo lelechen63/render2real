@@ -2,12 +2,14 @@ import os.path
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
 from PIL import Image, ImageChops
+import PIL
 import json
 import pickle 
 import cv2
 import numpy as np
 import random
 import torch
+import trimesh, os
 def get_exp():
     expressions = {
         1: "1_neutral",
@@ -171,7 +173,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.opt = opt
         self.root = opt.dataroot    
 
-        ### input A (renderred image)
+        ### input A (texture and mesh)
         self.dir_A = os.path.join(opt.dataroot, "textured_meshes")
 
         ### input B (real images)
@@ -183,33 +185,36 @@ class FacescapeMeshTexDataset(BaseDataset):
         ### json 
         self.dir_json = os.path.join(opt.dataroot, "fsmview_images")
 
-        # /raid/celong/FaceScape/fsmview_landmarks/99/14_sadness/1_eye.png
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/img_alone_train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_train.pkl"), "rb")
             
         else:
-            _file = open(os.path.join(opt.dataroot, "lists/img_alone_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
        
         self.data_list = pickle.load(_file)#[:1]
         _file.close()
         
         dic_file = open(os.path.join(opt.dataroot, "lists/img_dic_train.pkl"), "rb")
         self.dic_list = pickle.load(dic_file)#[:10]
-
-        self.angle_list = get_anlge_list()
-        
+        # self.facial_seg = PIL.ImageOps.invert(PIL.Image.open("../predef/facial_mask_v10.png"))
+        self.facial_seg = cv2.imread("../predef/facial_mask_v10.png")[:,:,::-1]
     def __getitem__(self, index):
 
         tmp = self.data_list[index].split('/')
-        A_path = os.path.join( self.dir_A , self.data_list[index] ) 
-        mask_path = os.path.join( self.dir_A , self.data_list[index][:-4] + '_mask.png' )
-        json_path = os.path.join( self.dir_json , tmp[0], tmp[1], 'params.json' )
-        
-        f  = open(json_path , 'r')
-        params = json.load(f)
-        viewpoint = [np.array(params['%s_Rt' %  tmp[2][:-4]]).flatten()]
+        # id_p , 'models_reg', motion_p
+        # tex 
+        tex_path = os.path.join( self.dir_A , self.data_list[index] + '.jpg')
+        # mesh 
+        tex = cv2.imread(tex_path)[:,:,::-1]
+        print (tex.shape, self.facial_seg.shape)
+        mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
+
+        mesh = trimesh.load(mesh_path, process=False)
+        vertices = mesh.vertices
+        print( vertices.shape )
+
         ### input mask (binary mask to segment person out)
         mask = cv2.imread(mask_path)[:,:,::-1]
         ### input A (real image)

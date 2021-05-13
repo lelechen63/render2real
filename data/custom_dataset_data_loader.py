@@ -10,6 +10,9 @@ def CreateDataset(opt):
     elif opt.datasetname == 'fs_pair':
         from data.facescape_paired_dataset import FacescapeDirDataset
         dataset = FacescapeDirDataset()
+    elif opt.datasetname == 'fs_texmesh':
+        from data.facescape_paired_dataset import FacescapeMeshTexDataset
+        dataset = FacescapeMeshTexDataset()
     print("dataset [%s] was created" % (dataset.name()))
     dataset.initialize(opt)
     return dataset
