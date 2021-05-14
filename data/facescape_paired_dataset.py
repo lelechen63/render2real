@@ -220,21 +220,13 @@ class FacescapeMeshTexDataset(BaseDataset):
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
         A_tex_tensor = transform(tex)
-        print (A_tex_tensor.shape)
-        print (time.time() -t )
-        print ('2')
 
         mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
         mesh = trimesh.load(mesh_path, process=False)
-        print (time.time() -t, '3' )
         vertices = mesh.vertices
         vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
-        print( A_vertices.shape )
-        print (time.time() -t, '3' )
-
-        print ('4')
-
+       
         toss = random.getrandbits(1)
         # toss 0-> same iden, diff exp
         if toss == 0:
@@ -248,19 +240,17 @@ class FacescapeMeshTexDataset(BaseDataset):
             B_exp = tmp[-1]
         
         # tex 
-        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.jpg')
+        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.jpg')
         # mesh 
         tex = Image.open(tex_path).convert('RGB').resize(self.img_size)
         tex  = np.array(tex ) 
-        # tex = cv2.imread(tex_path)[:,:,::-1]
-        # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
         B_tex_tensor = transform(tex)
 
-        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.obj')
+        mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
         mesh = trimesh.load(mesh_path, process=False)
         vertices = mesh.vertices
         vertices=vertices.reshape(-1, 4, 3)
