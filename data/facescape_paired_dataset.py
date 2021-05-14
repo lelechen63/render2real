@@ -260,7 +260,6 @@ class FacescapeMeshTexDataset(BaseDataset):
                 mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 B_vertices = np.array(om_mesh.points()).reshape(-1)
-                print (A_vertices.shape, B_vertices.shape)
                 break
             except:
                 print('!!!!!', tex_path)
