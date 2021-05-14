@@ -688,7 +688,7 @@ class TexMeshEncoderDecoder(nn.Module):
 
         A_tex_dec = self.tex_fc_dec(A_feature)
 
-        A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
         A_decoded = self.tex_decoder(A_tex_dec)
         A_rec_tex = self.output_layer(A_decoded)
         return_list.append( A_rec_tex)        
