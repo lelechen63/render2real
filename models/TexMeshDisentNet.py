@@ -156,7 +156,7 @@ class TexMeshDisentNet(BaseModel):
             else:
                 loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh
                 loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh
-        loss_G_mesh = loss_G_pix1 + loss_G_pix2
+        loss_G_mesh = loss_mesh1 + loss_mesh2
         ################################
         A_err_map = (Aexp_Aid_tex - Atex).sum(1).unsqueeze(1)
 
