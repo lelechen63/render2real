@@ -11,7 +11,7 @@ class TexMeshDisentNet(BaseModel):
     def name(self):
         return 'TexMeshDisentNet'
 
-    def init_loss_filter(self, use_feat_loss, use_mismatch_loss):
+    def init_loss_filter(self, use_feat_loss, use_mismatch_loss, use_mesh_loss):
         flags = (True, use_mismatch_loss, use_mismatch_loss,use_feat_loss, use_mismatch_loss and use_feat_loss, use_mismatch_loss and use_feat_loss,use_mesh_loss, use_mesh_loss& use_mismatch_loss, use_mesh_loss & use_mismatch_loss)
         def loss_filter(A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss):
             return [l for (l,f) in zip((A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss),flags) if f]
@@ -49,7 +49,7 @@ class TexMeshDisentNet(BaseModel):
             self.old_lr = opt.lr
 
             # define loss functions
-            self.loss_filter = self.init_loss_filter(not opt.no_vgg_loss, not opt.no_mismatch_loss)
+            self.loss_filter = self.init_loss_filter(not opt.no_vgg_loss, not opt.no_mismatch_loss, not opt.no_mesh_loss)
                     
             self.criterionGAN = networks.GANLoss(use_lsgan=not opt.no_lsgan, tensor=self.Tensor)   
             self.criterionFeat = torch.nn.L1Loss()
