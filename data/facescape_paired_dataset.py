@@ -231,36 +231,40 @@ class FacescapeMeshTexDataset(BaseDataset):
         A_vertices = np.array(om_mesh.points()).reshape(-1)
         # vertices=vertices.reshape(-1, 4, 3)
         # A_vertices = vertices[:, 0, :].reshape(-1)
-       
+
         toss = random.getrandbits(1)
         # toss 0-> same iden, diff exp
-        if toss == 0:
-            pool = self.exp_set - set(tmp[-1])
-            B_exp = random.sample(pool, 1)[0]
-            B_id = tmp[0]
-        # toss 1 -> same exp, diff iden
-        else:
-            pool = self.id_set - set(tmp[0])
-            B_id = random.sample(pool, 1)[0]
-            B_exp = tmp[-1]
-        
-        # tex 
-        tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.jpg')
-        # mesh 
-        tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
-        tex  = np.array(tex ) 
-        tex = tex * self.facial_seg
-        tex = Image.fromarray(np.uint8(tex))
-        params = get_params(self.opt, tex.size)
-        transform = get_transform(self.opt, params)      
-        B_tex_tensor = transform(tex)
+        while True:
+            try:
+                if toss == 0:
+                    pool = self.exp_set - set(tmp[-1])
+                    B_exp = random.sample(pool, 1)[0]
+                    B_id = tmp[0]
+                # toss 1 -> same exp, diff iden
+                else:
+                    pool = self.id_set - set(tmp[0])
+                    B_id = random.sample(pool, 1)[0]
+                    B_exp = tmp[-1]
+                
+                # tex 
+                tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.jpg')
+                # mesh 
+                tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
+                tex  = np.array(tex ) 
+                tex = tex * self.facial_seg
+                tex = Image.fromarray(np.uint8(tex))
+                params = get_params(self.opt, tex.size)
+                transform = get_transform(self.opt, params)      
+                B_tex_tensor = transform(tex)
 
-        mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
-        # mesh = trimesh.load(mesh_path, process=False)
-        # vertices = mesh.vertices
-        om_mesh = openmesh.read_trimesh(mesh_path)
-        B_vertices = np.array(om_mesh.points()).reshape(-1)
-        print (A_vertices.shape, B_vertices.shape)
+                mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
+                om_mesh = openmesh.read_trimesh(mesh_path)
+                B_vertices = np.array(om_mesh.points()).reshape(-1)
+                print (A_vertices.shape, B_vertices.shape)
+                break
+            except:
+                print('!!!!!', tex_path)
+                continue
         # vertices=vertices.reshape(-1, 4, 3)
         # B_vertices = vertices[:, 0, :].reshape(-1)
         input_dict = { 'Atex':A_tex_tensor, 'Amesh': torch.FloatTensor(A_vertices), 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': torch.FloatTensor(B_vertices), 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
