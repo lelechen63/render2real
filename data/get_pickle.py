@@ -2,7 +2,7 @@ import pickle
 import os
 import random
 import openmesh
-import PIL
+from PIL import Image
 def get_image_pickle():
     
     base_p = '/raid/celong/FaceScape/ffhq_aligned_img'
@@ -117,7 +117,7 @@ def get_texmesh_pickle():
             # try:
                 tex_path = os.path.join(current_p, motion_p + '.jpg')
                 mesh_path = os.path.join(current_p, motion_p + '.obj')
-                tex = PIL.Image.open(tex_path)
+                tex = Image.open(tex_path)
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 A_vertices = np.array(om_mesh.points())
                 print (A_vertices.shape)
