@@ -508,12 +508,11 @@ class DisentEncoderDecoder(nn.Module):
 
 
 class TexMeshEncoderDecoder(nn.Module):
-    def __init__(self, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
-                 padding_type='reflect'):
+    def __init__(self, tex_shape, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d,padding_type='reflect'):
         assert(n_blocks >= 0)
         super(TexMeshEncoderDecoder, self).__init__()        
         activation = nn.ReLU(True)     
-
+        self.tex_shape = tex_shape
         self.CNNencoder = nn.Sequential(
                             nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0),
                             norm_layer(ngf), 
@@ -546,15 +545,14 @@ class TexMeshEncoderDecoder(nn.Module):
                             nn.Conv2d(ngf*8 , ngf  * 16, kernel_size=3, stride=2, padding=1),
                             norm_layer(ngf  * 16),
                             nn.ReLU(True),  #8
-
-                            nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
-                            norm_layer(ngf  * 16),
-                            nn.ReLU(True),  #4
-
+                            # nn.Conv2d(ngf*16 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            # norm_layer(ngf  * 16),
+                            # nn.ReLU(True),  #4
                         )
-        
+
+        self.enc_input_size = int(ngf * 16 * self.tex_shape/256 * self.tex_shape/256 * 4 + ngf * 4)
         self.identity_enc = nn.Sequential(
-                                    nn.Linear( ngf * 16 * 16 + ngf * 4, ngf*4),
+                                    nn.Linear( self.enc_input_size, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -565,7 +563,7 @@ class TexMeshEncoderDecoder(nn.Module):
                                     )
 
         self.expression_enc = nn.Sequential(
-                                    nn.Linear( ngf * 16 * 16 + ngf * 4, ngf*4),
+                                    nn.Linear( self.enc_input_size, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -622,9 +620,9 @@ class TexMeshEncoderDecoder(nn.Module):
         ### upsample
 
         self.tex_decoder = nn.Sequential(
-                        nn.ConvTranspose2d(ngf * 16, ngf * 16, kernel_size=3, stride=2, padding=1, output_padding=1),
-                        norm_layer(ngf * 16), 
-                        nn.ReLU(True),
+                        # nn.ConvTranspose2d(ngf * 16, ngf * 16, kernel_size=3, stride=2, padding=1, output_padding=1),
+                        # norm_layer(ngf * 16), 
+                        # nn.ReLU(True),
                         nn.ConvTranspose2d(ngf * 16, ngf * 8, kernel_size=3, stride=2, padding=1, output_padding=1),
                         norm_layer(ngf * 8), 
                         nn.ReLU(True),
@@ -687,8 +685,13 @@ class TexMeshEncoderDecoder(nn.Module):
         return_list.append( A_rec_mesh)
 
         A_tex_dec = self.tex_fc_dec(A_feature)
+        if self.tex_shape == 256:
+            A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        elif self.tex_shape == 512:
+            A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        else:
+            A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure 
 
-        A_tex_dec = A_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
         A_decoded = self.tex_decoder(A_tex_dec)
         A_rec_tex = self.output_layer(A_decoded)
         return_list.append( A_rec_tex)        
@@ -710,8 +713,12 @@ class TexMeshEncoderDecoder(nn.Module):
         return_list.append( B_rec_mesh)
 
         B_tex_dec = self.tex_fc_dec(B_feature)
-
-        B_tex_dec = B_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        if self.tex_shape == 256:
+            B_tex_dec = B_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        elif self.tex_shape == 512:
+            B_tex_dec = B_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        else:
+            B_tex_dec = B_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure  
         B_decoded = self.tex_decoder(B_tex_dec)
         B_rec_tex = self.output_layer(B_decoded)
         return_list.append( B_rec_tex)
