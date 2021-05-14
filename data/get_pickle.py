@@ -135,7 +135,7 @@ def get_texmesh_pickle():
 
     with open('/raid/celong/FaceScape/lists/texmesh_train.pkl', 'wb') as handle:
         pickle.dump(train_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open('/raid/celong/FaceScape/lists/texmesh_train.pkl', 'wb') as handle:
+    with open('/raid/celong/FaceScape/lists/texmesh_test.pkl', 'wb') as handle:
         pickle.dump(test_list, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def get_paired_texmesh_pickle():
