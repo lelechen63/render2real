@@ -109,7 +109,6 @@ class TexMeshDisentNet(BaseModel):
         loss_G_VGG4 = 0
         loss_G_VGG1 = 0
         loss_G_VGG2 = 0
-        print (Aexp_Aid_tex.shape, Atex.shape)
         if not self.opt.no_vgg_loss:
             # mismatch loss
             for i in range(map_type.shape[0]):
