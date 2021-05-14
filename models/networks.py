@@ -741,7 +741,12 @@ class TexMeshEncoderDecoder(nn.Module):
 
         Aexp_Bid_tex_dec = self.tex_fc_dec(Aexp_Bid_fea)
 
-        Aexp_Bid_tex_dec = Aexp_Bid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        if self.tex_shape == 256:
+            Aexp_Bid_tex_dec = Aexp_Bid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        elif self.tex_shape == 512:
+            Aexp_Bid_tex_dec = Aexp_Bid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        else:
+            Aexp_Bid_tex_dec = Aexp_Bid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8) # not sure  
         Aexp_Bid_decoded = self.tex_decoder(Aexp_Bid_tex_dec)
         Aexp_Bid_rec_tex = self.output_layer(Aexp_Bid_decoded)
         return_list.append( Aexp_Bid_rec_tex)
@@ -750,7 +755,12 @@ class TexMeshEncoderDecoder(nn.Module):
         return_list.append( Bexp_Aid_mesh)
 
         Bexp_Aid_tex_dec = self.tex_fc_dec(Bexp_Aid_fea)
-        Bexp_Aid_tex_dec = Bexp_Aid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        if self.tex_shape == 256:
+            Bexp_Aid_tex_dec = Bexp_Aid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 2,2) # not sure 
+        elif self.tex_shape == 512:
+            Bexp_Aid_tex_dec = Bexp_Aid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 4,4) # not sure 
+        else:
+            Bexp_Aid_tex_dec = Bexp_Aid_tex_dec.unsqueeze(2).unsqueeze(3).repeat(1, 1, 8,8)
         Bexp_Aid_decoded = self.tex_decoder(Bexp_Aid_tex_dec)
         Bexp_Aid_rec_tex = self.output_layer(Bexp_Aid_decoded)
         return_list.append( Bexp_Aid_rec_tex)
