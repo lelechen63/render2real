@@ -595,7 +595,7 @@ class TexMeshEncoderDecoder(nn.Module):
                                     nn.ReLU(True),
                                     )
         self.meshencoder = nn.Sequential(
-                                    nn.Linear( 6601*3, ngf*2),
+                                    nn.Linear( 78951, ngf*2),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*2, ngf*2),
                                     nn.ReLU(True),
@@ -617,7 +617,7 @@ class TexMeshEncoderDecoder(nn.Module):
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
-                                    nn.Linear( ngf*4, 6601 * 3),
+                                    nn.Linear( ngf*4, 78951),
                                     )
         ### upsample
 
