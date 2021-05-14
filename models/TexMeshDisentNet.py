@@ -12,9 +12,9 @@ class TexMeshDisentNet(BaseModel):
         return 'TexMeshDisentNet'
 
     def init_loss_filter(self, use_feat_loss, use_mismatch_loss):
-        flags = (True, use_mismatch_loss, use_mismatch_loss,use_feat_loss, use_mismatch_loss and use_feat_loss, use_mismatch_loss and use_feat_loss)
-        def loss_filter(A_pix_loss, B_pix_loss, pix_loss, A_feat_loss, B_feat_loss, mismatch_loss):
-            return [l for (l,f) in zip((A_pix_loss,B_pix_loss, pix_loss, A_feat_loss,B_feat_loss,mismatch_loss),flags) if f]
+        flags = (True, use_mismatch_loss, use_mismatch_loss,use_feat_loss, use_mismatch_loss and use_feat_loss, use_mismatch_loss and use_feat_loss,use_mesh_loss, use_mesh_loss& use_mismatch_loss, use_mesh_loss & use_mismatch_loss)
+        def loss_filter(A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss):
+            return [l for (l,f) in zip((A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss),flags) if f]
         return loss_filter
     
     def initialize(self, opt):
