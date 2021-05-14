@@ -114,7 +114,7 @@ def get_texmesh_pickle():
                 all_motions.append(f[:-4])
         random.shuffle(all_motions)
         for k, motion_p in enumerate(all_motions):
-            try:
+            # try:
                 tex_path = os.path.join(current_p, motion_p + '.jpg')
                 mesh_path = os.path.join(current_p, motion_p + '.obj')
                 tex = PIL.Image.open(tex_path)
@@ -126,8 +126,8 @@ def get_texmesh_pickle():
                     train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
                 else:
                     test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
-            except:
-                continue
+            # except:
+            #     continue
     print (test_list[:10])
     print (len(train_list), len(test_list))
 
