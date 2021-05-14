@@ -25,7 +25,7 @@ class TexMeshDisentNet(BaseModel):
         input_nc = 3
         output_nc =3
         linearity = not opt.no_linearity
-        self.netEncoderDecoder = networks.define_TexMesh_EncoderDecoder(linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
+        self.netEncoderDecoder = networks.define_TexMesh_EncoderDecoder(opt.load_size, linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
 
