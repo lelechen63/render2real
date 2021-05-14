@@ -70,7 +70,7 @@ class TexMeshDisentNet(BaseModel):
     def forward(self, Atex, Amesh, Btex, Bmesh, map_type, infer=False):
         
         Atex = Variable(Atex.cuda())
-        Btex = Variable(map_imageBtex.cuda())
+        Btex = Variable(Btex.cuda())
         Amesh = Variable(Amesh.cuda())
         Bmesh = Variable(Bmesh.cuda())
 
