@@ -3,6 +3,7 @@ import os
 import random
 import openmesh
 from PIL import Image
+import numpy as np
 def get_image_pickle():
     
     base_p = '/raid/celong/FaceScape/ffhq_aligned_img'
