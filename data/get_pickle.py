@@ -107,6 +107,7 @@ def get_texmesh_pickle():
     ids =  os.listdir(base_p)
     ids.sort()
     for id_p in ids:
+        print (id_p ,'/', len(ids))
         current_p = os.path.join( base_p , id_p, 'models_reg')
         all_files = os.listdir(current_p)
         all_motions = []
