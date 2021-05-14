@@ -256,10 +256,12 @@ class FacescapeMeshTexDataset(BaseDataset):
                 params = get_params(self.opt, tex.size)
                 transform = get_transform(self.opt, params)      
                 B_tex_tensor = transform(tex)
-
                 mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 B_vertices = np.array(om_mesh.points()).reshape(-1)
+                if B_vertices.shape[0] != 78951:
+                    print('!!!!',B_vertices.shape )
+                    continue
                 break
             except:
                 print('!!!!!', tex_path)
