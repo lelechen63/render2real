@@ -200,8 +200,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         ids = open(os.path.join(opt.dataroot, "lists/ids.pkl"), "rb")
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
-        self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
-        self.facial_seg = cv2.resize(self.facial_seg, self.img_size, interpolation = cv2.INTER_AREA)
+        # self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
+        self.facial_seg = Image.open("./predef/facial_mask_v10.png").convert('RGB')
+        self.facial_seg  = self.facial_seg.resize(self.img_size)
+        self.facial_seg  = np.array(self.facial_seg ) 
     def __getitem__(self, index):
         print ('1')
         t = time.time()
@@ -210,8 +212,9 @@ class FacescapeMeshTexDataset(BaseDataset):
         # tex 
         tex_path = os.path.join( self.dir_A , self.data_list[index] + '.jpg')
         # mesh 
-        tex = cv2.imread(tex_path)[:,:,::-1]
-        tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
+        tex = Image.open(tex_path).convert('RGB').resize(self.img_size)
+        tex  = np.array(tex ) 
+        # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
@@ -247,8 +250,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         # tex 
         tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp,  + '.jpg')
         # mesh 
-        tex = cv2.imread(tex_path)[:,:,::-1]
-        tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
+        tex = Image.open(tex_path).convert('RGB').resize(self.img_size)
+        tex  = np.array(tex ) 
+        # tex = cv2.imread(tex_path)[:,:,::-1]
+        # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
