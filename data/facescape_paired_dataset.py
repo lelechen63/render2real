@@ -226,7 +226,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # mesh = trimesh.load(mesh_path, process=False)
         # vertices = mesh.vertices
         om_mesh = openmesh.read_trimesh(mesh_path)
-        vertices = np.array(om_mesh.points()).reshape(-1)
+        A_vertices = np.array(om_mesh.points()).reshape(-1)
         print (vertices.shape)
         # vertices=vertices.reshape(-1, 4, 3)
         # A_vertices = vertices[:, 0, :].reshape(-1)
@@ -258,7 +258,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # mesh = trimesh.load(mesh_path, process=False)
         # vertices = mesh.vertices
         om_mesh = openmesh.read_trimesh(mesh_path)
-        vertices = np.array(om_mesh.points()).reshape(-1)
+        B_vertices = np.array(om_mesh.points()).reshape(-1)
         # vertices=vertices.reshape(-1, 4, 3)
         # B_vertices = vertices[:, 0, :].reshape(-1)
         input_dict = { 'Atex':A_tex_tensor, 'Amesh': A_vertices, 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': B_vertices, 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
