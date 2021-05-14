@@ -227,6 +227,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # vertices = mesh.vertices
         om_mesh = openmesh.read_trimesh(mesh_path)
         vertices = np.array(om_mesh.points())
+        print (vertices.shape)
         vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
        
