@@ -554,7 +554,7 @@ class TexMeshEncoderDecoder(nn.Module):
                         )
         
         self.identity_enc = nn.Sequential(
-                                    nn.Linear( ngf * 16 * 4 + ngf * 4, ngf*4),
+                                    nn.Linear( ngf * 16 * 16 + ngf * 4, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
@@ -565,7 +565,7 @@ class TexMeshEncoderDecoder(nn.Module):
                                     )
 
         self.expression_enc = nn.Sequential(
-                                    nn.Linear( ngf * 16 * 4 + ngf * 4, ngf*4),
+                                    nn.Linear( ngf * 16 * 16 + ngf * 4, ngf*4),
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
