@@ -2,6 +2,7 @@ from PIL import Image, ImageChops, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import PIL
 import cv2
+import numpy as np
 tex_path = '/raid/celong/FaceScape/textured_meshes/1/models_reg/16_grin.jpg'
 # mesh 
 tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
