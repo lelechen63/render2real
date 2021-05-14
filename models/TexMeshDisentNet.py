@@ -80,7 +80,7 @@ class TexMeshDisentNet(BaseModel):
         B_exp_code, B_id_code,\
         Bexp_Bid_mesh, Bexp_Bid_tex, \
         Aexp_Bid_mesh, Aexp_Bid_tex, \
-        Bexp_Aid_mesh, Bexp_Aid_image   = self.netEncoderDecoder(Atex, Amesh, Btex, Bmesh, map_type)
+        Bexp_Aid_mesh, Bexp_Aid_tex   = self.netEncoderDecoder(Atex, Amesh, Btex, Bmesh, map_type)
 
         # mismatch reconstruction
         # Aexp_Bid_image
