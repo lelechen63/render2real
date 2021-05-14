@@ -120,6 +120,7 @@ def get_texmesh_pickle():
                 tex = PIL.Image.open(tex_path)
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 A_vertices = np.array(om_mesh.points())
+                print (A_vertices.shape)
                 if A_vertices.shape[0] == 0:
                     continue
                 if k < 17:
