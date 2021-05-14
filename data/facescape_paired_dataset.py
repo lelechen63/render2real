@@ -204,9 +204,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
         # self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
-        self.facial_seg = Image.open("./predef/facial_mask_v10.png").convert('RGB')
+        self.facial_seg = Image.open("./predef/facial_mask_v10.png")
         # self.facial_seg  = self.facial_seg.resize(self.img_size)
-        self.facial_seg  = np.array(self.facial_seg ) 
+        self.facial_seg  = np.array(self.facial_seg ) / 255.0
+        self.facial_seg = np.expand_dims(self.facial_seg, axis=2)
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
