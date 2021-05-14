@@ -9,7 +9,9 @@ import cv2
 import numpy as np
 import random
 import torch
-import trimesh, os, time
+import openmesh
+
+import  os, time
 def get_exp():
     expressions = {
         1: "1_neutral",
@@ -221,8 +223,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         A_tex_tensor = transform(tex)
 
         mesh_path = os.path.join( self.dir_A , self.data_list[index] + '.obj')
-        mesh = trimesh.load(mesh_path, process=False)
-        vertices = mesh.vertices
+        # mesh = trimesh.load(mesh_path, process=False)
+        # vertices = mesh.vertices
+        om_mesh = openmesh.read_trimesh(mesh_path)
+        vertices = np.array(om_mesh.points())
         vertices=vertices.reshape(-1, 4, 3)
         A_vertices = vertices[:, 0, :].reshape(-1)
        
@@ -250,8 +254,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         B_tex_tensor = transform(tex)
 
         mesh_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.obj')
-        mesh = trimesh.load(mesh_path, process=False)
-        vertices = mesh.vertices
+        # mesh = trimesh.load(mesh_path, process=False)
+        # vertices = mesh.vertices
+        om_mesh = openmesh.read_trimesh(mesh_path)
+        vertices = np.array(om_mesh.points())
         vertices=vertices.reshape(-1, 4, 3)
         B_vertices = vertices[:, 0, :].reshape(-1)
         input_dict = { 'Atex':A_tex_tensor, 'Amesh': A_vertices, 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': B_vertices, 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
