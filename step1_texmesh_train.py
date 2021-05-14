@@ -79,11 +79,13 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
         loss_dict = dict(zip(model.module.loss_names, losses))
 
+    
         # calculate final loss scalar
-        loss_pix = (loss_dict['A_tex_loss'] + loss_dict.get('B_tex_loss',0) + loss_dict.get('tex_loss',0) ) 
-        loss_vgg = loss_dict.get('A_feat_loss',0) + loss_dict.get('B_feat_loss',0) + loss_dict.get('mismatch_loss',0)
-        loss_mesh = loss_dict.get('A_mesh_loss',0) + loss_dict.get('B_mesh_loss',0) + loss_dict.get('mismatch_mesh_loss',0)
-        loss_G = loss_pix + loss_vgg + loss_mesh
+        loss_pix = (loss_dict['A_pix'] + loss_dict.get('B_pix',0) + loss_dict.get('mis_pix',0) ) 
+        loss_vgg = loss_dict.get('A_vgg',0) + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
+        loss_vgg = loss_dict.get('A_mesh',0) + loss_dict.get('B_mesh',0) + loss_dict.get('mis_mesh',0)
+
+        loss_G = loss_pix + loss_vgg
         # loss_G = loss_dict['A_pix']
         ############### Backward Pass ####################
         # update generator weights
