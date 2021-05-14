@@ -158,7 +158,7 @@ class TexMeshDisentNet(BaseModel):
                 loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh
         loss_G_mesh = loss_G_pix1 + loss_G_pix2
         ################################
-        A_err_map = (Aexp_Aid_image - image).sum(1).unsqueeze(1)
+        A_err_map = (Aexp_Aid_tex - Atex).sum(1).unsqueeze(1)
 
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh), \
