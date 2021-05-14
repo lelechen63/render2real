@@ -16,7 +16,7 @@ tex  = np.array(tex ) * facial_seg
 tex =  np.uint8(tex)
 print (np.unique(tex))
 print (tex.shape)
-tex = cv2.cvtColor(tex.astype(int), cv2.COLOR_RGB2BGR)
+tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 # tex = cv2.imread(tex_path)
 # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
 # tex = tex * self.facial_seg
