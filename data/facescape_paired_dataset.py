@@ -1,7 +1,8 @@
 import os.path
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 import PIL
 import json
 import pickle 
