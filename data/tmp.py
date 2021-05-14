@@ -5,7 +5,8 @@ import cv2
 import numpy as np
 
 facial_seg = Image.open("./predef/facial_mask_v10.png")
-facial_seg  = np.array(facial_seg ) 
+facial_seg  = np.array(facial_seg )
+facial_seg = np.expand_dims(facial_seg, axis=2)
 print (np.unique(facial_seg))
 
 tex_path = '/raid/celong/FaceScape/textured_meshes/1/models_reg/16_grin.jpg'
