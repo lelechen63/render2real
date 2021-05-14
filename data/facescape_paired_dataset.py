@@ -205,7 +205,6 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.facial_seg  = self.facial_seg.resize(self.img_size)
         self.facial_seg  = np.array(self.facial_seg ) 
     def __getitem__(self, index):
-        print ('1')
         t = time.time()
         tmp = self.data_list[index].split('/')
         # id_p , 'models_reg', motion_p
