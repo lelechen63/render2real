@@ -119,7 +119,7 @@ def get_texmesh_pickle():
             try:
                 tex_path = os.path.join(current_p, motion_p + '.jpg')
                 mesh_path = os.path.join(current_p, motion_p + '.obj')
-                tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
+                tex = Image.open(tex_path).convert('RGB')
                 tex  = np.array(tex ) 
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 A_vertices = np.array(om_mesh.points())
