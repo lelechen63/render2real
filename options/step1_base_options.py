@@ -13,7 +13,6 @@ class BaseOptions():
         self.parser.add_argument('--name', type=str, default='step1', help='name of the experiment. It decides where to store samples and models')        
         self.parser.add_argument('--gpu_ids', type=str, default='7,6,5,4,3,2,1,0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         self.parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
-        self.parser.add_argument('--model', type=str, default='step1', help='which model to use')
         self.parser.add_argument('--norm', type=str, default='instance', help='instance normalization or batch normalization')        
         self.parser.add_argument('--use_dropout', action='store_true', help='use dropout for the generator')
         self.parser.add_argument('--data_type', default=32, type=int, choices=[8, 16, 32], help="Supported data type i.e. 8, 16, 32 bit")
@@ -66,7 +65,7 @@ class BaseOptions():
             self.initialize()
         self.opt = self.parser.parse_args()
         self.opt.isTrain = self.isTrain   # train or test
-
+        slef.opt.model_name = self.opt.name
         str_ids = self.opt.gpu_ids.split(',')
         self.opt.gpu_ids = []
         for str_id in str_ids:
