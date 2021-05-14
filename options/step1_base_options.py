@@ -65,7 +65,7 @@ class BaseOptions():
             self.initialize()
         self.opt = self.parser.parse_args()
         self.opt.isTrain = self.isTrain   # train or test
-        slef.opt.model_name = self.opt.name
+        self.opt.model_name = self.opt.name
         str_ids = self.opt.gpu_ids.split(',')
         self.opt.gpu_ids = []
         for str_id in str_ids:
