@@ -130,6 +130,7 @@ def get_texmesh_pickle():
                     test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
             except:
                 continue
+        print (len(train_list))
     print (test_list[:10])
     print (len(train_list), len(test_list))
 
