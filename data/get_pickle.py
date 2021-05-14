@@ -1,6 +1,8 @@
 import pickle
 import os
 import random
+import openmesh
+import PIL
 def get_image_pickle():
     
     base_p = '/raid/celong/FaceScape/ffhq_aligned_img'
@@ -112,11 +114,20 @@ def get_texmesh_pickle():
                 all_motions.append(f[:-4])
         random.shuffle(all_motions)
         for k, motion_p in enumerate(all_motions):
-            if k < 17:
-                train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
-            else:
-                test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
-
+            try:
+                tex_path = os.path.join(current_p, motion_p + '.jpg')
+                mesh_path = os.path.join(current_p, motion_p + '.obj')
+                tex = PIL.Image.open(tex_path)
+                om_mesh = openmesh.read_trimesh(mesh_path)
+                A_vertices = np.array(om_mesh.points())
+                if A_vertices.shape[0] == 0:
+                    continue
+                if k < 17:
+                    train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
+                else:
+                    test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
+            except:
+                continue
     print (test_list[:10])
     print (len(train_list), len(test_list))
 
@@ -133,6 +144,6 @@ def get_paired_texmesh_pickle():
 
     with open('/raid/celong/FaceScape/lists/ids.pkl', 'wb') as handle:
         pickle.dump(ids, handle, protocol=pickle.HIGHEST_PROTOCOL)
-get_paired_texmesh_pickle()
-# get_texmesh_pickle()
+# get_paired_texmesh_pickle()
+get_texmesh_pickle()
 # get_paired_image_pickle()
