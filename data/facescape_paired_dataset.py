@@ -208,6 +208,16 @@ class FacescapeMeshTexDataset(BaseDataset):
         # self.facial_seg  = self.facial_seg.resize(self.img_size)
         self.facial_seg  = np.array(self.facial_seg ) / 255.0
         self.facial_seg = np.expand_dims(self.facial_seg, axis=2)
+
+        gray = cv2.cvtColor(cv2.imread("./predef/facial_mask_v10.png"), cv2.COLOR_BGR2GRAY)
+        edged = cv2.Canny(gray, 30, 200)
+        cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
+                        cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(edged, 
+            cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        cnts = cnts[0]
+        self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
+
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
@@ -219,6 +229,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex  = np.array(tex ) 
         # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
+        tex = tex[self.y:self.y+self.h,self.x:self.x+self.w,:]
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
