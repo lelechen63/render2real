@@ -217,6 +217,8 @@ class FacescapeMeshTexDataset(BaseDataset):
             cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         cnts = cnts[0]
         self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
+        self.l = max(self.w,self.h)
+        self.kkk =  int(self.x - (self.l-self.w)/2)
 
     def __getitem__(self, index):
         t = time.time()
@@ -230,6 +232,8 @@ class FacescapeMeshTexDataset(BaseDataset):
         # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
         tex = tex[self.y:self.y+self.h,self.x:self.x+self.w,:]
+        tex = tex[self.y:self.y+self.h,self.kkk :self.kkk +self.l,:]
+
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
@@ -263,6 +267,8 @@ class FacescapeMeshTexDataset(BaseDataset):
                 tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
                 tex  = np.array(tex ) 
                 tex = tex * self.facial_seg
+                tex = tex[self.y:self.y+self.h,self.x:self.x+self.w,:]
+                tex = tex[self.y:self.y+self.h,self.kkk :self.kkk +self.l,:]
                 tex = Image.fromarray(np.uint8(tex))
                 params = get_params(self.opt, tex.size)
                 transform = get_transform(self.opt, params)      
