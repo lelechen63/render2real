@@ -11,7 +11,7 @@ gray = cv2.cvtColor(kk, cv2.COLOR_BGR2GRAY)
 
 ret, thresh = cv2.threshold(gray, 0, 10, cv2.THRESH_BINARY)
 cv2.bitwise_not(thresh, thresh)
-nts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
+cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                 cv2.CHAIN_APPROX_SIMPLE)
 cnts = cnts[0]
 c = max(cnts, key=cv2.contourArea)
