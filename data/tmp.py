@@ -38,7 +38,7 @@ tex  = np.array(tex ) * facial_seg
 tex =  np.uint8(tex)
 print (np.unique(tex))
 print (tex.shape)
-tex = tex[x:x+w,y:y+h,:]
+tex = tex[y:y+h,x:x+w,:]
 tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 
 # tex = cv2.imread(tex_path)
