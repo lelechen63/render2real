@@ -14,7 +14,7 @@ edged = cv2.Canny(gray, 30, 200)
 # cv2.bitwise_not(thresh, thresh)
 cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
                 cv2.CHAIN_APPROX_SIMPLE)
-cnts, hierarchy = cv2.findContours(edged, 
+cnts = cv2.findContours(edged, 
     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 cnts = cnts[0]
 c = max(cnts, key=cv2.contourArea)
