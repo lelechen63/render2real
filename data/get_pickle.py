@@ -123,7 +123,8 @@ def get_texmesh_pickle():
                 tex  = np.array(tex ) 
                 om_mesh = openmesh.read_trimesh(mesh_path)
                 A_vertices = np.array(om_mesh.points())
-                if A_vertices.shape[0] == 78951:
+                if A_vertices.shape[0] != 78951:
+                    print('!!!!!', A_vertices.shape)
                     continue
                 if k < 17:
                     train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
