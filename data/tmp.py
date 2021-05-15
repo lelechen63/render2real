@@ -32,6 +32,7 @@ tex =  np.uint8(tex)
 print (np.unique(tex))
 print (tex.shape)
 l = max(w, h)
+print ((l-w)/2)
 tex = tex[y:y+l,x- (l-w)/2:x+l,:]
 tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 
