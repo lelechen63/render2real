@@ -666,7 +666,9 @@ class TexMeshEncoderDecoder(nn.Module):
     
     def forward(self, A_tex, A_mesh, B_tex , B_mesh, map_type ):
         return_list = []
+        printz(A_tex.shape)
         A_tex_encoded = self.CNNencoder(A_tex)
+        print (A_tex_encoded.shape)
         A_tex_encoded = self.resblocks(A_tex_encoded).view(A_tex_encoded.shape[0], -1)
         A_mesh_encoded = self.meshencoder(A_mesh)
         print (A_mesh_encoded.shape, A_tex_encoded.shape)
