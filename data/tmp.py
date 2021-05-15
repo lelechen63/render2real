@@ -5,8 +5,9 @@ import cv2
 import numpy as np
 
 facial_seg = Image.open("./predef/facial_mask_v10.png")
-facial_seg  = np.array(facial_seg ) 
-gray = cv2.cvtColor(facial_seg, cv2.COLOR_BGR2GRAY)
+facial_seg  = np.array(facial_seg )
+kk = cv2.imread("./predef/facial_mask_v10.png")
+gray = cv2.cvtColor(kk, cv2.COLOR_BGR2GRAY)
 
 ret, thresh = cv2.threshold(gray, 0, 10, cv2.THRESH_BINARY)
 cv2.bitwise_not(thresh, thresh)
