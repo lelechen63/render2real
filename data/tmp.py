@@ -17,13 +17,9 @@ cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
 cnts = cv2.findContours(edged, 
     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 cnts = cnts[0]
-print(cnts)
-c = max(cnts, key=cv2.contourArea)
 
-left = tuple(c[c[:, :, 0].argmin()][0])
-right = tuple(c[c[:, :, 0].argmax()][0])
 
-x,y,w,h = cv2.boundingRect(c)
+x,y,w,h = cv2.boundingRect(cnts)
 
 print (x,y,w, h, left, right)
 
