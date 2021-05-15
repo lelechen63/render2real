@@ -8,11 +8,14 @@ facial_seg = Image.open("./predef/facial_mask_v10.png")
 facial_seg  = np.array(facial_seg )
 kk = cv2.imread("./predef/facial_mask_v10.png")
 gray = cv2.cvtColor(kk, cv2.COLOR_BGR2GRAY)
+edged = cv2.Canny(gray, 30, 200)
 
-ret, thresh = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
-cv2.bitwise_not(thresh, thresh)
-cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
+# ret, thresh = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
+# cv2.bitwise_not(thresh, thresh)
+cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
                 cv2.CHAIN_APPROX_SIMPLE)
+cnts, hierarchy = cv2.findContours(edged, 
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 cnts = cnts[0]
 c = max(cnts, key=cv2.contourArea)
 
