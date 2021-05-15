@@ -21,7 +21,7 @@ cnts = cnts[0]
 
 x,y,w,h = cv2.boundingRect(cnts)
 
-print (x,y,w, h, left, right)
+print (x,y,w, h)
 
 
 facial_seg = facial_seg / 255.0
