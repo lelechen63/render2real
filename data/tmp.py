@@ -9,7 +9,7 @@ facial_seg  = np.array(facial_seg )
 kk = cv2.imread("./predef/facial_mask_v10.png")
 gray = cv2.cvtColor(kk, cv2.COLOR_BGR2GRAY)
 
-ret, thresh = cv2.threshold(gray, 0, 10, cv2.THRESH_BINARY)
+ret, thresh = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
 cv2.bitwise_not(thresh, thresh)
 cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                 cv2.CHAIN_APPROX_SIMPLE)
