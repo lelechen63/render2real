@@ -34,7 +34,7 @@ print (tex.shape)
 l = max(w, h)
 
 kkk =  int(x - (l-w)/2)
-print (y, y +l, x-kkk, x +l)
+print (y, y +l, kkk, x +l)
 tex = tex[y:y+l,x- kkk:x+l,:]
 tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 
