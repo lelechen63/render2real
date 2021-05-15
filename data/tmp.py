@@ -32,9 +32,9 @@ tex =  np.uint8(tex)
 print (np.unique(tex))
 print (tex.shape)
 l = max(w, h)
-print int(x-(l-w)/2)
-print (y, y +l, x +l)
-tex = tex[y:y+l,x- (l-w)/2:x+l,:]
+kkk =  int(x-(l-w)/2)
+print (y, y +l, x-kkk, x +l)
+tex = tex[y:y+l,x- kkk:x+l,:]
 tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 
 # tex = cv2.imread(tex_path)
