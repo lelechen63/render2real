@@ -233,7 +233,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex = tex * self.facial_seg
         tex = tex[self.y:self.y+self.h,self.x:self.x+self.w,:]
         tex = tex[self.y:self.y+self.h,self.kkk :self.kkk +self.l,:]
-
+        print('!!!!!!', tex.shape)
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
