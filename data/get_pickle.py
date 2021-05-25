@@ -133,6 +133,10 @@ def get_texmesh_pickle():
                     print(A_vertices.shape)
             except:
                 continue
+            if len(train_list) == 50:
+                break
+        if len(train_list) == 50:
+            break
         print (len(train_list))
     print (test_list[:10])
     print (len(train_list), len(test_list))
