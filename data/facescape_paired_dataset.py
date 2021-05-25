@@ -231,6 +231,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # id_p , 'models_reg', motion_p
         # tex 
         tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
+        tex_path = '/raid/celong/FaceScape/texture_mapping/target/1/9_mouth_right.png'
         # mesh 
         tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
         tex  = np.array(tex ) 
@@ -268,6 +269,7 @@ class FacescapeMeshTexDataset(BaseDataset):
                 
                 # tex 
                 tex_path = os.path.join( self.dir_tex , B_id, B_exp + '.png')
+                tex_path = '/raid/celong/FaceScape/texture_mapping/target/1/9_mouth_right.png'
                 # mesh 
                 tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
                 tex  = np.array(tex ) 
