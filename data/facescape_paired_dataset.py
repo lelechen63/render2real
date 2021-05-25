@@ -177,8 +177,10 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.root = opt.dataroot    
         self.img_size = (1024,1024)
 
-        ### input A (texture and mesh)
+        ### input A (texture and mesh)   
         self.dir_A = os.path.join(opt.dataroot, "textured_meshes")
+
+        self.dir_tex = '/raid/celong/FaceScape/texture_mapping/target/'
 
         ### input B (real images)
         self.dir_B = os.path.join(opt.dataroot, "ffhq_aligned_img")
@@ -225,7 +227,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tmp = self.data_list[index].split('/')
         # id_p , 'models_reg', motion_p
         # tex 
-        tex_path = os.path.join( self.dir_A , self.data_list[index] + '.jpg')
+        tex_path = os.path.join( self.dir_tex , self.data_list[index] + '.png')
         # mesh 
         tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
         tex  = np.array(tex ) 
@@ -242,6 +244,8 @@ class FacescapeMeshTexDataset(BaseDataset):
         # vertices = mesh.vertices
         om_mesh = openmesh.read_trimesh(mesh_path)
         A_vertices = np.array(om_mesh.points()).reshape(-1)
+        if A_vertices.shape[0] != 78951:
+             
         # vertices=vertices.reshape(-1, 4, 3)
         # A_vertices = vertices[:, 0, :].reshape(-1)
 
@@ -260,7 +264,7 @@ class FacescapeMeshTexDataset(BaseDataset):
                     B_exp = tmp[-1]
                 
                 # tex 
-                tex_path = os.path.join( self.dir_A , B_id, 'models_reg' , B_exp + '.jpg')
+                tex_path = os.path.join( self.dir_tex , B_id, B_exp + '.png')
                 # mesh 
                 tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
                 tex  = np.array(tex ) 
