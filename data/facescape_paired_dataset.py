@@ -217,7 +217,7 @@ class FacescapeMeshTexDataset(BaseDataset):
                         cv2.CHAIN_APPROX_SIMPLE)
         cnts = cv2.findContours(edged, 
             cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        cnts = cnts[0]
+        cnts = cnts[0][0]
         print (type(cnts))
         print (cnts)
         print('++++++++')
