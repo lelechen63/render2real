@@ -17,8 +17,8 @@ def bbox(img):
 bbox = bbox(gray)
 print (bbox)
 x = bbox[0]
-y = bbox[1]
-w = bbox[2] - x
+y = bbox[2]
+w = bbox[1] - x
 h = bbox[3] - y
 # edged = cv2.Canny(gray, 30, 200)
 # cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
