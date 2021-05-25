@@ -13,7 +13,7 @@ cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
                 cv2.CHAIN_APPROX_SIMPLE)
 cnts = cv2.findContours(edged, 
     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-cnts = cnts[0]
+cnts = cnts[0][0]
 x,y,w,h = cv2.boundingRect(cnts)
 
 print (x,y,w, h)
