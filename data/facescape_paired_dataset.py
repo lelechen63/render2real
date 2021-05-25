@@ -221,7 +221,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
         self.l = max(self.w,self.h)
         self.kkk =  int(self.x - (self.l-self.w)/2)
-
+        print('++++++', len(self.data_list))
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
