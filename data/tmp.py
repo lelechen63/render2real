@@ -8,13 +8,26 @@ facial_seg = Image.open("./predef/facial_mask_v10.png")
 facial_seg  = np.array(facial_seg )
 kk = cv2.imread("./predef/facial_mask_v10.png")
 gray = cv2.cvtColor(kk, cv2.COLOR_BGR2GRAY)
-edged = cv2.Canny(gray, 30, 200)
-cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
-                cv2.CHAIN_APPROX_SIMPLE)
-cnts = cv2.findContours(edged, 
-    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-cnts = cnts[0][0]
-x,y,w,h = cv2.boundingRect(cnts)
+
+def bbox(img):
+    a = np.where(img != 0)
+    bbox = np.min(a[0]), np.max(a[0]), np.min(a[1]), np.max(a[1])
+    return bbox
+
+bbox = bbox(gray)
+print (bbbox)
+x = bbbox[0]
+y = bbbox[1]
+w = bbbox[2] - x
+h = bbbox[3] - y
+# edged = cv2.Canny(gray, 30, 200)
+# cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
+#                 cv2.CHAIN_APPROX_SIMPLE)
+# cnts = cv2.findContours(edged, 
+#     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+# print (len(cnts), len(cnts[0]))
+# cnts = cnts[0][0]
+# x,y,w,h = cv2.boundingRect(cnts)
 
 print (x,y,w, h)
 
