@@ -230,7 +230,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tmp = self.data_list[index].split('/')
         # id_p , 'models_reg', motion_p
         # tex 
-        tex_path = os.path.join( self.dir_tex , self.data_list[index] + '.png')
+        tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
         # mesh 
         tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
         tex  = np.array(tex ) 
