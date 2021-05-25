@@ -16,10 +16,10 @@ def bbox(img):
 
 bbox = bbox(gray)
 print (bbox)
-x = bbox[0]
-y = bbox[2]
-w = bbox[1] - x
-h = bbox[3] - y
+y = bbox[0]
+x = bbox[2]
+h = bbox[1] - x
+w = bbox[3] - y
 # edged = cv2.Canny(gray, 30, 200)
 # cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
 #                 cv2.CHAIN_APPROX_SIMPLE)
