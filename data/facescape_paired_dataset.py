@@ -218,9 +218,6 @@ class FacescapeMeshTexDataset(BaseDataset):
         cnts = cv2.findContours(edged, 
             cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         cnts = cnts[0][0]
-        print (type(cnts))
-        print (cnts)
-        print('++++++++')
         self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
         self.l = max(self.w,self.h)
         self.kkk =  int(self.x - (self.l-self.w)/2)
