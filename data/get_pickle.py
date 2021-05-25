@@ -117,7 +117,7 @@ def get_texmesh_pickle():
         random.shuffle(all_motions)
         for k, motion_p in enumerate(all_motions):
             try:
-                tex_path = os.path.join('/raid/celong/FaceScape/texture_mapping/target/', id_p, motion_p + '.jpg')
+                tex_path = os.path.join('/raid/celong/FaceScape/texture_mapping/target/', id_p, motion_p + '.png')
                 mesh_path = os.path.join(current_p, motion_p + '.obj')
                 tex = Image.open(tex_path).convert('RGB')
                 tex  = np.array(tex ) 
@@ -128,6 +128,7 @@ def get_texmesh_pickle():
                         train_list.append( os.path.join( id_p , 'models_reg', motion_p) )
                     else:
                         test_list.append( os.path.join( id_p , 'models_reg',  motion_p) )
+                    print(tex_path)
                 else:
                     print(A_vertices.shape)
             except:
