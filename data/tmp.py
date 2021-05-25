@@ -15,11 +15,11 @@ def bbox(img):
     return bbox
 
 bbox = bbox(gray)
-print (bbbox)
-x = bbbox[0]
-y = bbbox[1]
-w = bbbox[2] - x
-h = bbbox[3] - y
+print (bbox)
+x = bbox[0]
+y = bbox[1]
+w = bbox[2] - x
+h = bbox[3] - y
 # edged = cv2.Canny(gray, 30, 200)
 # cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
 #                 cv2.CHAIN_APPROX_SIMPLE)
