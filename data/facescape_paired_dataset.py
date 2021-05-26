@@ -221,10 +221,9 @@ class FacescapeMeshTexDataset(BaseDataset):
         # self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
         self.x = 1169-150
         self.y =600-100
-        self.w =1500
+        self.w =200
         self.h = 1334
         self.l = max(self.w,self.h)
-        self.kkk =  int(self.x - (self.l-self.w)/2)
         print('++++++', len(self.data_list))
     def __getitem__(self, index):
         t = time.time()
@@ -277,6 +276,7 @@ class FacescapeMeshTexDataset(BaseDataset):
                 tex = tex * self.facial_seg
                 tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
                 tex = Image.fromarray(np.uint8(tex))
+                
                 params = get_params(self.opt, tex.size)
                 transform = get_transform(self.opt, params)      
                 B_tex_tensor = transform(tex)
