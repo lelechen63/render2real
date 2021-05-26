@@ -28,7 +28,7 @@ w = bbox[3] - y
 # print (len(cnts), len(cnts[0]))
 # cnts = cnts[0][0]
 # x,y,w,h = cv2.boundingRect(cnts)
-x = 1169-150
+x = 1169-250
 y =600-150
 w =2000 
 h = 1334

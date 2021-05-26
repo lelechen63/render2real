@@ -206,19 +206,23 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
         # self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
-        self.facial_seg = Image.open("./predef/facial_mask_v10.png")
-        # self.facial_seg  = self.facial_seg.resize(self.img_size)
-        self.facial_seg  = np.array(self.facial_seg ) / 255.0
-        self.facial_seg = np.expand_dims(self.facial_seg, axis=2)
+        # self.facial_seg = Image.open("./predef/facial_mask_v10.png")
+        # # self.facial_seg  = self.facial_seg.resize(self.img_size)
+        # self.facial_seg  = np.array(self.facial_seg ) / 255.0
+        # self.facial_seg = np.expand_dims(self.facial_seg, axis=2)
 
-        gray = cv2.cvtColor(cv2.imread("./predef/facial_mask_v10.png"), cv2.COLOR_BGR2GRAY)
-        edged = cv2.Canny(gray, 30, 200)
-        cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
-                        cv2.CHAIN_APPROX_SIMPLE)
-        cnts = cv2.findContours(edged, 
-            cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        cnts = cnts[0][0]
-        self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
+        # gray = cv2.cvtColor(cv2.imread("./predef/facial_mask_v10.png"), cv2.COLOR_BGR2GRAY)
+        # edged = cv2.Canny(gray, 30, 200)
+        # cnts = cv2.findContours(edged, cv2.RETR_EXTERNAL,
+        #                 cv2.CHAIN_APPROX_SIMPLE)
+        # cnts = cv2.findContours(edged, 
+        #     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        # cnts = cnts[0][0]
+        # self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
+        self.x = 1169-250
+        self.y =600-200
+        self.w =2000 
+        self.h = 1334
         self.l = max(self.w,self.h)
         self.kkk =  int(self.x - (self.l-self.w)/2)
         print('++++++', len(self.data_list))
