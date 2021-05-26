@@ -219,9 +219,9 @@ class FacescapeMeshTexDataset(BaseDataset):
         #     cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         # cnts = cnts[0][0]
         # self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
-        self.x = 1169-250
-        self.y =600-200
-        self.w =2000 
+        self.x = 1169-150
+        self.y =600-100
+        self.w =1500
         self.h = 1334
         self.l = max(self.w,self.h)
         self.kkk =  int(self.x - (self.l-self.w)/2)
@@ -275,7 +275,7 @@ class FacescapeMeshTexDataset(BaseDataset):
                 tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
                 tex  = np.array(tex ) 
                 tex = tex * self.facial_seg
-                tex = tex[self.y:self.y+self.h,self.kkk :self.kkk +self.l,:]
+                tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
                 tex = Image.fromarray(np.uint8(tex))
                 params = get_params(self.opt, tex.size)
                 transform = get_transform(self.opt, params)      
