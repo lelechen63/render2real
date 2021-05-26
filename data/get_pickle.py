@@ -152,7 +152,7 @@ def get_paired_texmesh_pickle():
     ids =  os.listdir(base_p)
     ids.sort()
     ids = ids[:300]
-
+    print(ids)
     with open('/raid/celong/FaceScape/lists/ids.pkl', 'wb') as handle:
         pickle.dump(ids, handle, protocol=pickle.HIGHEST_PROTOCOL)
 get_paired_texmesh_pickle()
