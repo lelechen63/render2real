@@ -32,6 +32,13 @@ x = 1169-250
 y =600-150
 w =2000 
 h = 1334
+
+x = 1169-150
+y =600-100
+w =1500
+h = 1334
+l = max(w,h)
+
 # print (x,y,w, h)
 
 # 1169-150 600-150 2260 1334
@@ -48,8 +55,9 @@ tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
 tex  = np.array(tex ) * facial_seg
 tex =  np.uint8(tex)
 l = max(w, h)
-kkk =  int(x - (l-w)/2)
-tex = tex[y:y+l,kkk :kkk +l,:]
+# kkk =  int(x - (l-w)/2)
+# tex = tex[y:y+l,kkk :kkk +l,:]
+tex = tex[y:y+l,x :x +l,:]
 tex = cv2.cvtColor(tex, cv2.COLOR_RGB2BGR)
 
 # tex = cv2.imread(tex_path)
