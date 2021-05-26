@@ -28,8 +28,13 @@ w = bbox[3] - y
 # print (len(cnts), len(cnts[0]))
 # cnts = cnts[0][0]
 # x,y,w,h = cv2.boundingRect(cnts)
+x = 1169-150
+y =600-150
+w =2260 
+h = 1334
+# print (x,y,w, h)
 
-print (x,y,w, h)
+# 1169-150 600-150 2260 1334
 
 
 facial_seg = facial_seg / 255.0
