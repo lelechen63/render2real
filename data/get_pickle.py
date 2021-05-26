@@ -148,11 +148,14 @@ def get_texmesh_pickle():
 
 def get_paired_texmesh_pickle():
     base_p = '/raid/celong/FaceScape/textured_meshes'
-
-    ids =  os.listdir(base_p)
-    ids.sort()
-    ids = ids[:300]
-    print(ids)
+    ids = []
+    # ids =  os.listdir(base_p)
+    # ids.sort()
+    # id_list = []
+    # ids = ids[:300]
+    # print(ids)
+    for i in range(300):
+        ids.append(str(i))
     with open('/raid/celong/FaceScape/lists/ids.pkl', 'wb') as handle:
         pickle.dump(ids, handle, protocol=pickle.HIGHEST_PROTOCOL)
 get_paired_texmesh_pickle()
