@@ -238,7 +238,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         tex  = np.array(tex ) 
         # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
         tex = tex * self.facial_seg
-        tex = tex[self.y:self.y+self.h,self.kkk :self.kkk +self.l,:]
+        tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
