@@ -221,7 +221,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # self.x,self.y,self.w,self.h = cv2.boundingRect(cnts)
         self.x = 1169-150
         self.y =600-100
-        self.w =200
+        self.w =2000
         self.h = 1334
         self.l = max(self.w,self.h)
         print('++++++', len(self.data_list))
