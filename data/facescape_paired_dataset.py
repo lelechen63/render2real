@@ -224,7 +224,6 @@ class FacescapeMeshTexDataset(BaseDataset):
         self.w =2000
         self.h = 1334
         self.l = max(self.w,self.h)
-        print('++++++', len(self.data_list))
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
