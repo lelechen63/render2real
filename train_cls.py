@@ -29,6 +29,7 @@ else:
 
 opt.print_freq = lcm(opt.print_freq, opt.batchSize)    
 opt.model = 'cls'
+opt.datasetname = 'fs_tex'
 if opt.debug:
     opt.display_freq = 1
     opt.print_freq = 1
