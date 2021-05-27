@@ -66,8 +66,12 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = total_steps % opt.display_freq == display_delta
 
         ############## Forward Pass ######################
-    
-        loss, out_labels, gt_labels = model( tex, gt_lbs, infer=save_fake)
+        if opt.clsname == 'idcls':
+            gt_lbs = data['id']
+        else:
+            gt_lbs = data['exp']
+
+        loss, out_labels, gt_labels = model( data['tex'], gt_lbs, infer=save_fake)
 
         # sum per device losses
         loss = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
