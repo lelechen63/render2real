@@ -69,7 +69,7 @@ class ClsNet(BaseModel):
         
         loss = self.criterionCEL( out_labels, gt_labels)
         
-        return [ self.loss_filter(loss) , out_labels， gt_labels ]
+        return [ self.loss_filter(loss) , out_labels, gt_labels ]
 
     def save(self, which_epoch):
         self.save_network(self.classifier, self.clsname , which_epoch, self.gpu_ids)
