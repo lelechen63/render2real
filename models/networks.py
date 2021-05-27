@@ -76,6 +76,20 @@ def define_TexMesh_EncoderDecoder(tex_shape, linearity, input_nc, code_n,encoder
     encoderdecoder.apply(weights_init)
     return encoderdecoder
 
+def define_Classifier( tex_size, output_nc, ngf, netG, n_downsample_global=5, n_blocks_global=9, 
+             n_blocks_local=3, norm='instance', gpu_ids=[]):    
+    norm_layer = get_norm_layer(norm_type=norm)     
+   
+    classifier = TexClassifier(tex_size, output_nc, ngf, n_downsample_global, n_blocks_global)       
+    
+    print(classifier)
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())   
+        classifier.cuda(gpu_ids[0])
+    classifier.apply(weights_init)
+    return classifier
+
+
 def define_G(input_nc, output_nc, ngf, netG, n_downsample_global=3, n_blocks_global=9, n_local_enhancers=1, 
              n_blocks_local=3, norm='instance', gpu_ids=[]):    
     norm_layer = get_norm_layer(norm_type=norm)     
@@ -506,6 +520,64 @@ class DisentEncoderDecoder(nn.Module):
 
         return return_list
 
+
+class TexClassifier(nn.Module):
+    def __init__(self, tex_size, output_nc, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d, 
+                 padding_type='reflect'):
+        assert(n_blocks >= 0)
+        super(TexClassifier, self).__init__()        
+        activation = nn.ReLU(True)        
+
+        self.CNNencoder = nn.Sequential(
+                            nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0),
+                            norm_layer(ngf), 
+                            nn.ReLU(True),  
+
+                            nn.Conv2d(ngf , ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            nn.ReLU(True),  # 512
+
+                            nn.Conv2d( ngf * 2, ngf  * 2, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 2),
+                            nn.ReLU(True),  #256
+
+                            nn.Conv2d(ngf*2 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            nn.ReLU(True), # 128
+
+                            nn.Conv2d(ngf*4 , ngf  * 4, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 4),
+                            nn.ReLU(True), # 64
+
+                            nn.Conv2d(ngf*4 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            nn.ReLU(True),  #32
+
+                            nn.Conv2d(ngf*8 , ngf  * 8, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 8),
+                            nn.ReLU(True),  #16
+
+                            nn.Conv2d(ngf*8 , ngf  * 16, kernel_size=3, stride=2, padding=1),
+                            norm_layer(ngf  * 16),
+                            nn.ReLU(True),  #8
+
+                        )
+        
+        self.fc_layer = nn.Sequential(
+                                    nn.Linear( ngf * 16 * 4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4, ngf*4),
+                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,output_nc),
+                                    nn.ReLU(True),
+                                    )
+
+    def forward(self, tex ):
+        fea = self.CNNencoder(tex)
+        label = self.fc_layer(fea.view(fea.shape[0], -1))
+        return label
 
 class TexMeshEncoderDecoder(nn.Module):
     def __init__(self, tex_shape, linearity, input_nc,  code_n, encoder_fc_n, ngf=64, n_downsampling=5, n_blocks=4, norm_layer=nn.BatchNorm2d,padding_type='reflect'):

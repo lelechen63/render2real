@@ -26,6 +26,10 @@ def create_model(opt):
             model = TexMeshDisentNet()
         else:
             model = InferenceTexMeshDisentNet()
+    elif opt.model == 'cls':
+        from .cls import ClsNet
+        model = ClsNet()
+       
     model.initialize(opt)
     if opt.verbose:
         print("model [%s] was created" % (model.name()))

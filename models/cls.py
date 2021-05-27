@@ -23,9 +23,12 @@ class ClsNet(BaseModel):
             torch.backends.cudnn.benchmark = True
         self.isTrain = opt.isTrain
         self.clsname = opt.clsname
-        input_nc = 3
-        output_nc =3
-        self.classifier = networks.define_IdClassifier(opt.loadSize, input_nc, 
+        if self.clsname == 'idcls':
+            output_nc =300
+        else:
+            output_nc = 20
+
+        self.classifier = networks.define_Classifier(opt.loadSize, output_nc, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
 
@@ -66,7 +69,7 @@ class ClsNet(BaseModel):
         
         loss = self.criterionCEL( out_labels, gt_labels)
         
-        return [ self.loss_filter(loss) ]
+        return [ self.loss_filter(loss) , out_labels， gt_labels ]
 
     def save(self, which_epoch):
         self.save_network(self.classifier, self.clsname , which_epoch, self.gpu_ids)
