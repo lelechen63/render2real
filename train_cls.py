@@ -29,6 +29,7 @@ else:
 
 opt.print_freq = lcm(opt.print_freq, opt.batchSize)    
 opt.model = 'cls'
+opt.lr = 0.001
 opt.datasetname = 'fs_tex'
 if opt.debug:
     opt.display_freq = 1
@@ -94,10 +95,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         visualizer.plot_current_errors(errors, total_steps)
 
         ### display output images
-        save_fake = True
-        if save_fake:
-            print("out_labs:", out_labels)
-            print("gt_labs:", gt_labels)
 
         ## save latest model
         if total_steps % opt.save_latest_freq == save_delta:
