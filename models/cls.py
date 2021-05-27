@@ -51,7 +51,7 @@ class ClsNet(BaseModel):
                     
             self.criterionl1 = torch.nn.L1Loss()
             self.criterionl2 = torch.nn.MSELoss()
-            self.criterionCEL = nn.CrossEntropyLoss()
+            self.criterionCEL = torch.nn.CrossEntropyLoss()
 
             # Names so we can breakout loss
             self.loss_names = self.loss_filter('cls')
