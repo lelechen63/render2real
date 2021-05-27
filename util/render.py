@@ -54,23 +54,136 @@ def shift(image, vector):
     shifted = warp(image, transform, mode='wrap', preserve_range=True)
     return shifted.astype(image.dtype)
 
-with open("./predef/front_indices.pkl", "rb") as f:
-    indices_front = pickle.load(f)
-with open("./predef/predef_front_faces.pkl", 'rb') as f:
-    faces_front = pickle.load(f)
-f_front = np.array([f for f,_,_,_ in faces_front]) - 1
-f_front = torch.tensor(f_front, device=pyredner.get_device(), dtype=torch.int32)
+def read_obj(obj_file):
+    verts = []
+    uvs = []
+    indices = []
+    uv_indices = []
+    with open(obj_file) as f:
+        for line in f.read().splitlines():
+            if len(line) > 5 and line[:2] == "v ":
+                tks = line.split()
+                verts.append([float(tks[1]),float(tks[2]),float(tks[3])])
+            if len(line) > 5 and line[:3] == "vt ":
+                tks = line.split()
+                uvs.append([float(tks[1]),float(tks[2])])
+            if len(line) > 5 and line[:2] == "f ":
+                tks = line.split()
+                vi = []
+                ti = []
+                for tk in tks[1:]:
+                    idx = tk.split("/")
+                    vi.append(int(idx[0]))
+                    ti.append(int(idx[1]))
+                indices.append(vi)
+                uv_indices.append(ti)
+    return np.array(verts), np.array(uvs), np.array(indices)-1, np.array(uv_indices)-1
+
+
+# with open("./predef/front_indices.pkl", "rb") as f:
+#     indices_front = pickle.load(f)
+# with open("./predef/predef_front_faces.pkl", 'rb') as f:
+#     faces_front = pickle.load(f)
+# f_front = np.array([f for f,_,_,_ in faces_front]) - 1
+# f_front = torch.tensor(f_front, device=pyredner.get_device(), dtype=torch.int32)
+
 with open("./predef/Rt_scale_dict.json", 'r') as f:
     Rt_scale_dict = json.load(f)
+om_indices = np.load("./predef/om_indices.npy")
+om_indices = torch.from_numpy(om_indices).type(torch.int32).to(pyredner.get_device())
     
 
-def render(id_idx, exp_idx, vertices):  # int, int,
+def render(id_idx, exp_idx, vertices, cam_idx=1):  
+    """
+    # id_idx: int
+    # exp_idx: int
+    # vertices: [3*VN] (openmesh ordering, float32 tensor)
+    # cam_idx: 1
+    # return: rendered image, [h,w,3]
+    """
+
     scale = Rt_scale_dict['%d'%id_idx]['%d'%exp_idx][0]
     Rt_TU = np.array(Rt_scale_dict['%d'%id_idx]['%d'%exp_idx][1])
     Rt_TU = torch.from_numpy(Rt_TU).type(torch.float32).to(pyredner.get_device())
+    
+    input_vertices = vertices.reshape(-1,3).to(pyredner.get_device())
+    input_vertices = (Rt_TU[:3,:3].T @ (input_vertices - Rt_TU[:3,3]).T).T
+    input_vertices = input_vertices / scale
+    input_vertices = input_vertices.contiguous()
+
+    m = pyredner.Material(diffuse_reflectance = torch.tensor((0.5, 0.5, 0.5), device = pyredner.get_device()))
+    obj = pyredner.Object(vertices=input_vertices, indices=om_indices, material=m)
+    obj.normals = pyredner.compute_vertex_normal(obj.vertices, obj.indices)
+
+    img_dir = f"{image_data_root}/{id_idx}/{expressions[exp_idx]}"
+    with open(f"{img_dir}/params.json", 'r') as f:
+        params = json.load(f)
+
+    K = np.array(params['%d_K' % cam_idx])
+    Rt = np.array(params['%d_Rt' % cam_idx])
+    # dist = np.array(params['%d_distortion' % cam_idx], dtype = float)
+    h_src = params['%d_height' % cam_idx]
+    w_src = params['%d_width' % cam_idx]
+
+    cx = K[0,2]
+    cy = K[1,2]
+    dx = cx - 0.5 * w_src
+    dy = cy - 0.5 * h_src
+    dx = int(dx)
+    dy = int(dy)
+
+    c2w = np.eye(4)
+    c2w[:3,:3] = Rt[:3,:3].T
+    c2w[:3,3] = -Rt[:3,:3].T @ Rt[:3,3]
+    c2w = torch.from_numpy(c2w).type(torch.float32)
+    K = torch.from_numpy(K).type(torch.float32)
+
+    K[0,2] = 0
+    K[1,2] = 0
+    K[0,0] = K[0,0] * 2.0 / w_src
+    K[1,1] = -K[1,1] * 2.0 / w_src
+
+    # Setup camera
+    cam = pyredner.Camera(
+        cam_to_world= c2w,
+        intrinsic_mat=K,
+        clip_near = 1e-2, # needs to > 0
+        resolution = (h_src, w_src),
+        # distortion_params=distortion,
+        camera_type=pyredner.camera_type.perspective,
+        fisheye = False
+    )
+    
+    light_dir = torch.tensor([[0.0, 0.0, 1.0]])
+    light_dir = (c2w[:3,:3]@light_dir.T).T
+    lights = [
+        pyredner.DirectionalLight(light_dir.to(pyredner.get_device()), torch.tensor([5.0, 5.0, 5.0], device = pyredner.get_device()))
+    ]
+    
+    scene = pyredner.Scene(camera=cam, objects=[obj])
+    img = pyredner.render_deferred(scene, lights=lights)
+
+    img = torch.pow(img, 1.0/2.2).cpu().numpy()
+    img = shift(img, [-dx, -dy])
+
+    return img
 
 if __name__ == '__main__':
+    id_idx = 140
+    exp_idx = 4
+    cam_idx = 1
     
+    mesh_path = f"{mesh_root}/{id_idx}/models_reg/{expressions[exp_idx]}.obj"
+
+    om_mesh = openmesh.read_trimesh(mesh_path)
+    om_vertices = np.array(om_mesh.points()).reshape(-1)
+    om_vertices = torch.from_numpy(om_vertices.astype(np.float32))
+    
+    img = render(id_idx, exp_idx, om_vertices)
+    
+    imageio.imwrite("fkass.png", img)
+
+    exit(0)
     for id_idx in range(1,400):
         for exp_idx in range(1,21):
             print(f"Working on id={id_idx}, exp={exp_idx}")
