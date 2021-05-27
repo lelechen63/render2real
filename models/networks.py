@@ -570,8 +570,7 @@ class TexClassifier(nn.Module):
                                     nn.ReLU(True),
                                     nn.Linear( ngf*4, ngf*4),
                                     nn.ReLU(True),
-                                    nn.Linear( ngf*4,output_nc),
-                                    nn.ReLU(True),
+                                    nn.Linear( ngf*4,output_nc)
                                     )
 
     def forward(self, tex ):
