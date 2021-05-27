@@ -362,9 +362,8 @@ class FacescapeTexDataset(BaseDataset):
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
         tex_tensor = transform(tex)
-        print (tmp[0])
-        print(tmp[-1].split('_')[0])
-        input_dict = { 'tex':tex_tensor, 'id': int(tmp[0]), 'exp': int(tmp[-1].split('_'[0])), 'path': self.data_list[index]}
+
+        input_dict = { 'tex':tex_tensor, 'id': int(tmp[0]), 'exp': int(tmp[-1].split('_')[0]), 'path': self.data_list[index]}
 
         return input_dict
 
