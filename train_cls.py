@@ -75,6 +75,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss, out_labels, gt_labels = model( data['tex'], gt_lbs, infer=save_fake)
 
         # sum per device losses
+        loss =  torch.mean(loss) 
 
         # calculate final loss scalar
         ############### Backward Pass ####################
