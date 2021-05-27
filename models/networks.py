@@ -529,7 +529,7 @@ class TexClassifier(nn.Module):
         activation = nn.ReLU(True)        
 
         self.CNNencoder = nn.Sequential(
-                            nn.ReflectionPad2d(3), nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0),
+                            nn.ReflectionPad2d(3), nn.Conv2d(3, ngf, kernel_size=7, padding=0),
                             norm_layer(ngf), 
                             nn.ReLU(True),  
 
