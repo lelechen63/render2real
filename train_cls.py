@@ -76,7 +76,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
         # sum per device losses
         loss =  torch.mean(loss) 
-
+        loss_dict = dict(zip('pix', loss))
         # calculate final loss scalar
         ############### Backward Pass ####################
         # update generator weights
