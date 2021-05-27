@@ -70,13 +70,9 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss, out_labels, gt_labels = model( tex, gt_lbs, infer=save_fake)
 
         # sum per device losses
-        losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
-        loss_dict = dict(zip(model.module.loss_names, losses))
+        loss = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
 
-    
         # calculate final loss scalar
-
-        loss = loss_dict['cls']
         ############### Backward Pass ####################
         # update generator weights
         optimizer.zero_grad()    

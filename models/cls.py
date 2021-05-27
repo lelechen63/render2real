@@ -11,11 +11,7 @@ class ClsNet(BaseModel):
     def name(self):
         return 'ClsNet'
 
-    def init_loss_filter(self, use_cls_loss = True):
-        flags = (True)
-        def loss_filter(cls_loss):
-            return [l for (l,f) in zip((cls_loss),flags) if f]
-        return loss_filter
+   
     
     def initialize(self, opt):
         BaseModel.initialize(self, opt)
@@ -47,14 +43,12 @@ class ClsNet(BaseModel):
             self.old_lr = opt.lr
 
             # define loss functions
-            self.loss_filter = self.init_loss_filter()
                     
             self.criterionl1 = torch.nn.L1Loss()
             self.criterionl2 = torch.nn.MSELoss()
             self.criterionCEL = torch.nn.CrossEntropyLoss()
 
             # Names so we can breakout loss
-            self.loss_names = self.loss_filter('cls')
 
             # initialize optimizers
             # optimizer G
@@ -69,7 +63,7 @@ class ClsNet(BaseModel):
         
         loss = self.criterionCEL( out_labels, gt_labels)
         
-        return [ self.loss_filter(loss) , out_labels, gt_labels ]
+        return [ loss , out_labels, gt_labels ]
 
     def save(self, which_epoch):
         self.save_network(self.classifier, self.clsname , which_epoch, self.gpu_ids)
