@@ -23,6 +23,8 @@ def accuracy(y_pred, y_actual, topk=(1, )):
 
     _, pred = y_pred.topk(maxk, 1, True, True)
     pred = pred.t()
+    print('---------------')
+    print(pred)
     correct = pred.eq(y_actual.view(1, -1).expand_as(pred))
 
     res = []
