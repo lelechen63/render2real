@@ -15,6 +15,9 @@ import util.util as util
 from util.visualizer import Visualizer
 def accuracy(y_pred, y_actual, topk=(1, )):
     """Computes the precision@k for the specified values of k"""
+    print(y_pred)
+    print('===========')
+    print(y_actual)
     maxk = max(topk)
     batch_size = y_actual.size(0)
 
@@ -108,7 +111,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         # t = (time.time() - iter_start_time) / opt.print_freq
         # visualizer.print_current_errors(epoch, epoch_iter, errors, t)
         # visualizer.plot_current_errors(errors, total_steps)
-        print(loss, total_steps)
+        print(loss.data, total_steps)
         prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         print (prec1)
         ### display output images
