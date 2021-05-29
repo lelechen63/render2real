@@ -13,6 +13,21 @@ from data.data_loader import CreateDataLoader
 from models.models import create_model
 import util.util as util
 from util.visualizer import Visualizer
+def accuracy(y_pred, y_actual, topk=(1, )):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = y_actual.size(0)
+
+    _, pred = y_pred.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(y_actual.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+
+    return res
 
 opt = TrainOptions().parse()
 opt.name = 'cls'
@@ -89,11 +104,13 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### print out errors
         # if total_steps % opt.print_freq == print_delta:
 
-        errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in loss_dict.items()}            
-        t = (time.time() - iter_start_time) / opt.print_freq
-        visualizer.print_current_errors(epoch, epoch_iter, errors, t)
-        visualizer.plot_current_errors(errors, total_steps)
-        print (gt_labels)
+        # errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in loss_dict.items()}            
+        # t = (time.time() - iter_start_time) / opt.print_freq
+        # visualizer.print_current_errors(epoch, epoch_iter, errors, t)
+        # visualizer.plot_current_errors(errors, total_steps)
+        print(loss, total_steps)
+        prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
+        print (prec1)
         ### display output images
 
         ## save latest model
