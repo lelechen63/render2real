@@ -111,6 +111,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         print( 'loss: ', loss.data.sum(), 'step: ', total_steps)
         prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         print (prec1)
+        print(data['tex'].shape)
         ### display output images
 
         ## save latest model
