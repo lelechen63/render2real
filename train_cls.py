@@ -114,7 +114,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         print (prec1)
         print(data['tex'].shape)
         save_img = data['tex'].permute(0,2,3,1).data.numpy()*255
-        save_img = Image.fromarray(np.uint8( save_img))
+        save_img = Image.fromarray(np.uint8( save_img[0]))
         save_img.save('gg.png')
 
         ### display output images
