@@ -68,12 +68,4 @@ class ClsNet(BaseModel):
     def save(self, which_epoch):
         self.save_network(self.classifier, self.clsname , which_epoch, self.gpu_ids)
         
-    def update_learning_rate(self):
-        lrd = self.opt.lr / self.opt.niter_decay
-        lr = self.old_lr - lrd        
-        for param_group in self.optimizer.param_groups:
-            param_group['lr'] = lr
-        if self.opt.verbose:
-            print('update learning rate: %f -> %f' % (self.old_lr, lr))
-        self.old_lr = lr
-
+ 

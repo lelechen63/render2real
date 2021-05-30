@@ -149,6 +149,3 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         model.module.save(epoch)
         np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
-    ## linearly decay learning rate after certain iterations
-    if epoch > opt.niter:
-        model.module.update_learning_rate()
