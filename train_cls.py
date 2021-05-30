@@ -109,13 +109,12 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         # t = (time.time() - iter_start_time) / opt.print_freq
         # visualizer.print_current_errors(epoch, epoch_iter, errors, t)
         # visualizer.plot_current_errors(errors, total_steps)
-        print( 'loss: ', loss.data.sum(), 'step: ', total_steps)
         prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
-        print (prec1)
-        print(data['tex'].shape)
-        save_img = (data['tex'].permute(0,2,3,1).data.numpy() + 1 )/2*255
-        save_img = Image.fromarray(np.uint8( save_img[0]))
-        save_img.save('gg.png')
+        print( 'loss: ', loss.data.sum(), 'acc:', prec1,  'step: ', total_steps)
+        # print(data['tex'].shape)
+        # save_img = (data['tex'].permute(0,2,3,1).data.numpy() + 1 )/2*255
+        # save_img = Image.fromarray(np.uint8( save_img[0]))
+        # save_img.save('gg.png')
 
         ### display output images
 

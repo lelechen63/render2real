@@ -329,7 +329,7 @@ class FacescapeTexDataset(BaseDataset):
         else:
             _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
        
-        self.data_list = pickle.load(_file)[:1]
+        self.data_list = pickle.load(_file)#[:1]
         _file.close()
         
         ids = open(os.path.join(opt.dataroot, "lists/ids.pkl"), "rb")
