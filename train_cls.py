@@ -113,7 +113,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         print (prec1)
         print(data['tex'].shape)
         save_img = data['tex'].permute(0,2,3,1).data.numpy()*255
-        save_img = cv2.cvtColor(im_cv, cv2.COLOR_RGB2BGR)
+        save_img = cv2.cvtColor(save_img, cv2.COLOR_RGB2BGR)
         print (save_img.shape)
         print(type(save_img))
         cv2.imwrite('gg.png', save_img[0])
