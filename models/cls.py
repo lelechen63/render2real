@@ -40,19 +40,16 @@ class ClsNet(BaseModel):
         if self.isTrain:
             if opt.pool_size > 0 and (len(self.gpu_ids)) > 1:
                 raise NotImplementedError("Fake Pool Not Implemented for MultiGPU")
-            self.old_lr = opt.lr
-
             # define loss functions
                     
             self.criterionl1 = torch.nn.L1Loss()
             self.criterionl2 = torch.nn.MSELoss()
             self.criterionCEL = torch.nn.CrossEntropyLoss()
 
-            # Names so we can breakout loss
-
             # initialize optimizers
             # optimizer G
-            self.optimizer = torch.optim.SGD(self.classifier.parameters(), lr=opt.lr, momentum=0.9)                            
+            self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=opt.lr)  
+                           
 
 
     def forward(self, texture, gt_labels, infer=False):

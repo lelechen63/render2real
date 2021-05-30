@@ -91,41 +91,31 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             gt_lbs = data['exp']
         loss, out_labels, gt_labels = model( data['tex'].cuda(), gt_lbs.cuda(), infer=save_fake)
 
-        # sum per device losses
-        # loss =  torch.mean(loss) 
         # calculate final loss scalar
         ############### Backward Pass ####################
         # update generator weights
         optimizer.zero_grad()    
         loss.backward()          
         optimizer.step()
-
-        ############## Display results and errors ##########
-        ### print out errors
-        # if total_steps % opt.print_freq == print_delta:
-
-        # errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in loss_dict.items()}            
-        # t = (time.time() - iter_start_time) / opt.print_freq
-        # visualizer.print_current_errors(epoch, epoch_iter, errors, t)
-        # visualizer.plot_current_errors(errors, total_steps)
-        # prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         try:
             print( 'loss: ', loss.data.sum())
         except:
             print('+++++')
             print(loss)
+        print( 'step: ', total_steps)
+
+        ############## Display results and errors #########
+        # prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         # try:
         #     print( 'acc: ', prec1)
         # except:
         #     print('******')
         #     print(out_labels)
-        print( 'step: ', total_steps)
-        # print(data['tex'].shape)
+        ### display output images
         # save_img = (data['tex'].permute(0,2,3,1).data.numpy() + 1 )/2*255
         # save_img = Image.fromarray(np.uint8( save_img[0]))
         # save_img.save('gg.png')
 
-        ### display output images
 
         ## save latest model
         if total_steps % opt.save_latest_freq == save_delta:

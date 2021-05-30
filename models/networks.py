@@ -565,11 +565,11 @@ class TexClassifier(nn.Module):
         
         self.fc_layer = nn.Sequential(
                                     nn.Linear( ngf * 16 * 4, ngf*4),
-                                    nn.ReLU(True),
+                                    nn.ReLU(),
                                     nn.Linear( ngf*4, ngf*4),
-                                    nn.ReLU(True),
+                                    nn.ReLU(),
                                     nn.Linear( ngf*4, ngf*4),
-                                    nn.ReLU(True),
+                                    nn.ReLU(),
                                     nn.Linear( ngf*4,output_nc)
                                     )
 
