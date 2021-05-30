@@ -366,10 +366,10 @@ class FacescapeTexDataset(BaseDataset):
         tex_tensor = transform(tex)
 
         input_dict = { 'tex':tex_tensor, 'id': int(tmp[0]) - 1, 'exp': int(tmp[-1].split('_')[0] )- 1, 'path': self.data_list[index]}
-        if input_dict['id'] > 300:
+        if input_dict['id'] > 300 or input_dict['id']< 0 or input_dict['exp'] > 19  or input_dict['exp']< 0 :
             print(input_dict['path'])
-        if input_dict['exp'] > 19:
-            print(input_dict['path'])
+            print('*************')
+       
         return input_dict
 
     def __len__(self):
