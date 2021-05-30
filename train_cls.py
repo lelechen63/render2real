@@ -114,7 +114,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         print(data['tex'].shape)
         save_img = data['tex'].permute(0,2,3,1).data[0]
         print (save_img.shape)
-        print(save_img.type())
+        print(type(save_img))
         cv2.imwrite('gg.png', save_img)
         ### display output images
 
