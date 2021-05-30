@@ -57,10 +57,7 @@ class ClsNet(BaseModel):
 
 
     def forward(self, texture, gt_labels, infer=False):
-        
-        texture = Variable(texture.cuda())
         out_labels = self.classifier(texture)
-        
         loss = self.criterionCEL( out_labels, gt_labels)
         
         return [ loss , out_labels, gt_labels ]

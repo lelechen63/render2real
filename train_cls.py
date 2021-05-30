@@ -89,8 +89,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             gt_lbs = data['id']
         else:
             gt_lbs = data['exp']
-
-        loss, out_labels, gt_labels = model( data['tex'], gt_lbs, infer=save_fake)
+        loss, out_labels, gt_labels = model( data['tex'].cuda(), gt_lbs.cuda(), infer=save_fake)
 
         # sum per device losses
         # loss =  torch.mean(loss) 
@@ -109,17 +108,17 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         # t = (time.time() - iter_start_time) / opt.print_freq
         # visualizer.print_current_errors(epoch, epoch_iter, errors, t)
         # visualizer.plot_current_errors(errors, total_steps)
-        prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
+        # prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         try:
             print( 'loss: ', loss.data.sum())
         except:
             print('+++++')
             print(loss)
-        try:
-            print( 'acc: ', prec1)
-        except:
-            print('******')
-            print(out_labels)
+        # try:
+        #     print( 'acc: ', prec1)
+        # except:
+        #     print('******')
+        #     print(out_labels)
         print( 'step: ', total_steps)
         # print(data['tex'].shape)
         # save_img = (data['tex'].permute(0,2,3,1).data.numpy() + 1 )/2*255
