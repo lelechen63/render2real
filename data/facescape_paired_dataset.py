@@ -365,7 +365,7 @@ class FacescapeTexDataset(BaseDataset):
         transform = get_transform(self.opt, params)      
         tex_tensor = transform(tex)
 
-        input_dict = { 'tex':tex_tensor, 'id': int(tmp[0]) - 1, 'exp': int(tmp[-1].split('_')[0] - 1), 'path': self.data_list[index]}
+        input_dict = { 'tex':tex_tensor, 'id': int(tmp[0]) - 1, 'exp': int(tmp[-1].split('_')[0] )- 1, 'path': self.data_list[index]}
         if input_dict['id'] > 300:
             print(input_dict['path'])
         if input_dict['exp'] > 19:
