@@ -112,10 +112,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
         print (prec1)
         print(data['tex'].shape)
-        save_img = data['tex'].permute(0,2,3,1).data[0]
+        save_img = data['tex'].permute(0,2,3,1).data.numpy()
         print (save_img.shape)
         print(type(save_img))
-        cv2.imwrite('gg.png', save_img)
+        cv2.imwrite('gg.png', save_img[0])
         ### display output images
 
         ## save latest model
