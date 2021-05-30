@@ -15,16 +15,12 @@ import util.util as util
 from util.visualizer import Visualizer
 def accuracy(y_pred, y_actual, topk=(1, )):
     """Computes the precision@k for the specified values of k"""
-    print(y_pred)
-    print('===========')
-    print(y_actual)
+   
     maxk = max(topk)
     batch_size = y_actual.size(0)
 
     _, pred = y_pred.topk(maxk, 1, True, True)
     pred = pred.t()
-    print('---------------')
-    print(pred)
     correct = pred.eq(y_actual.view(1, -1).expand_as(pred))
 
     res = []
