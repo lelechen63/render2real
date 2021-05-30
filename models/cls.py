@@ -52,8 +52,7 @@ class ClsNet(BaseModel):
 
             # initialize optimizers
             # optimizer G
-            params = list(self.classifier.parameters())
-            self.optimizer = torch.optim.SGD(params, lr=opt.lr, momentum=0.9)                            
+            self.optimizer = torch.optim.SGD(self.classifier.parameters(), lr=opt.lr, momentum=0.9)                            
 
 
     def forward(self, texture, gt_labels, infer=False):
