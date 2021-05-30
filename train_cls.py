@@ -13,6 +13,7 @@ from data.data_loader import CreateDataLoader
 from models.models import create_model
 import util.util as util
 from util.visualizer import Visualizer
+from PIL import Image
 def accuracy(y_pred, y_actual, topk=(1, )):
     """Computes the precision@k for the specified values of k"""
    
