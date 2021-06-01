@@ -105,24 +105,18 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         print( 'step: ', total_steps)
 
         ############## Display results and errors #########
-        # prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
-        # try:
-        #     print( 'acc: ', prec1)
-        # except:
-        #     print('******')
-        #     print(out_labels)
-        ### display output images
-        # save_img = (data['tex'].permute(0,2,3,1).data.numpy() + 1 )/2*255
-        # save_img = Image.fromarray(np.uint8( save_img[0]))
-        # save_img.save('gg.png')
-
-
         ## save latest model
         if total_steps % opt.save_latest_freq == save_delta:
             print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
             model.module.save('latest')            
             np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
-
+            prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
+            try:
+                print( 'acc: ', prec1)
+            except:
+                print('******')
+                print(out_labels)
+        
         if epoch_iter >= dataset_size:
             break
 
@@ -138,3 +132,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         model.module.save(epoch)
         np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
+    ### linearly decay learning rate after certain iterations
+    if epoch > opt.niter:
+        model.module.update_learning_rate()

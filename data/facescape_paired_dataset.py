@@ -324,7 +324,7 @@ class FacescapeTexDataset(BaseDataset):
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_train.pkl"), "rb")
             
         else:
             _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
