@@ -101,7 +101,6 @@ def get_paired_image_pickle():
 def get_texmesh_pickle():
     
     base_p = '/raid/celong/FaceScape/textured_meshes'
-
     train_list = []
     test_list = []
     ids =  os.listdir(base_p)
@@ -158,6 +157,20 @@ def get_paired_texmesh_pickle():
         ids.append(str(i))
     with open('/raid/celong/FaceScape/lists/ids.pkl', 'wb') as handle:
         pickle.dump(ids, handle, protocol=pickle.HIGHEST_PROTOCOL)
-get_paired_texmesh_pickle()
+
+def gettexmesh_pid_expid():
+    dataroot = '/raid/celong/FaceScape/'
+    _file = open(os.path.join(dataroot, "lists/texmesh_train.pkl"), "rb")
+    data_list = pickle.load(_file)
+    _file.close()
+    for d in data_list:
+        print(d)
+        break
+
+gettexmesh_pid_expid()
+
+# get_paired_texmesh_pickle()
 # get_texmesh_pickle()
 # get_paired_image_pickle()
+
+
