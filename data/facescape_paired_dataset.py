@@ -353,7 +353,7 @@ class FacescapeTexDataset(BaseDataset):
             tex  = np.array(tex ) 
             tex = tex * self.facial_seg
             tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
-            total_tex.append(tex)
+            self.total_tex.append(tex)
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
