@@ -163,10 +163,18 @@ def gettexmesh_pid_expid():
     _file = open(os.path.join(dataroot, "lists/texmesh_train.pkl"), "rb")
     data_list = pickle.load(_file)
     _file.close()
+    pid = set([])
+    exp = set([])
     for d in data_list:
         print(d)
-        break
-
+        tmp = d.split('/')
+        pid.append(int(tmp[0]))
+        exp.append(int(tmp[-1].split('_')[0]))
+        # break
+    pid = sorted(pid)
+    exp = sorted(exp)
+    print(exp)
+    print(pid)
 gettexmesh_pid_expid()
 
 # get_paired_texmesh_pickle()
