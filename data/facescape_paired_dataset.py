@@ -324,7 +324,7 @@ class FacescapeTexDataset(BaseDataset):
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_train.pkl"), "rb")
             
         else:
             _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
@@ -352,8 +352,7 @@ class FacescapeTexDataset(BaseDataset):
             tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
             tex  = np.array(tex ) 
             tex = tex * self.facial_seg
-            tex =
-             tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
+            tex =  tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
             self.total_tex.append(tex)
     def __getitem__(self, index):
         t = time.time()
