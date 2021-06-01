@@ -345,6 +345,15 @@ class FacescapeTexDataset(BaseDataset):
         self.w =2000
         self.h = 1334
         self.l = max(self.w,self.h)
+        self.total_tex = []
+        for data in self.data_list:
+            tmp = self.data_list[index].split('/')
+            tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
+            tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
+            tex  = np.array(tex ) 
+            tex = tex * self.facial_seg
+            tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
+            total_tex.append(tex)
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
@@ -353,13 +362,12 @@ class FacescapeTexDataset(BaseDataset):
         tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
         # tex_path = '/raid/celong/FaceScape/texture_mapping/target/1/9_mouth_right.png'
         # mesh 
-        tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
-        tex  = np.array(tex ) 
-        # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
-        tex = tex * self.facial_seg
-        tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
-
-
+        # tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
+        # tex  = np.array(tex ) 
+        # # tex = cv2.resize(tex, self.img_size, interpolation = cv2.INTER_AREA)
+        # tex = tex * self.facial_seg
+        # tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
+        tex = self.total_tex[index]
         tex = Image.fromarray(np.uint8(tex))
         params = get_params(self.opt, tex.size)
         transform = get_transform(self.opt, params)      
