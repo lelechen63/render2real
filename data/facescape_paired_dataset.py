@@ -205,7 +205,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         ids = open(os.path.join(opt.dataroot, "lists/ids.pkl"), "rb")
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
-        self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
+        # self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
         self.facial_seg = Image.open("./predef/facial_mask_v10.png")
         # self.facial_seg  = self.facial_seg.resize(self.img_size)
         self.facial_seg  = np.array(self.facial_seg ) / 255.0
@@ -335,7 +335,7 @@ class FacescapeTexDataset(BaseDataset):
         ids = open(os.path.join(opt.dataroot, "lists/ids.pkl"), "rb")
         self.id_set = set(pickle.load(ids))
         self.exp_set = get_exp()
-        self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
+        # self.facial_seg = cv2.imread("./predef/facial_mask_v10.png")[:,:,::-1]
         self.facial_seg = Image.open("./predef/facial_mask_v10.png")
         # self.facial_seg  = self.facial_seg.resize(self.img_size)
         self.facial_seg  = np.array(self.facial_seg ) / 255.0
@@ -353,6 +353,8 @@ class FacescapeTexDataset(BaseDataset):
             tex  = np.array(tex ) 
             tex = tex * self.facial_seg
             tex =  tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
+            tex = cv2.resize(tex, (opt.loadSize,opt.loadSize), interpolation = cv2.INTER_AREA)
+
             self.total_tex.append(tex)
     def __getitem__(self, index):
         t = time.time()
