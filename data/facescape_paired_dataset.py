@@ -347,7 +347,7 @@ class FacescapeTexDataset(BaseDataset):
         self.l = max(self.w,self.h)
         self.total_tex = []
         for data in self.data_list:
-            tmp = self.data_list[index].split('/')
+            tmp = data.split('/')
             tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
             tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
             tex  = np.array(tex ) 
