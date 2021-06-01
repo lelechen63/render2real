@@ -11,7 +11,7 @@ import numpy as np
 import random
 import torch
 import openmesh
-
+from tqdm import tqdm
 import  os, time
 def get_exp():
     expressions = {
@@ -324,7 +324,7 @@ class FacescapeTexDataset(BaseDataset):
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/texmesh_train.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
             
         else:
             _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
@@ -346,13 +346,14 @@ class FacescapeTexDataset(BaseDataset):
         self.h = 1334
         self.l = max(self.w,self.h)
         self.total_tex = []
-        for data in self.data_list:
+        for data in tqdm(self.data_list):
             tmp = data.split('/')
             tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
             tex = Image.open(tex_path).convert('RGB')#.resize(self.img_size)
             tex  = np.array(tex ) 
             tex = tex * self.facial_seg
-            tex = tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
+            tex =
+             tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
             self.total_tex.append(tex)
     def __getitem__(self, index):
         t = time.time()
