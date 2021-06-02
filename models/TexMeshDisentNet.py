@@ -65,6 +65,7 @@ class TexMeshDisentNet(BaseModel):
             
             if not opt.no_cls_loss:
                 self.criterionCLS = networks.CLSLoss(opt)
+                self.criterionCLS = torch.nn.DataParallel(self.criterionCLS, device_ids = self.gpu_ids)
             # Names so we can breakout loss
             self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh", 'A_cls', 'B_cls', "mis_cls",)
 
