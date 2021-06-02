@@ -151,12 +151,12 @@ class TexMeshDisentNet(BaseModel):
                 loss_exp_CLS2 = self.criterionCLS(Bexp_Aid_tex， Agt_id, 'exp') * self.opt.lambda_cls
                  
             # reconstruction loss
-            loss_id_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_id) * self.opt.lambda_cls
-            loss_id_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_id) * self.opt.lambda_cls
+            loss_id_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls
+            loss_id_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_id, 'id') * self.opt.lambda_cls
             loss_id_CLS = loss_id_CLS1 + loss_id_CLS2
 
-            loss_exp_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_exp) * self.opt.lambda_cls
-            loss_exp_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_exp) * self.opt.lambda_cls
+            loss_exp_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_exp, 'exp') * self.opt.lambda_cls
+            loss_exp_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_exp, 'exp') * self.opt.lambda_cls
             loss_exp_CLS = loss_exp_CLS1 + loss_exp_CLS2
         loss_G_pix = 0
         loss_G_pix1 = 0
