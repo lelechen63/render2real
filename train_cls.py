@@ -92,8 +92,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         
         loss, out_labels, gt_labels = model( data['tex'].cuda(), gt_lbs.cuda(), infer=save_fake)
         loss = loss.mean()
-        print (gt_labels)
-        print(out_labels.shape)
         # calculate final loss scalar
         ############### Backward Pass ####################
         # update generator weights
