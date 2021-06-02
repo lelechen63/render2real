@@ -64,7 +64,7 @@ class ClsNet(BaseModel):
     def update_learning_rate(self):
         lrd = self.opt.lr / self.opt.niter_decay
         lr = self.old_lr - lrd        
-        for param_group in self.optimizer_G.param_groups:
+        for param_group in self.optimizer.param_groups:
             param_group['lr'] = lr
         if self.opt.verbose:
             print('update learning rate: %f -> %f' % (self.old_lr, lr))
