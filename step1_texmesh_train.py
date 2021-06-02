@@ -38,14 +38,10 @@ dataset = data_loader.load_data()
 dataset_size = len(data_loader)
 print('#training images = %d' % dataset_size)
 
-model = create_model(opt)
+model = create_model(opt).cuda()
 visualizer = Visualizer(opt)
-if opt.fp16:    
-    from apex import amp
-    model, [optimizer_G] = amp.initialize(model, [model.optimizer_G], opt_level='O1')             
-    model = torch.nn.DataParallel(model, device_ids=opt.gpu_ids)
-else:
-    optimizer_G = model.module.optimizer_G
+
+optimizer_G = model.module.optimizer_G
 
 total_steps = (start_epoch-1) * dataset_size + epoch_iter
 
