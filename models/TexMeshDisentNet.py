@@ -199,7 +199,7 @@ class TexMeshDisentNet(BaseModel):
 
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, 
-                 loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh 
+                 loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh, 
                  loss_CLS3, loss_CLS4, loss_CLS), 
                  [Aexp_Aid_mesh, Aexp_Aid_tex,  Bexp_Bid_mesh, Bexp_Bid_tex, 
                  Aexp_Bid_mesh, Aexp_Bid_tex, Bexp_Aid_mesh, Bexp_Aid_tex], A_err_map ]
