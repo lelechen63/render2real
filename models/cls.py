@@ -19,6 +19,7 @@ class ClsNet(BaseModel):
             torch.backends.cudnn.benchmark = True
         self.isTrain = opt.isTrain
         self.clsname = opt.clsname
+        self.old_lr = opt.lr
         if self.clsname == 'idcls':
             output_nc =301
         else:
