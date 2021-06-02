@@ -214,7 +214,9 @@ class CLSLoss(nn.Module):
         self.idcls = TexClassifier(opt.loadSize, 301, 64, opt.n_downsample_global, opt.n_blocks_global).cuda()   
         self.expcls = TexClassifier(opt.loadSize, 20, 64, opt.n_downsample_global, opt.n_blocks_global).cuda()
         
-        self.idcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_expcls.pth'))
+        self.idcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_idcls.pth'))
+        self.expcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_expcls.pth'))
+
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, tex, gt_lab, mode):
@@ -222,7 +224,7 @@ class CLSLoss(nn.Module):
             out_lab = self.idcls(tex)
         else:
             out_lab = self.expcls(tex)
-
+            
         loss = self.criterion(out_lab, gt_lab.detach())
         return loss
 

@@ -73,6 +73,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
                                     Btex = Variable(data['Btex']) , 
                                     Bmesh =  Variable(data['Bmesh']),
                                     map_type = data['map_type'],
+                                    Agt_id = data['Aid'],
+                                    Bgt_id = data['Bid'],
+                                    Agt_exp = data['Aexp'],
+                                    Bgt_exp = data['Bexp'],
                                     infer=save_fake)
 
         # sum per device losses
@@ -85,7 +89,9 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         loss_vgg = loss_dict.get('A_vgg',0) + loss_dict.get('B_vgg',0) + loss_dict.get('mis_vgg',0)
         loss_mesh = loss_dict.get('A_mesh',0) + loss_dict.get('B_mesh',0) + loss_dict.get('mis_mesh',0)
 
-        loss_G = loss_pix + loss_vgg + loss_mesh
+        loss_cls = loss_dict.get('A_cls',0) + loss_dict.get('B_cls',0) + loss_dict.get('mis_cls',0)
+
+        loss_G = loss_pix + loss_vgg + loss_mesh + loss_cls
         # loss_G = loss_dict['A_pix']
         ############### Backward Pass ####################
         # update generator weights

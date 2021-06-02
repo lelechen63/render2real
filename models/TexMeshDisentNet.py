@@ -11,9 +11,14 @@ class TexMeshDisentNet(BaseModel):
     def name(self):
         return 'TexMeshDisentNet'
 
-    def init_loss_filter(self, use_feat_loss, use_mismatch_loss, use_mesh_loss):
-        flags = (True, use_mismatch_loss, use_mismatch_loss,use_feat_loss, use_mismatch_loss and use_feat_loss, use_mismatch_loss and use_feat_loss,use_mesh_loss, use_mesh_loss& use_mismatch_loss, use_mesh_loss & use_mismatch_loss)
-        def loss_filter(A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss):
+    def init_loss_filter(self, use_feat_loss, use_mismatch_loss, use_mesh_loss, use_cls_loss):
+        flags = (True, use_mismatch_loss, use_mismatch_loss,use_feat_loss, \
+                use_mismatch_loss and use_feat_loss, use_mismatch_loss and use_feat_loss,\
+                use_mesh_loss, use_mesh_loss, use_mesh_loss & use_mismatch_loss, \
+                use_cls_loss, use_cls_loss , use_cls_loss & use_mismatch_loss)
+        def loss_filter(A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss,\
+         mismatch_loss,  A_mesh_loss, B_mesh_loss, mismatch_mesh_loss, \
+         A_cls_loss, B_cls_loss, mismatch_cls_loss):
             return [l for (l,f) in zip((A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss),flags) if f]
         return loss_filter
     
@@ -49,7 +54,7 @@ class TexMeshDisentNet(BaseModel):
             self.old_lr = opt.lr
 
             # define loss functions
-            self.loss_filter = self.init_loss_filter(not opt.no_vgg_loss, not opt.no_mismatch_loss, not opt.no_mesh_loss)
+            self.loss_filter = self.init_loss_filter(not opt.no_vgg_loss, not opt.no_mismatch_loss, not opt.no_mesh_loss, not opt.no_cls_loss)
                     
             self.criterionGAN = networks.GANLoss(use_lsgan=not opt.no_lsgan, tensor=self.Tensor)   
             self.criterionFeat = torch.nn.L1Loss()
@@ -59,7 +64,7 @@ class TexMeshDisentNet(BaseModel):
                 self.criterionVGG = networks.VGGLoss(self.gpu_ids)
             
             if not opt.no_cls_loss:
-                self.criterionCLS = network.CLSLoss(self.gpu_ids)
+                self.criterionCLS = network.CLSLoss(opt)
             # Names so we can breakout loss
             self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh", 'A_cls', 'B_cls', "mis_cls",)
 
@@ -133,15 +138,12 @@ class TexMeshDisentNet(BaseModel):
             loss_G_VGG4 = self.criterionVGG(Bexp_Bid_tex, Btex) * self.opt.lambda_feat
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
-        loss_id_CLS1 = 0
-        loss_id_CLS2 = 0
-        loss_id_CLS3 = 0
-        loss_id_CLS4 = 0
+        loss_CLS1 = 0
+        loss_CLS2 = 0
+        loss_CLS3 = 0
+        loss_CLS4 = 0
 
-        loss_exp_CLS1 = 0
-        loss_exp_CLS2 = 0
-        loss_exp_CLS3 = 0
-        loss_exp_CLS4 = 0
+       
         if not self.opt.no_cls_loss:
             # mismatch loss
                 loss_id_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'id' ) * self.opt.lambda_cls
@@ -158,6 +160,9 @@ class TexMeshDisentNet(BaseModel):
             loss_exp_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_exp, 'exp') * self.opt.lambda_cls
             loss_exp_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_exp, 'exp') * self.opt.lambda_cls
             loss_exp_CLS = loss_exp_CLS1 + loss_exp_CLS2
+        loss_CLS = loss_id_CLS + loss_exp_CLS
+        loss_CLS3 = loss_id_CLS3 + loss_exp_CLS3
+        loss_CLS4 = loss_id_CLS4 + loss_exp_CLS4
         loss_G_pix = 0
         loss_G_pix1 = 0
         loss_G_pix2 = 0
@@ -193,7 +198,9 @@ class TexMeshDisentNet(BaseModel):
         A_err_map = (Aexp_Aid_tex - Atex).sum(1).unsqueeze(1)
 
         # Only return the fake_B image if necessary to save BW
-        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh), \
+        return [ self.loss_filter( loss_G_pix3, loss_G_pix4, loss_G_pix, loss_G_VGG3, \
+                 loss_G_VGG4, loss_G_VGG, loss_mesh3, loss_mesh4, loss_G_mesh \
+                 loss_CLS3, loss_CLS4, loss_CLS), \
                  [Aexp_Aid_mesh, Aexp_Aid_tex,  Bexp_Bid_mesh, Bexp_Bid_tex, Aexp_Bid_mesh, Aexp_Bid_tex, Bexp_Aid_mesh, Bexp_Aid_tex], A_err_map ]
                                     # A iamge l1, B image l1, mismatch l1, A vgg loss, B vgg loss, mismatch vgg 
 

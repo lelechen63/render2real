@@ -227,6 +227,8 @@ class FacescapeMeshTexDataset(BaseDataset):
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
+        A_id = int(tmp[0])
+        A_exp = int(tmp[-1].split('_')[0])
         # id_p , 'models_reg', motion_p
         # tex 
         tex_path = os.path.join( self.dir_tex , tmp[0], tmp[-1] + '.png')
@@ -291,7 +293,11 @@ class FacescapeMeshTexDataset(BaseDataset):
                 continue
         # vertices=vertices.reshape(-1, 4, 3)
         # B_vertices = vertices[:, 0, :].reshape(-1)
-        input_dict = { 'Atex':A_tex_tensor, 'Amesh': torch.FloatTensor(A_vertices), 'A_path': self.data_list[index], 'Btex':B_tex_tensor, 'Bmesh': torch.FloatTensor(B_vertices), 'B_path': os.path.join( B_id, 'models_reg' , B_exp), 'map_type':toss}
+        input_dict = { 'Atex':A_tex_tensor, 'Amesh': torch.FloatTensor(A_vertices), \ 
+                'A_path': self.data_list[index], 'Btex':B_tex_tensor, \ 
+                'Bmesh': torch.FloatTensor(B_vertices), 'B_path': os.path.join( B_id, 'models_reg' , B_exp), \ 
+                'map_type':toss, 'Aid': int(A_id) - 1, 'Aexp': int(A_exp) -1, \
+                'Bid':int(B_id) - 1, 'Bexp':int(B_exp.split('_')[0]) - 1 }
 
         return input_dict
 
