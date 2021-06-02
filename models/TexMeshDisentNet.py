@@ -57,9 +57,11 @@ class TexMeshDisentNet(BaseModel):
             self.criterionPix = torch.nn.MSELoss()
             if not opt.no_vgg_loss:             
                 self.criterionVGG = networks.VGGLoss(self.gpu_ids)
-                
+            
+            if not opt.no_cls_loss:
+                self.criterionCLS = network.CLSLoss(self.gpu_ids)
             # Names so we can breakout loss
-            self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh")
+            self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh", 'A_cls', 'B_cls', "mis_cls",)
 
             # initialize optimizers
             # optimizer G
@@ -67,12 +69,18 @@ class TexMeshDisentNet(BaseModel):
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
 
-    def forward(self, Atex, Amesh, Btex, Bmesh, map_type, infer=False):
+    def forward(self, Atex, Amesh, Btex, Bmesh, map_type, Agt_id, Bgt_id, Agt_exp, Bgt_exp, infer=False):
         
         Atex = Variable(Atex.cuda())
         Btex = Variable(Btex.cuda())
         Amesh = Variable(Amesh.cuda())
         Bmesh = Variable(Bmesh.cuda())
+
+        Agt_id = Variable(Agt_id.cuda())
+        Bgt_id = Variable(Bgt_id.cuda())
+    
+        Agt_exp = Variable(Agt_exp.cuda())
+        Bgt_exp = Variable(Bgt_exp.cuda())
 
         # Fake Generation
         A_exp_code, A_id_code, \
@@ -125,6 +133,31 @@ class TexMeshDisentNet(BaseModel):
             loss_G_VGG4 = self.criterionVGG(Bexp_Bid_tex, Btex) * self.opt.lambda_feat
             loss_G_VGG = loss_G_VGG1 + loss_G_VGG2 
         
+        loss_id_CLS1 = 0
+        loss_id_CLS2 = 0
+        loss_id_CLS3 = 0
+        loss_id_CLS4 = 0
+
+        loss_exp_CLS1 = 0
+        loss_exp_CLS2 = 0
+        loss_exp_CLS3 = 0
+        loss_exp_CLS4 = 0
+        if not self.opt.no_cls_loss:
+            # mismatch loss
+                loss_id_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'id' ) * self.opt.lambda_cls
+                loss_id_CLS2 = self.criterionCLS(Bexp_Aid_tex， Agt_id, 'id') * self.opt.lambda_cls
+
+                loss_exp_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'exp' ) * self.opt.lambda_cls
+                loss_exp_CLS2 = self.criterionCLS(Bexp_Aid_tex， Agt_id, 'exp') * self.opt.lambda_cls
+                 
+            # reconstruction loss
+            loss_id_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_id) * self.opt.lambda_cls
+            loss_id_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_id) * self.opt.lambda_cls
+            loss_id_CLS = loss_id_CLS1 + loss_id_CLS2
+
+            loss_exp_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_exp) * self.opt.lambda_cls
+            loss_exp_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_exp) * self.opt.lambda_cls
+            loss_exp_CLS = loss_exp_CLS1 + loss_exp_CLS2
         loss_G_pix = 0
         loss_G_pix1 = 0
         loss_G_pix2 = 0
