@@ -75,6 +75,7 @@ class Pix2PixHDModel(BaseModel):
             self.criterionFeat = torch.nn.L1Loss()
             if not opt.no_vgg_loss:             
                 self.criterionVGG = networks.VGGLoss(self.gpu_ids)
+                print('!!!!!!!')
                 
         
             # Names so we can breakout loss
