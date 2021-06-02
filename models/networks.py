@@ -229,14 +229,14 @@ class CLSLoss(nn.Module):
 
     def forward(self, tex, gt_lab, mode):
         device_id = tex.device.index
+        print('++++++++++++++++++++')
+        print(mode, gt_lab )
         print('tex', device_id)
-        print (gt_lab)
 
         # device_id = self.expcls.device.index
         # print('expcls', device_id)
         # device_id = self.idcls.device.index
         # print('idcls', device_id)
-        print('++++++++++++++++++++')
 
         if mode == 'id':
             out_lab = self.idcls(tex)
