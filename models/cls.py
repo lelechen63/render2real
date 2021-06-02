@@ -10,8 +10,6 @@ from .blocks import LinearBlock, Conv2dBlock, ResBlocks, ActFirstResBlock
 class ClsNet(BaseModel):
     def name(self):
         return 'ClsNet'
-
-   
     
     def initialize(self, opt):
         BaseModel.initialize(self, opt)
@@ -20,7 +18,7 @@ class ClsNet(BaseModel):
         self.isTrain = opt.isTrain
         self.clsname = opt.clsname
         self.old_lr = opt.lr
-        if self.clsname == 'idcls':
+        if self.clsname == 'expcls':
             output_nc =301
         else:
             output_nc = 20
