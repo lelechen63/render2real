@@ -295,7 +295,7 @@ class FacescapeMeshTexDataset(BaseDataset):
         # B_vertices = vertices[:, 0, :].reshape(-1)
         input_dict = { 'Atex':A_tex_tensor, 'Amesh': torch.FloatTensor(A_vertices),
                 'A_path': self.data_list[index], 'Btex':B_tex_tensor,
-                'Bmesh': torch.FloatTensor(B_vertices), 'B_path': os.path.join( B_id, 'models_reg' , B_exp), \ 
+                'Bmesh': torch.FloatTensor(B_vertices), 'B_path': os.path.join( B_id, 'models_reg' , B_exp),
                 'map_type':toss, 'Aid': int(A_id) - 1, 'Aexp': int(A_exp) -1,
                 'Bid':int(B_id) - 1, 'Bexp':int(B_exp.split('_')[0]) - 1 }
 
