@@ -39,7 +39,7 @@ dataset = data_loader.load_data()
 dataset_size = len(data_loader)
 print('#training images = %d' % dataset_size)
 
-model = create_model(opt).cuda()
+model = create_model(opt)
 visualizer = Visualizer(opt)
 
 optimizer_G = model.module.optimizer_G
