@@ -2,6 +2,7 @@ import time
 import os
 import numpy as np
 import torch
+torch.backends.cudnn.enabled=False
 from torch.autograd import Variable
 from collections import OrderedDict
 from subprocess import call
