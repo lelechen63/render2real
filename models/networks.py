@@ -230,6 +230,7 @@ class CLSLoss(nn.Module):
     def forward(self, tex, gt_lab, mode):
         device_id = tex.device.index
         print('tex', device_id)
+        print (gt_lab)
 
         # device_id = self.expcls.device.index
         # print('expcls', device_id)
@@ -241,7 +242,8 @@ class CLSLoss(nn.Module):
             out_lab = self.idcls(tex)
         else:
             out_lab = self.expcls(tex)
-            
+        
+        print(out_lab.shape)
         loss = self.criterion(out_lab, gt_lab.detach())
         return loss
 
