@@ -71,7 +71,9 @@ for i, data in enumerate(dataset):
         gt_lbs = data['exp']
     
     out_labels = cls( data['tex'].cuda())
-    loss = criterion(out_labels, gt_lbs)
+    print(out_labels.shape)
+    print(gt_lbs)
+    loss = criterion(out_labels, gt_lbs.detach())
     loss = loss.mean()
     # calculate final loss scalar
     ############### Backward Pass ####################
