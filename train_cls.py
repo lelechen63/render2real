@@ -33,7 +33,7 @@ def accuracy(y_pred, y_actual, topk=(1, )):
 
 opt = TrainOptions().parse()
 opt.name = 'cls'
-opt.clsname = 'idcls'
+# opt.clsname = 'idcls'
 iter_path = os.path.join(opt.checkpoints_dir, opt.name, 'iter.txt')
 if opt.continue_train:
     try:
