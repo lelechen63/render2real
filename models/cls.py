@@ -18,7 +18,7 @@ class ClsNet(BaseModel):
         self.isTrain = opt.isTrain
         self.clsname = opt.clsname
         self.old_lr = opt.lr
-        if self.clsname == 'expcls':
+        if self.clsname == 'idcls':
             output_nc =301
         else:
             output_nc = 20
