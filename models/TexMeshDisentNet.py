@@ -123,6 +123,7 @@ class TexMeshDisentNet(BaseModel):
         loss_G_VGG4 = 0
         loss_G_VGG1 = 0
         loss_G_VGG2 = 0
+        print ('!!!!!!!!!!', self.opt.no_vgg_loss)
         if not self.opt.no_vgg_loss:
             # mismatch loss
             for i in range(map_type.shape[0]):
@@ -132,7 +133,7 @@ class TexMeshDisentNet(BaseModel):
                 else:
                     loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat
                     loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat
-            
+                print ('!!!!!!!!!!vgg')
             # reconstruction loss
             
             loss_G_VGG3 = self.criterionVGG(Aexp_Aid_tex, Atex) * self.opt.lambda_feat
