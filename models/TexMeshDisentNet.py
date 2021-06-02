@@ -33,8 +33,8 @@ class TexMeshDisentNet(BaseModel):
         self.netEncoderDecoder = networks.define_TexMesh_EncoderDecoder(opt.loadSize, linearity, input_nc, opt.code_n,opt.encoder_fc_n, 
                                                 opt.ngf, opt.netG, opt.n_downsample_global, 
                                                 opt.n_blocks_global, opt.norm, gpu_ids=self.gpu_ids)  
-
-        self.netEncoderDecoder = torch.nn.DataParallel(self.netEncoderDecoder, opt.gpu_ids).cuda()     
+        self.netEncoderDecoder = self.netEncoderDecoder.cuda()
+        # self.netEncoderDecoder = torch.nn.DataParallel(self.netEncoderDecoder, opt.gpu_ids).cuda()     
         if self.opt.verbose:
                 print('---------- Networks initialized -------------')
 
@@ -61,12 +61,12 @@ class TexMeshDisentNet(BaseModel):
 
             self.criterionPix = torch.nn.MSELoss()
             if not opt.no_vgg_loss:             
-                self.criterionVGG = networks.VGGLoss(self.gpu_ids)
-                self.criterionVGG = torch.nn.DataParallel(self.criterionVGG, opt.gpu_ids).cuda()     
+                self.criterionVGG = networks.VGGLoss(self.gpu_ids).cuda()
+                # self.criterionVGG = torch.nn.DataParallel(self.criterionVGG, opt.gpu_ids).cuda()     
 
             if not opt.no_cls_loss:
-                self.criterionCLS = networks.CLSLoss(opt)
-                self.criterionCLS = torch.nn.DataParallel(self.criterionCLS, device_ids = self.gpu_ids).cuda()
+                self.criterionCLS = networks.CLSLoss(opt).cuda()
+                # self.criterionCLS = torch.nn.DataParallel(self.criterionCLS, device_ids = self.gpu_ids).cuda()
             # Names so we can breakout loss
             self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh", 'A_cls', 'B_cls', "mis_cls",)
 
