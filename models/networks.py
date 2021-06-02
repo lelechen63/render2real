@@ -218,6 +218,11 @@ class CLSLoss(nn.Module):
         self.expcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_expcls.pth'))
         self.expcls = self.expcls.cuda()
         self.idcls = self.idcls.cuda()
+        for param in self.idcls.parameters():
+            param.requires_grad = False
+        for param in self.expcls.parameters():
+            param.requires_grad = False
+
 
         self.criterion = nn.CrossEntropyLoss()
 
