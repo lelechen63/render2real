@@ -211,13 +211,15 @@ class VGGLoss(nn.Module):
 class CLSLoss(nn.Module):
     def __init__(self, opt):
         super(CLSLoss, self).__init__()        
-        self.idcls = TexClassifier(opt.loadSize, 301, 64, opt.n_downsample_global, opt.n_blocks_global).cuda()   
-        self.expcls = TexClassifier(opt.loadSize, 20, 64, opt.n_downsample_global, opt.n_blocks_global).cuda()
+        self.idcls = TexClassifier(opt.loadSize, 301, 64, opt.n_downsample_global, opt.n_blocks_global)
+        self.expcls = TexClassifier(opt.loadSize, 20, 64, opt.n_downsample_global, opt.n_blocks_global)
         
         self.idcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_idcls.pth'))
         self.expcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_expcls.pth'))
+        self.expcls = self.expcls.cuda()
+        self.idcls = self.idcls.cuda()
 
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = nn.CrossEntropyLoss().cuda()
 
     def forward(self, tex, gt_lab, mode):
         if mode == 'id':
