@@ -238,9 +238,7 @@ class CLSLoss(nn.Module):
         if mode == 'id':
             out_lab = self.idcls(tex)
         else:
-            out_lab = self.expcls(tex)
-        
-        print(out_lab.shape)
+            out_lab = self.expcls(tex)        
         loss = self.criterion(out_lab, gt_lab.detach())
         return loss
 
