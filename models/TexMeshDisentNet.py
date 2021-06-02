@@ -64,7 +64,7 @@ class TexMeshDisentNet(BaseModel):
                 self.criterionVGG = networks.VGGLoss(self.gpu_ids)
             
             if not opt.no_cls_loss:
-                self.criterionCLS = network.CLSLoss(opt)
+                self.criterionCLS = networks.CLSLoss(opt)
             # Names so we can breakout loss
             self.loss_names = self.loss_filter('A_pix','B_pix','mis_pix','A_vgg', 'B_vgg', "mis_vgg", "A_mesh", "B_mesh", "mis_mesh", 'A_cls', 'B_cls', "mis_cls",)
 
