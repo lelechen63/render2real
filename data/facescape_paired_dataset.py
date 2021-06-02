@@ -385,7 +385,7 @@ class FacescapeTexDataset(BaseDataset):
         return input_dict
 
     def __len__(self):
-        return len(self.data_list) // self.opt.batchSize * self.opt.batchSize
+        return len(self.total_list) // self.opt.batchSize * self.opt.batchSize
 
     def name(self):
         return 'FacescapeTexDataset'
