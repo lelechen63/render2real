@@ -216,8 +216,8 @@ class CLSLoss(nn.Module):
         
         self.idcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_idcls.pth'))
         self.expcls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/100_net_expcls.pth'))
-        self.expcls = self.expcls.cuda(opt.gpu_ids[0])
-        self.idcls = self.idcls.cuda(opt.gpu_ids[0])
+        self.expcls = self.expcls.cuda()
+        self.idcls = self.idcls.cuda()
         for param in self.idcls.parameters():
             param.requires_grad = False
         for param in self.expcls.parameters():
@@ -227,7 +227,17 @@ class CLSLoss(nn.Module):
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, tex, gt_lab, mode):
+        device_id = tex.device.index
+        print('tex': device_id)
+
+        device_id = self.expcls.device.index
+        print('expcls': device_id)
+        device_id = self.idcls.device.index
+        print('idcls': device_id)
+        print('++++++++++++++++++++')
+
         if mode == 'id':
+            
             out_lab = self.idcls(tex)
         else:
             out_lab = self.expcls(tex)
