@@ -356,7 +356,7 @@ class FacescapeTexDataset(BaseDataset):
             tex = cv2.resize(tex, (opt.loadSize,opt.loadSize), interpolation = cv2.INTER_AREA)
 
             self.total_tex.append(tex)
-            if len(self.total_list) == 100:
+            if len(self.total_tex) == 100:
                 break
     def __getitem__(self, index):
         t = time.time()
@@ -385,7 +385,7 @@ class FacescapeTexDataset(BaseDataset):
         return input_dict
 
     def __len__(self):
-        return len(self.total_list) // self.opt.batchSize * self.opt.batchSize
+        return len(self.total_tex) // self.opt.batchSize * self.opt.batchSize
 
     def name(self):
         return 'FacescapeTexDataset'
