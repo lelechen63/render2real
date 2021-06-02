@@ -59,14 +59,9 @@ else:
 cls = cls.cuda()
 criterion = torch.nn.CrossEntropyLoss()
 
-print_delta = total_steps % opt.print_freq
-save_delta = total_steps % opt.save_latest_freq
-
+total_steps = 0
 for i, data in enumerate(dataset):
-    if total_steps % opt.print_freq == print_delta:
-        iter_start_time = time.time()
     total_steps += opt.batchSize
-    epoch_iter += opt.batchSize
     # whether to collect output images
 
     ############## Forward Pass ######################
