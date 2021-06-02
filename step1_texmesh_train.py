@@ -67,8 +67,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = total_steps % opt.display_freq == display_delta
 
         ############## Forward Pass ######################
-    
-        losses, generated, errormap = model(  Atex = Variable(data['Atex']) , 
+        print(data.keys())
+        losses, generated, errormap = model(Atex = Variable(data['Atex']) , 
                                     Amesh =  Variable(data['Amesh']),
                                     Btex = Variable(data['Btex']) , 
                                     Bmesh =  Variable(data['Bmesh']),
