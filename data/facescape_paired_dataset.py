@@ -324,7 +324,7 @@ class FacescapeTexDataset(BaseDataset):
         self.exp_set =  get_exp()
 
         if opt.isTrain:
-            _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
+            _file = open(os.path.join(opt.dataroot, "lists/texmesh_train.pkl"), "rb")
             
         else:
             _file = open(os.path.join(opt.dataroot, "lists/texmesh_test.pkl"), "rb")
@@ -355,9 +355,9 @@ class FacescapeTexDataset(BaseDataset):
             tex =  tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
             tex = cv2.resize(tex, (opt.loadSize,opt.loadSize), interpolation = cv2.INTER_AREA)
 
-            self.total_tex.append(tex)
-            if len(self.total_tex) == 129:
-                break
+            # self.total_tex.append(tex)
+            # if len(self.total_tex) == 129:
+                # break
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
