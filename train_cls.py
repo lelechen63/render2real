@@ -98,12 +98,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         optimizer.zero_grad()    
         loss.backward()          
         optimizer.step()
-        try:
-            print( 'loss: ', loss.data.sum())
-        except:
-            print('+++++')
-            print(loss)
-        print( 'step: ', total_steps)
+
 
         ############## Display results and errors #########
         ## save latest model
@@ -112,11 +107,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             model.module.save('latest')            
             np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
             prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
-            try:
-                print( 'acc: ', prec1)
-            except:
-                print('******')
-                print(out_labels)
+            print( 'step:', total_steps,  'loss: ', loss.data.sum(), 'acc:', prec1)          
         
         if epoch_iter >= dataset_size:
             break
