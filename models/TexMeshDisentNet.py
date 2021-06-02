@@ -147,7 +147,7 @@ class TexMeshDisentNet(BaseModel):
         if not self.opt.no_cls_loss:
             # mismatch loss
                 loss_id_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'id' ) * self.opt.lambda_cls
-                loss_id_CLS2 = self.criterionCLS(Bexp_Aid_tex， Agt_id, 'id') * self.opt.lambda_cls
+                loss_id_CLS2 = self.criterionCLS(Bexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls
 
                 loss_exp_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'exp' ) * self.opt.lambda_cls
                 loss_exp_CLS2 = self.criterionCLS(Bexp_Aid_tex， Agt_id, 'exp') * self.opt.lambda_cls
