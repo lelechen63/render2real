@@ -2,7 +2,7 @@ import os
 import torch
 import sys
 
-class BaseModel(torch.nn.Module):
+class BaseModel:
     def name(self):
         return 'BaseModel'
 
