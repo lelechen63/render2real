@@ -52,7 +52,7 @@ dataset_size = len(data_loader)
 print('#testing images = %d' % dataset_size)
 if opt.clsname == 'idcls':
     cls = networks.TexClassifier(opt.loadSize, 301, 64, opt.n_downsample_global, opt.n_blocks_global)
-    cls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/200_net_idcls.pth'))
+    cls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/130_net_idcls.pth'))
 else:
     cls = networks.TexClassifier(opt.loadSize, 20, 64, opt.n_downsample_global, opt.n_blocks_global)
     cls.load_state_dict(torch.load('/raid/celong/lele/github/render2real/checkpoints/cls/170_net_expcls.pth'))
