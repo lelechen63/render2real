@@ -361,8 +361,8 @@ class FacescapeTexDataset(BaseDataset):
             tex =  tex[self.y:self.y+self.l,self.x :self.x +self.l,:]
             tex = cv2.resize(tex, (opt.loadSize,opt.loadSize), interpolation = cv2.INTER_AREA)
             self.total_tex.append(tex)
-            if len(self.total_tex) == 33:
-                break
+            # if len(self.total_tex) == 33:
+            #     break
     def __getitem__(self, index):
         t = time.time()
         tmp = self.data_list[index].split('/')
