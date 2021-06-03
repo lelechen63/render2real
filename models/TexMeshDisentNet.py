@@ -19,7 +19,7 @@ class TexMeshDisentNet(BaseModel):
         def loss_filter(A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss,\
          mismatch_loss,  A_mesh_loss, B_mesh_loss, mismatch_mesh_loss, \
          A_cls_loss, B_cls_loss, mismatch_cls_loss):
-            return [l for (l,f) in zip((A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss),flags) if f]
+            return [l for (l,f) in zip((A_tex_loss, B_tex_loss, tex_loss, A_feat_loss, B_feat_loss, mismatch_loss, A_mesh_loss, B_mesh_loss, mismatch_mesh_loss, A_cls_loss,B_cls_loss,mismatch_cls_loss),flags) if f]
         return loss_filter
     
     def initialize(self, opt):
