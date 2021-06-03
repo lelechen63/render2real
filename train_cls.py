@@ -90,7 +90,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         else:
             gt_lbs = data['exp']
         
-        loss, out_labels, gt_labels = model( data['tex'].cuda(), gt_lbs.cuda(), infer=save_fake)
+        loss, out_labels, gt_labels = model.forward( data['tex'].cuda(), gt_lbs.cuda(), infer=save_fake)
         loss = loss.mean()
         # calculate final loss scalar
         ############### Backward Pass ####################
