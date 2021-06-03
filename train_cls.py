@@ -63,7 +63,7 @@ print('#training images = %d' % dataset_size)
 model = create_model(opt)
 visualizer = Visualizer(opt)
 
-optimizer = model.module.optimizer
+optimizer = model.optimizer
 
 total_steps = (start_epoch-1) * dataset_size + epoch_iter
 
@@ -104,7 +104,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ## save latest model
         if total_steps % opt.save_latest_freq == save_delta:
             print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
-            model.module.save('latest')            
+            model.save('latest')            
             np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
             prec1, temp_var = accuracy(out_labels.data, gt_labels.data , topk=(1, 1))
             print( 'step:', total_steps,  'loss: ', loss.data.sum(), 'acc:', prec1)          
@@ -120,10 +120,10 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
     ## save model for this epoch
     if epoch % opt.save_epoch_freq == 0:
         print('saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))        
-        model.module.save('latest')
-        model.module.save(epoch)
+        model.save('latest')
+        model.save(epoch)
         np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
     ### linearly decay learning rate after certain iterations
     if epoch > opt.niter:
-        model.module.update_learning_rate()
+        model.update_learning_rate()
