@@ -126,13 +126,14 @@ class TexMeshDisentNet(BaseModel):
         loss_G_VGG2 = 0
         if not self.opt.no_vgg_loss:
             # mismatch loss
-            for i in range(map_type.shape[0]):
-                if map_type[i] == 0:
-                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat * self.opt.lambda_mismatch
-                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
-                else:
-                    loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
-                    loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
+            if not self.opt.no_mismatch_loss:
+                for i in range(map_type.shape[0]):
+                    if map_type[i] == 0:
+                        loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat * self.opt.lambda_mismatch
+                        loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
+                    else:
+                        loss_G_VGG1 += self.criterionVGG(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
+                        loss_G_VGG2 += self.criterionVGG(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_feat* self.opt.lambda_mismatch
             # reconstruction loss
             
             loss_G_VGG3 = self.criterionVGG(Aexp_Aid_tex, Atex) * self.opt.lambda_feat
@@ -146,16 +147,17 @@ class TexMeshDisentNet(BaseModel):
 
         if not self.opt.no_cls_loss:
             # mismatch loss
-            loss_id_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'id' ) * self.opt.lambda_cls* self.opt.lambda_mismatch
-            loss_id_CLS2 = self.criterionCLS(Bexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls* self.opt.lambda_mismatch
+            if not self.opt.no_mismatch_loss:
+                loss_id_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_id, 'id' ) * self.opt.lambda_cls* self.opt.lambda_mismatch
+                loss_id_CLS2 = self.criterionCLS(Bexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls* self.opt.lambda_mismatch
 
-            loss_exp_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_exp, 'exp' ) * self.opt.lambda_cls* self.opt.lambda_mismatch
-            loss_exp_CLS2 = self.criterionCLS(Bexp_Aid_tex, Agt_exp, 'exp') * self.opt.lambda_cls* self.opt.lambda_mismatch
-                 
-            # reconstruction loss
-            loss_id_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls
-            loss_id_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_id, 'id') * self.opt.lambda_cls
-            loss_id_CLS = loss_id_CLS1 + loss_id_CLS2
+                loss_exp_CLS1 = self.criterionCLS(Aexp_Bid_tex, Bgt_exp, 'exp' ) * self.opt.lambda_cls* self.opt.lambda_mismatch
+                loss_exp_CLS2 = self.criterionCLS(Bexp_Aid_tex, Agt_exp, 'exp') * self.opt.lambda_cls* self.opt.lambda_mismatch
+                    
+                # reconstruction loss
+                loss_id_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_id, 'id') * self.opt.lambda_cls
+                loss_id_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_id, 'id') * self.opt.lambda_cls
+                loss_id_CLS = loss_id_CLS1 + loss_id_CLS2
 
             loss_exp_CLS3 = self.criterionCLS(Aexp_Aid_tex, Agt_exp, 'exp') * self.opt.lambda_cls
             loss_exp_CLS4 = self.criterionCLS(Bexp_Bid_tex, Bgt_exp, 'exp') * self.opt.lambda_cls
@@ -167,13 +169,14 @@ class TexMeshDisentNet(BaseModel):
         loss_G_pix1 = 0
         loss_G_pix2 = 0
         # mismatch loss
-        for i in range(map_type.shape[0]):
-            if map_type[i] == 0:
-                loss_G_pix1 += self.criterionPix(Aexp_Bid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
-                loss_G_pix2 += self.criterionPix(Bexp_Aid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
-            else:
-                loss_G_pix1 += self.criterionPix(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
-                loss_G_pix2 += self.criterionPix(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
+        if not self.opt.no_mismatch_loss:
+            for i in range(map_type.shape[0]):
+                if map_type[i] == 0:
+                    loss_G_pix1 += self.criterionPix(Aexp_Bid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
+                    loss_G_pix2 += self.criterionPix(Bexp_Aid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
+                else:
+                    loss_G_pix1 += self.criterionPix(Aexp_Bid_tex[i].unsqueeze(0), Btex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
+                    loss_G_pix2 += self.criterionPix(Bexp_Aid_tex[i].unsqueeze(0), Atex[i].unsqueeze(0)) * self.opt.lambda_pix* self.opt.lambda_mismatch
         
         # reconstruction loss
         loss_G_pix3 = self.criterionPix(Aexp_Aid_tex, Atex) * self.opt.lambda_pix
@@ -186,13 +189,14 @@ class TexMeshDisentNet(BaseModel):
         loss_mesh3 = self.criterionPix(Aexp_Aid_mesh, Amesh)* self.opt.lambda_mesh
         loss_mesh4 = self.criterionPix(Bexp_Bid_mesh, Bmesh)* self.opt.lambda_mesh
         # mismatch loss
-        for i in range(map_type.shape[0]):
-            if map_type[i] == 0:
-                loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
-                loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
-            else:
-                loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
-                loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
+        if not self.opt.no_mismatch_loss:
+            for i in range(map_type.shape[0]):
+                if map_type[i] == 0:
+                    loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
+                    loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
+                else:
+                    loss_mesh1 += self.criterionPix(Aexp_Bid_mesh[i].unsqueeze(0), Bmesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
+                    loss_mesh2 += self.criterionPix(Bexp_Aid_mesh[i].unsqueeze(0), Amesh[i].unsqueeze(0)) * self.opt.lambda_mesh* self.opt.lambda_mismatch
         loss_G_mesh = loss_mesh1 + loss_mesh2
         ################################
         A_err_map = (Aexp_Aid_tex - Atex).sum(1).unsqueeze(1)
